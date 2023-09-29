@@ -147,13 +147,12 @@ export default function ExpenseRecord() {
     setActionTake(true);
     setOpen(true);
     updatedrow = rows.filter((e) => e.id == id);
-    console.log(updatedrow[0].ActionDate);
-    console.log(new Date(updatedrow[0].ActionDate).toISOString().split("T")[0]);
+
     setAddDetails({
       ...updatedrow[0],
-      ActionDate: new Date(updatedrow[0].ActionDate)
-        .toISOString()
-        .split("T")[0],
+      // ActionDate: new Date(updatedrow[0].ActionDate)
+      //   .toISOString()
+      //   .split("T")[0],
     });
   };
 
@@ -524,7 +523,7 @@ export default function ExpenseRecord() {
                 }
                 value={Number(adddetails.SGST) || ""}
               />
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
+              {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   label={
                     <span>
@@ -541,7 +540,17 @@ export default function ExpenseRecord() {
                     })
                   }
                 />
-              </LocalizationProvider>
+              </LocalizationProvider> */}
+              <label htmlFor=""> DueDate</label>
+              <br />
+              <input
+                type="date"
+                label="DueDate"
+                style={{ width: "200px", height: "60px" }}
+                onChange={(e) =>
+                  setAddDetails({ ...adddetails, DueDate: e.target.value })
+                }
+              ></input>
             </Grid>
             <Grid item lg={4}>
               <TextField
@@ -573,7 +582,7 @@ export default function ExpenseRecord() {
                 }
                 value={Number(adddetails.IGST) || ""}
               />
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
+              {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   label={
                     <span>
@@ -591,7 +600,17 @@ export default function ExpenseRecord() {
                   }
                   // value={moment(adddetails.ActionDate).format("YYYY-MM-DD")}
                 />
-              </LocalizationProvider>
+              </LocalizationProvider> */}
+              <label htmlFor=""> ActionDate</label>
+              <br />
+              <input
+                type="date"
+                label="DueDate"
+                style={{ width: "200px", height: "60px" }}
+                onChange={(e) =>
+                  setAddDetails({ ...adddetails, ActionDate: e.target.value })
+                }
+              ></input>
             </Grid>
           </Grid>
         </DialogContent>

@@ -3,6 +3,7 @@ import axios from "axios";
 
 export default {
   addIncome: async function (newRow) {
+    console.log(newRow);
     try {
       const response = await axios.post(`/addincome`, newRow);
       return response.data;

@@ -106,6 +106,8 @@ export default function Income2() {
       });
       if (actionTake) {
         console.log(typeof adddetails.DueDate);
+        console.log(adddetails.DueDate);
+        console.log(adddetails.ActionDate);
         ApiCalls.updateIncome(adddetails.id, {
           ...adddetails,
           TotalAmount: total,
@@ -123,12 +125,13 @@ export default function Income2() {
           })
           .catch((err) => window.alert("Sorry!Try Again"));
       } else {
+        console.log(adddetails);
         ApiCalls.addIncome({
           ...adddetails,
           TotalAmount: total,
           BalanceDue: total,
-          DueDate: adddetails.DueDate.add(1, "days"),
-          ActionDate: adddetails.ActionDate.add(1, "days"),
+          // DueDate: adddetails.DueDate.add(1, "days"),
+          // ActionDate: adddetails.ActionDate.add(1, "days"),
         })
           .then((res) => {
             if (res.status == 200 || 201) {
@@ -168,10 +171,10 @@ export default function Income2() {
     // console.log(new Date(updatedrow[0].ActionDate).toISOString().split("T")[0]);
     setAddDetails({
       ...updatedrow[0],
-      DueDate: new Date(updatedrow[0].DueDate).toISOString().split("T")[0],
-      ActionDate: new Date(updatedrow[0].ActionDate)
-        .toISOString()
-        .split("T")[0],
+      // DueDate: new Date(updatedrow[0].DueDate).toISOString().split("T")[0],
+      // ActionDate: new Date(updatedrow[0].ActionDate)
+      //   .toISOString()
+      //   .split("T")[0],
     });
   };
 
@@ -700,7 +703,7 @@ export default function Income2() {
                 }
                 value={Number(adddetails.SGST) || ""}
               />
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
+              {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   label={
                     <span>
@@ -717,7 +720,17 @@ export default function Income2() {
                     })
                   }
                 />
-              </LocalizationProvider>
+              </LocalizationProvider> */}
+              <label htmlFor=""> DueDate</label>
+              <br />
+              <input
+                type="date"
+                label="DueDate"
+                style={{ width: "200px", height: "60px" }}
+                onChange={(e) =>
+                  setAddDetails({ ...adddetails, DueDate: e.target.value })
+                }
+              ></input>
             </Grid>
             <Grid item lg={4}>
               <TextField
@@ -787,7 +800,7 @@ export default function Income2() {
                 }
                 value={Number(adddetails.IGST) || ""}
               />
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
+              {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   label={
                     <span>
@@ -802,7 +815,17 @@ export default function Income2() {
                     })
                   }
                 />
-              </LocalizationProvider>
+              </LocalizationProvider> */}
+              <label htmlFor=""> ActionDate</label>
+              <br />
+              <input
+                type="date"
+                label="DueDate"
+                style={{ width: "200px", height: "60px" }}
+                onChange={(e) =>
+                  setAddDetails({ ...adddetails, ActionDate: e.target.value })
+                }
+              ></input>
             </Grid>
           </Grid>
         </DialogContent>

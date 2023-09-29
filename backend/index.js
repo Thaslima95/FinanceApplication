@@ -80,6 +80,7 @@ function numberToWords(number) {
 
 
 app.post('/addincome',(req,res)=>{
+  console.log(req.body)
     console.log(req.body)
     const companyname=req.body.CompanyName;
     const streetaddress=req.body.StreetAddress;
@@ -125,6 +126,7 @@ app.post('/addincome',(req,res)=>{
 app.put('/updateincome/:id',(req,res)=>{
     console.log(req.params.id)
 const id=req.params.id;
+console.log(req.body.DueDate)
 console.log(req.body.ActionDate)
 
 const companyname=req.body.CompanyName;
@@ -184,6 +186,8 @@ const companyname=req.body.CompanyName;
         })
       }
       else{
+        console.log(duedate+"due date")
+        console.log(actiondate+"actiondate")
         const sql="UPDATE income_table SET CompanyName=?,StreetAddress=?,City=?,State=?,Pincode=?,PlaceofSupply=?,GSTIN=?,Particulars=?,PSYear=?,HSNSAC=?,Rate=?,DueDate=?,CGST=?,SGST=?,IGST=?,TotalAmount=?,BalanceDue=?,`Status`=?,Items=?,ActionDate=? where id=?";
 db.query(sql,[companyname,streetaddress,city,state,pincode,placeofsupply,GSTIN,particulars,psyear,hsnsac,rate,duedate,cgst,sgst,igst,totalamount,balancedue,status,details,actiondate,id],(err,data)=>{
      if(err){
@@ -314,10 +318,7 @@ app.post('/addexpense',(req,res)=>{
 app.put('/updateexpense/:id',(req,res)=>{
   console.log("update")
   const utcDateTimeString = req.body.DueDate;
-
-// Convert the UTC date to another timezone (e.g., New York - America/New_York)
 const newYorkDateTime = moment.tz(utcDateTimeString, 'America/New_York');
-
 console.log('Original UTC Date:', utcDateTimeString);
 console.log('Converted New York Time:', newYorkDateTime.format());
   console.log(req.body)
