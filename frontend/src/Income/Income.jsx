@@ -75,15 +75,15 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
       adddetails.StreetAddress == "" ||
       adddetails.City == "" ||
       adddetails.State == "" ||
-      adddetails.Pincode == null ||
+      adddetails.Pincode == "" ||
       adddetails.PlaceofSupply == "" ||
       adddetails.GSTIN == "" ||
       adddetails.Particulars == "" ||
       adddetails.Items == "" ||
       adddetails.HSNSAC == "" ||
-      adddetails.Rate == null ||
-      adddetails.DueDate == null ||
-      adddetails.ActionDate == null ||
+      adddetails.Rate == "" ||
+      adddetails.DueDate == "" ||
+      adddetails.ActionDate == "" ||
       adddetails.Status == ""
     ) {
       alert(`Mandatory fields should not be empty`);
@@ -103,6 +103,9 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
           ...adddetails,
           TotalAmount: total,
           BalanceDue: total,
+          CGST: Number(adddetails.CGST),
+          SGST: Number(adddetails.SGST),
+          IGST: Number(adddetails.IGST),
         })
           .then((res) => {
             if (res.status == 200 || 201) {
@@ -112,6 +115,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               setOpen(false);
               getIncomeRecord();
               setAddDetails({
+                id: "",
                 InvoiceNumber: "",
                 CompanyName: "",
                 StreetAddress: "",
@@ -142,6 +146,9 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
           ...adddetails,
           TotalAmount: total,
           BalanceDue: total,
+          CGST: Number(adddetails.CGST),
+          SGST: Number(adddetails.SGST),
+          IGST: Number(adddetails.IGST),
         })
           .then((res) => {
             if (res.status == 200 || 201) {
@@ -150,6 +157,30 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               totalunpaidincomecall();
               setOpen(false);
               getIncomeRecord();
+              setAddDetails({
+                id: "",
+                InvoiceNumber: "",
+                CompanyName: "",
+                StreetAddress: "",
+                City: "",
+                Pincode: "",
+                State: "",
+                PlaceofSupply: "",
+                Particulars: "",
+                PSYear: "23-24",
+                Items: "",
+                HSNSAC: "",
+                Rate: "",
+                CGST: "",
+                SGST: "",
+                IGST: "",
+                Status: "",
+                DueDate: "",
+                ActionDate: "",
+                GSTIN: "",
+                TotalAmount: 0,
+                BalanceDue: 0,
+              });
             }
           })
           .catch((err) => window.alert("Sorry!Try Again"));
@@ -159,7 +190,30 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
 
   const handleClose = () => {
     setOpen(false);
-    // getIncomeRecord();
+    setAddDetails({
+      id: "",
+      InvoiceNumber: "",
+      CompanyName: "",
+      StreetAddress: "",
+      City: "",
+      Pincode: "",
+      State: "",
+      PlaceofSupply: "",
+      Particulars: "",
+      PSYear: "23-24",
+      Items: "",
+      HSNSAC: "",
+      Rate: "",
+      CGST: "",
+      SGST: "",
+      IGST: "",
+      Status: "",
+      DueDate: "",
+      ActionDate: "",
+      GSTIN: "",
+      TotalAmount: 0,
+      BalanceDue: 0,
+    });
   };
   const handleDeleteClose = () => {
     setdeleteOpen(false);

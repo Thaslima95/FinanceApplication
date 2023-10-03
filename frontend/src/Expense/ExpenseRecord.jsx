@@ -63,7 +63,21 @@ export default function ExpenseRecord({
 
   const handleClose = () => {
     setOpen(false);
-    // window.location.reload();
+    setAddDetails({
+      id: "",
+      InvoiceNumber: "",
+      Particulars: "",
+      Amount: "",
+      CGST: "",
+      SGST: "",
+      IGST: "",
+      PaymentType: "",
+      AccountType: "",
+      DueDate: "",
+      ActionDate: "",
+      TotalAmount: 0,
+      BalanceDue: 0,
+    });
   };
   const handleDeleteClose = () => {
     setdeleteOpen(false);
@@ -101,6 +115,9 @@ export default function ExpenseRecord({
             ...adddetails,
             TotalAmount: total,
             BalanceDue: total,
+            CGST: Number(adddetails.CGST),
+            SGST: Number(adddetails.SGST),
+            IGST: Number(adddetails.IGST),
           })
             .then((res) => {
               if (res.status == 200 || 201) {
@@ -110,6 +127,7 @@ export default function ExpenseRecord({
                 getExpenseRecord();
                 setOpen(false);
                 setAddDetails({
+                  id: "",
                   InvoiceNumber: "",
                   Particulars: "",
                   Amount: "",
@@ -146,6 +164,7 @@ export default function ExpenseRecord({
                 totalIndirectExpenseDetails();
                 setOpen(false);
                 setAddDetails({
+                  id: "",
                   InvoiceNumber: "",
                   Particulars: "",
                   Amount: "",

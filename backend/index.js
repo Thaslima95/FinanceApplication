@@ -117,8 +117,6 @@ app.post('/addincome',(req,res)=>{
     const psyear=req.body.PSYear;
     const GSTIN=req.body.GSTIN;
     const hsnsac=req.body.HSNSAC;
-    console.log(req.body.DueDate)
-    console.log(new Date(req.body.DueDate).toUTCString())
     const duedate = req.body.DueDate;
     const actiondate =req.body.ActionDate; 
     const rate=req.body.Rate;
@@ -138,6 +136,7 @@ app.post('/addincome',(req,res)=>{
     }
      let id=data.insertId;
      req.body.id=id;
+     console.log(id)
     const sql=`UPDATE income_table SET InvoiceNumber='PS/${psyear}/00${id}' where id=${id}`
     pool.query(sql,(err,data)=>{
          if(err){
