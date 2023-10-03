@@ -18,7 +18,7 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import { Grid } from "@mui/material";
 import axios from "axios";
-import { GridRowModes, DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import ApiCalls from "../API/ApiCalls";
 
@@ -498,7 +498,6 @@ export default function ExpenseRecord({
         columns={columns}
         editMode="row"
         rowModesModel={rowModesModel}
-        // onRowModesModelChange={handleRowModesModelChange}
         slotProps={{
           toolbar: { setRows, setRowModesModel },
         }}
