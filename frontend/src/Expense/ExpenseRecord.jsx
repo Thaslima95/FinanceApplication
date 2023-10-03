@@ -37,6 +37,7 @@ export default function ExpenseRecord({
   const [validationError, setValidationError] = useState("");
   const [actionTake, setActionTake] = useState(false);
   const [adddetails, setAddDetails] = useState({
+    id: "",
     InvoiceNumber: "",
     Particulars: "",
     Amount: "",
@@ -327,7 +328,7 @@ export default function ExpenseRecord({
       },
     },
     {
-      field: "CGST",
+      field: "IGST",
       headerName: (
         <div>
           <b>IGST % </b>
@@ -386,7 +387,7 @@ export default function ExpenseRecord({
       headerClassName: "super-app-theme--header",
     },
     {
-      field: "PaymentType",
+      field: "AccountType",
       headerName: (
         <div>
           <b>Account Type </b>
@@ -457,28 +458,6 @@ export default function ExpenseRecord({
       headerClassName: "super-app-theme--header",
 
       getActions: ({ id }) => {
-        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-
-        if (isInEditMode) {
-          return [
-            <GridActionsCellItem
-              icon={<SaveIcon sx={{ color: "#676767" }} />}
-              label="Save"
-              sx={{
-                color: "#676767",
-              }}
-              onClick={handleSaveClick(id)}
-            />,
-            <GridActionsCellItem
-              icon={<CancelIcon sx={{ color: "#676767" }} />}
-              label="Cancel"
-              className="textPrimary"
-              onClick={handleCancelClick(id)}
-              color="inherit"
-            />,
-          ];
-        }
-
         return [
           <GridActionsCellItem
             icon={<EditIcon sx={{ color: "#676767" }} />}
@@ -560,7 +539,12 @@ export default function ExpenseRecord({
             <Grid item lg={4}>
               <TextField
                 id="filled-basic"
-                label={<span>Invoice Number</span>}
+                label={
+                  <span>
+                    Invoice Number <span style={{ color: "red" }}>*</span>
+                  </span>
+                }
+                className="red-asterisk"
                 variant="filled"
                 onChange={(e) =>
                   setAddDetails({
@@ -626,7 +610,10 @@ export default function ExpenseRecord({
                   <MenuItem value={"Indirect"}>InDirect</MenuItem>
                 </Select>
               </FormControl>
-              <label htmlFor=""> InvoiceDate</label>
+              <label htmlFor="">
+                {" "}
+                InvoiceDate <span style={{ color: "red" }}>*</span>
+              </label>
               <br />
               <input
                 type="date"
@@ -641,7 +628,11 @@ export default function ExpenseRecord({
             <Grid item lg={4}>
               <TextField
                 id="filled-basic"
-                label={<span>Particulars</span>}
+                label={
+                  <span>
+                    Particulars <span style={{ color: "red" }}>*</span>
+                  </span>
+                }
                 variant="filled"
                 onChange={(e) =>
                   setAddDetails({
@@ -655,11 +646,7 @@ export default function ExpenseRecord({
 
               <TextField
                 id="standard-number"
-                label={
-                  <span>
-                    SGST % <span style={{ color: "red" }}>*</span>
-                  </span>
-                }
+                label={<span>SGST %</span>}
                 type="number"
                 variant="standard"
                 sx={{ marginBottom: "25px", width: 218 }}
@@ -671,24 +658,6 @@ export default function ExpenseRecord({
                 }
                 value={Number(adddetails.SGST) || ""}
               />
-              {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  label={
-                    <span>
-                      {actionTake
-                        ? moment(adddetails.DueDate).format("YYYY-MM-DD")
-                        : "Due Date"}
-                    </span>
-                  }
-                  sx={{ m: 1, width: 200, marginTop: "10px" }}
-                  onChange={(e) =>
-                    setAddDetails({
-                      ...adddetails,
-                      DueDate: e,
-                    })
-                  }
-                />
-              </LocalizationProvider> */}
               <FormControl sx={{ m: 1, minWidth: 220, marginBottom: "23px" }}>
                 <InputLabel
                   id="demo-simple-select-label"
@@ -715,7 +684,10 @@ export default function ExpenseRecord({
                   <MenuItem value={"Director Fund"}>Director Fund</MenuItem>
                 </Select>
               </FormControl>
-              <label htmlFor=""> DueDate</label>
+              <label htmlFor="">
+                {" "}
+                DueDate<span style={{ color: "red" }}>*</span>
+              </label>
               <br />
               <input
                 type="date"
@@ -730,7 +702,11 @@ export default function ExpenseRecord({
             <Grid item lg={4}>
               <TextField
                 id="standard-number"
-                label={<span>Amount</span>}
+                label={
+                  <span>
+                    Amount <span style={{ color: "red" }}>*</span>
+                  </span>
+                }
                 type="number"
                 variant="standard"
                 sx={{ marginTop: "10px", marginBottom: "26px", width: 218 }}
@@ -745,11 +721,7 @@ export default function ExpenseRecord({
 
               <TextField
                 id="standard-number"
-                label={
-                  <span>
-                    IGST % <span style={{ color: "red" }}>*</span>
-                  </span>
-                }
+                label={<span>IGST %</span>}
                 type="number"
                 variant="standard"
                 sx={{ marginBottom: "25px", width: 218 }}
@@ -761,25 +733,6 @@ export default function ExpenseRecord({
                 }
                 value={Number(adddetails.IGST) || ""}
               />
-              {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  label={
-                    <span>
-                      {actionTake
-                        ? moment(adddetails.ActionDate).format("YYYY-MM-DD")
-                        : "Action Date"}
-                    </span>
-                  }
-                  sx={{ m: 1, width: 200 }}
-                  onChange={(e) =>
-                    setAddDetails({
-                      ...adddetails,
-                      ActionDate: e,
-                    })
-                  }
-                  // value={moment(adddetails.ActionDate).format("YYYY-MM-DD")}
-                />
-              </LocalizationProvider> */}
             </Grid>
           </Grid>
         </DialogContent>
