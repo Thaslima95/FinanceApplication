@@ -1,22 +1,13 @@
 const express=require('express')
 const mysql=require('mysql')
 const cors=require('cors')
+var jwt = require('jsonwebtoken');
 var bodyParser = require('body-parser');
-const moment = require('moment-timezone');
 const { v4: uuidv4 } = require('uuid');
 const userRoutes = require('./routes/userRoutes');
 const otpRoutes = require('./routes/otpRoutes');
 const pool = require('./db/db');
-const corsOpts = {
-  origin: '*',
-  methods: [
-    'GET',
-    'POST',
-  ],
-  allowedHeaders: [
-    'Content-Type',
-  ],
-};
+
 const app = express();
 
 
@@ -262,7 +253,8 @@ app.get('/getsingleincomedetails/:id',(req,res)=>{
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
     }
-         return res.status(200).json({"message":"Download Success"})
+        //  return res.status(200).json({"message":"Download Success"})
+        res.download(filePath, fileName); 
     })
     })
 })
@@ -493,7 +485,10 @@ app.post("/api/login", async (req, res) => {
       const user = results[0];
       console.log(user, "user", "password", password);
       if (user.password === password) {
-        res.status(200).json({ userId: user.id, message: "Login successful" });
+        var token = jwt.sign({email:req.body.email,id:results[0].id}, 'mysecret');   
+  res.status(200).json({ userId: user.id, message: "Login successful" ,token:token});
+
+        
       } else {
         res.status(401).json({ error: "Invalid email or password" });
       }
