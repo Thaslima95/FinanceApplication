@@ -320,13 +320,14 @@ app.post('/addexpense',(req,res)=>{
     const duedate = req.body.DueDate;
     const actiondate =req.body.ActionDate; 
     const paymentType=req.body.PaymentType;
+    const accountType=req.body.AccountType;
     const amount=req.body.Amount;
     const cgst=req.body.CGST;
     const sgst=req.body.SGST;
     const igst=req.body.IGST;
     const totalamount=req.body.TotalAmount;
-    const sql="INSERT INTO expense_table (InvoiceNumber,Particulars,PaymentType,Amount,CGST,SGST,IGST,TotalAmount,DueDate,ActionDate) VALUES ?";
-    const value=[[invoicenumber,particulars,paymentType,amount,cgst,sgst,igst,totalamount,duedate,actiondate]];
+    const sql="INSERT INTO expense_table (InvoiceNumber,Particulars,PaymentType,AccountType,Amount,CGST,SGST,IGST,TotalAmount,DueDate,ActionDate) VALUES ?";
+    const value=[[invoicenumber,particulars,paymentType,accountType,amount,cgst,sgst,igst,totalamount,duedate,actiondate]];
  pool.query(sql,[value],(err,data)=>{
      if(err){
         console.error("Error executing query: " + err.stack);
@@ -346,13 +347,14 @@ const id=req.params.id;
     const duedate = req.body.DueDate;
     const actiondate =req.body.ActionDate; 
     const paymentType=req.body.PaymentType;
+    const accountType=req.body.AccountType;
     const amount=req.body.Amount;
     const cgst=req.body.CGST;
     const sgst=req.body.SGST;
     const igst=req.body.IGST;
     const totalamount=req.body.TotalAmount;
-const sql="UPDATE expense_table SET InvoiceNumber=?,Particulars=?,DueDate=?,PaymentType=?,Amount=?,CGST=?,SGST=?,IGST=?,TotalAmount=?,ActionDate=? where id=?";
-pool.query(sql,[invoicenumber,particulars,duedate,paymentType,amount,cgst,sgst,igst,totalamount,actiondate,id],(err,data)=>{
+const sql="UPDATE expense_table SET InvoiceNumber=?,Particulars=?,DueDate=?,PaymentType=?,AccountType=?,Amount=?,CGST=?,SGST=?,IGST=?,TotalAmount=?,ActionDate=? where id=?";
+pool.query(sql,[invoicenumber,particulars,duedate,paymentType,accountType,amount,cgst,sgst,igst,totalamount,actiondate,id],(err,data)=>{
     if(err){
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
@@ -387,7 +389,7 @@ app.get('/getIndirectTotalExpenseRate',(req,res)=>{
     })
 })
 app.get('/getexpensedetails',(req,res)=>{
-    const sql="SELECT id,InvoiceNumber,CGST,Particulars,PaymentType,Amount,SGST,IGST,TotalAmount,DueDate,ActionDate from expense_table where  IsDeleted=0";
+    const sql="SELECT id,InvoiceNumber,CGST,Particulars,PaymentType,AccountType,Amount,SGST,IGST,TotalAmount,DueDate,ActionDate from expense_table where  IsDeleted=0";
     pool.query(sql,(err,data)=>{
         if(err){
         console.error("Error executing query: " + err.stack);

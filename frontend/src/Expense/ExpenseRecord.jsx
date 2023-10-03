@@ -33,7 +33,7 @@ export default function ExpenseRecord({
   const [open, setOpen] = React.useState(false);
   const [deleteopen, setdeleteOpen] = React.useState(false);
   const [deleteid, setDeleteId] = useState(0);
-  let show = true;
+
   let updatedrow = [];
   const [rows, setRows] = useState([]);
   const [fullWidth, setFullWidth] = React.useState(true);
@@ -48,6 +48,7 @@ export default function ExpenseRecord({
     SGST: "",
     IGST: "",
     PaymentType: "",
+    AccountType: "",
     DueDate: "",
     ActionDate: "",
     TotalAmount: 0,
@@ -72,55 +73,98 @@ export default function ExpenseRecord({
     if (
       adddetails.InvoiceNumber == "" ||
       adddetails.Particulars == "" ||
-      adddetails.Amount == null ||
-      adddetails.DueDate == null ||
-      adddetails.ActionDate == null ||
-      adddetails.PaymentType == ""
+      adddetails.Amount == 0 ||
+      adddetails.PaymentType == "" ||
+      adddetails.AccountType == "" ||
+      adddetails.DueDate == "" ||
+      adddetails.ActionDate == ""
     ) {
       alert(`Mandatory fields should not be empty`);
     } else {
-      const total =
-        (adddetails.CGST / 100) * adddetails.Amount +
-        (adddetails.SGST / 100) * adddetails.Amount +
-        (adddetails.IGST / 100) * adddetails.Amount +
-        adddetails.Amount;
-      setAddDetails({
-        ...adddetails,
-        TotalAmount: total,
-        BalanceDue: total,
-      });
-      if (actionTake) {
-        ApiCalls.updateExpense(adddetails.id, {
+      console.log(adddetails.ActionDate <= adddetails.DueDate);
+      {
+        console.log(adddetails);
+      }
+      if (adddetails.ActionDate <= adddetails.DueDate) {
+        const total =
+          (adddetails.CGST / 100) * adddetails.Amount +
+          (adddetails.SGST / 100) * adddetails.Amount +
+          (adddetails.IGST / 100) * adddetails.Amount +
+          adddetails.Amount;
+        setAddDetails({
           ...adddetails,
           TotalAmount: total,
           BalanceDue: total,
-        })
-          .then((res) => {
-            if (res.status == 200 || 201) {
-              window.alert("Expense Updated Successfully");
-              totalExpenseDetails();
-              totalIndirectExpenseDetails();
-              getExpenseRecord();
-              setOpen(false);
-            }
+        });
+        if (actionTake) {
+          ApiCalls.updateExpense(adddetails.id, {
+            ...adddetails,
+            TotalAmount: total,
+            BalanceDue: total,
           })
-          .catch((err) => window.alert("Sorry!Try Again"));
+            .then((res) => {
+              if (res.status == 200 || 201) {
+                window.alert("Expense Updated Successfully");
+                totalExpenseDetails();
+                totalIndirectExpenseDetails();
+                getExpenseRecord();
+                setOpen(false);
+                setAddDetails({
+                  InvoiceNumber: "",
+                  Particulars: "",
+                  Amount: "",
+                  CGST: "",
+                  SGST: "",
+                  IGST: "",
+                  PaymentType: "",
+                  AccountType: "",
+                  DueDate: "",
+                  ActionDate: "",
+                  TotalAmount: 0,
+                  BalanceDue: 0,
+                });
+              }
+            })
+            .catch((err) => window.alert("Sorry!Try Again"));
+        } else {
+          {
+            console.log(adddetails);
+          }
+          ApiCalls.addExpense({
+            ...adddetails,
+            TotalAmount: total,
+            BalanceDue: total,
+            CGST: Number(adddetails.CGST),
+            SGST: Number(adddetails.SGST),
+            IGST: Number(adddetails.IGST),
+          })
+            .then((res) => {
+              if (res.status == 200 || 201) {
+                window.alert("Expense Created Successfully");
+                getExpenseRecord();
+                totalExpenseDetails();
+                totalIndirectExpenseDetails();
+                setOpen(false);
+                setAddDetails({
+                  InvoiceNumber: "",
+                  Particulars: "",
+                  Amount: "",
+                  CGST: "",
+                  SGST: "",
+                  IGST: "",
+                  PaymentType: "",
+                  AccountType: "",
+                  DueDate: "",
+                  ActionDate: "",
+                  TotalAmount: 0,
+                  BalanceDue: 0,
+                });
+              }
+            })
+            .catch((err) => window.alert("Sorry!Try Again"));
+        }
       } else {
-        ApiCalls.addExpense({
-          ...adddetails,
-          TotalAmount: total,
-          BalanceDue: total,
-        })
-          .then((res) => {
-            if (res.status == 200 || 201) {
-              window.alert("Expense Created Successfully");
-              getExpenseRecord();
-              totalExpenseDetails();
-              totalIndirectExpenseDetails();
-              setOpen(false);
-            }
-          })
-          .catch((err) => window.alert("Sorry!Try Again"));
+        window.alert("Invoice date should be less than or equal to due date");
       }
     }
   };
@@ -193,7 +237,7 @@ export default function ExpenseRecord({
           <b>Invoice Number </b>
         </div>
       ),
-      width: 160,
+      width: 150,
       editable: true,
       align: "left",
       headerAlign: "center",
@@ -220,7 +264,7 @@ export default function ExpenseRecord({
         </div>
       ),
       type: "number",
-      width: 160,
+      width: 130,
       editable: true,
       align: "left",
       headerAlign: "center",
@@ -234,11 +278,19 @@ export default function ExpenseRecord({
         </div>
       ),
       type: "number",
-      width: 160,
+      width: 130,
       editable: true,
       align: "left",
       headerAlign: "center",
       headerClassName: "super-app-theme--header",
+      renderCell: (params) => {
+        const value = params.value || 0;
+        return (
+          <span>
+            <b>{value}</b>
+          </span>
+        );
+      },
     },
     {
       field: "SGST",
@@ -248,25 +300,41 @@ export default function ExpenseRecord({
         </div>
       ),
       type: "number",
-      width: 160,
+      width: 130,
       editable: true,
       align: "left",
       headerAlign: "center",
       headerClassName: "super-app-theme--header",
+      renderCell: (params) => {
+        const value = params.value || 0;
+        return (
+          <span>
+            <b>{value}</b>
+          </span>
+        );
+      },
     },
     {
-      field: "IGST",
+      field: "CGST",
       headerName: (
         <div>
           <b>IGST % </b>
         </div>
       ),
       type: "number",
-      width: 160,
+      width: 130,
       editable: true,
       align: "left",
       headerAlign: "center",
       headerClassName: "super-app-theme--header",
+      renderCell: (params) => {
+        const value = params.value || 0;
+        return (
+          <span>
+            <b>{value}</b>
+          </span>
+        );
+      },
     },
     {
       field: "TotalAmount",
@@ -276,7 +344,7 @@ export default function ExpenseRecord({
         </div>
       ),
       type: "number",
-      width: 160,
+      width: 130,
       editable: true,
       align: "left",
       headerAlign: "center",
@@ -305,7 +373,44 @@ export default function ExpenseRecord({
       valueOptions: ["Direct", "Indirect"],
       headerClassName: "super-app-theme--header",
     },
-    show && {
+    {
+      field: "PaymentType",
+      headerName: (
+        <div>
+          <b>Account Type </b>
+        </div>
+      ),
+      width: 160,
+      editable: true,
+      align: "left",
+      headerAlign: "center",
+      type: "singleSelect",
+      valueOptions: ["Cash", "Solution", "Workz", "Digital", "Director Fund"],
+      headerClassName: "super-app-theme--header",
+    },
+    {
+      field: "ActionDate",
+      headerName: (
+        <div>
+          <b>Invoice Date </b>
+        </div>
+      ),
+      type: "date",
+      width: 150,
+      align: "left",
+      headerAlign: "center",
+      editable: true,
+      valueGetter: (params) => {
+        const actionDate = params.row.ActionDate;
+        if (actionDate === null || actionDate === undefined) {
+          return new Date();
+        }
+        return new Date(actionDate);
+      },
+
+      headerClassName: "super-app-theme--header",
+    },
+    {
       field: "DueDate",
       headerName: (
         <div>
@@ -329,28 +434,6 @@ export default function ExpenseRecord({
       headerClassName: "super-app-theme--header",
     },
 
-    {
-      field: "ActionDate",
-      headerName: (
-        <div>
-          <b>Action Date </b>
-        </div>
-      ),
-      type: "date",
-      width: 150,
-      align: "left",
-      headerAlign: "center",
-      editable: true,
-      valueGetter: (params) => {
-        const actionDate = params.row.ActionDate;
-        if (actionDate === null || actionDate === undefined) {
-          return new Date();
-        }
-        return new Date(actionDate);
-      },
-
-      headerClassName: "super-app-theme--header",
-    },
     {
       field: "actions",
       type: "actions",
@@ -508,7 +591,7 @@ export default function ExpenseRecord({
                   <div style={{ color: "red" }}>{validationError}</div>
                 )}
               </div>
-              <FormControl sx={{ m: 1, minWidth: 220 }}>
+              <FormControl sx={{ m: 1, minWidth: 220, marginBottom: "20px" }}>
                 <InputLabel
                   id="demo-simple-select-label"
                   placeholder="Payment Type"
@@ -531,6 +614,17 @@ export default function ExpenseRecord({
                   <MenuItem value={"Indirect"}>InDirect</MenuItem>
                 </Select>
               </FormControl>
+              <label htmlFor=""> InvoiceDate</label>
+              <br />
+              <input
+                type="date"
+                label="ActionDate"
+                style={{ width: "200px", height: "60px" }}
+                value={adddetails.ActionDate}
+                onChange={(e) =>
+                  setAddDetails({ ...adddetails, ActionDate: e.target.value })
+                }
+              ></input>
             </Grid>
             <Grid item lg={4}>
               <TextField
@@ -583,6 +677,32 @@ export default function ExpenseRecord({
                   }
                 />
               </LocalizationProvider> */}
+              <FormControl sx={{ m: 1, minWidth: 220, marginBottom: "23px" }}>
+                <InputLabel
+                  id="demo-simple-select-label"
+                  placeholder="Payment Type"
+                >
+                  Account Type <span style={{ color: "red" }}>*</span>
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={adddetails.AccountType}
+                  label="Status"
+                  onChange={(e) =>
+                    setAddDetails({
+                      ...adddetails,
+                      AccountType: e.target.value,
+                    })
+                  }
+                >
+                  <MenuItem value={"Cash"}>Cash</MenuItem>
+                  <MenuItem value={"Solution"}>Solution</MenuItem>
+                  <MenuItem value={"Workz"}>Workz</MenuItem>
+                  <MenuItem value={"Digital"}>Digital</MenuItem>
+                  <MenuItem value={"Director Fund"}>Director Fund</MenuItem>
+                </Select>
+              </FormControl>
               <label htmlFor=""> DueDate</label>
               <br />
               <input
@@ -613,10 +733,14 @@ export default function ExpenseRecord({
 
               <TextField
                 id="standard-number"
-                label={<span>IGST %</span>}
+                label={
+                  <span>
+                    IGST % <span style={{ color: "red" }}>*</span>
+                  </span>
+                }
                 type="number"
                 variant="standard"
-                sx={{ marginBottom: "26px", width: 218 }}
+                sx={{ marginBottom: "25px", width: 218 }}
                 onChange={(e) =>
                   setAddDetails({
                     ...adddetails,
@@ -644,17 +768,6 @@ export default function ExpenseRecord({
                   // value={moment(adddetails.ActionDate).format("YYYY-MM-DD")}
                 />
               </LocalizationProvider> */}
-              <label htmlFor=""> ActionDate</label>
-              <br />
-              <input
-                type="date"
-                label="ActionDate"
-                style={{ width: "200px", height: "60px" }}
-                value={adddetails.ActionDate}
-                onChange={(e) =>
-                  setAddDetails({ ...adddetails, ActionDate: e.target.value })
-                }
-              ></input>
             </Grid>
           </Grid>
         </DialogContent>
