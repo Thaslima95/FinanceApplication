@@ -68,12 +68,13 @@ const RegistrationForm = () => {
   };
   return (
     <>
-      <Container className="centered-container">
+      <Container className="centered-container" sx={{border:"1px solid red"}}>
         <div
           style={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            border:"1px solid red"
           }}
         >
           <AccountCircle style={{ fontSize: "64px", color: "#FBC91B" }} />{" "}
@@ -81,7 +82,9 @@ const RegistrationForm = () => {
           <h1 style={{ fontSize: "24px", color: "black" }}>Signup</h1>
           <img src={logoImage} alt="Your Logo" />
         </div>
-        <h4 style={{ alignItems: "center" }}>PYRA-FIN</h4>
+        <div style={{border:"1px solid red"}}>
+          <div style={{border:'2px solid green',paddingLeft:"430px"}}>
+        <h4 style={{ alignItems: "center",paddingLeft:"140px" }}>PYRA-FIN</h4>
         {!otpSent ? (
           <form onSubmit={formik.handleSubmit}>
             <TextField
@@ -147,6 +150,8 @@ const RegistrationForm = () => {
             />
           </div>
         )}
+        </div>
+        </div>
       </Container>
     </>
   );
