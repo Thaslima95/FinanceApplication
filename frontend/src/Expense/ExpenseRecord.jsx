@@ -95,10 +95,6 @@ export default function ExpenseRecord({
     ) {
       alert(`Mandatory fields should not be empty`);
     } else {
-      console.log(adddetails.ActionDate <= adddetails.DueDate);
-      {
-        console.log(adddetails);
-      }
       if (adddetails.ActionDate <= adddetails.DueDate) {
         const total =
           (adddetails.CGST / 100) * adddetails.Amount +

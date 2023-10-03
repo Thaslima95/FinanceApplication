@@ -1,19 +1,28 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
 import { useDispatch } from "react-redux";
-import { TextField, Button, Container, Grid, IconButton, InputAdornment } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Container,
+  Grid,
+  IconButton,
+  InputAdornment,
+} from "@mui/material";
 import { Visibility, VisibilityOff, AccountCircle } from "@mui/icons-material";
 import "./RegistrationForm.css";
 import logoImage from "../../src/assets/Images/pyraimage.png";
 import { Link } from "react-router-dom";
 import OTPValidationForm from "./OTPValidationForm";
-import * as Yup from 'yup'; // Import Yup
+import * as Yup from "yup"; // Import Yup
 import axios from "axios";
 const RegistrationForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const validationSchema = Yup.object({
-    email: Yup.string().email("Invalid email format").required("Email is required"),
+    email: Yup.string()
+      .email("Invalid email format")
+      .required("Email is required"),
     password: Yup.string().required("Password is required"),
   });
   const formik = useFormik({
@@ -25,13 +34,15 @@ const RegistrationForm = () => {
     onSubmit: async (values) => {
       // setOtpSent(true);
       try {
-        localStorage.setItem("email", values.email)
-        const registrationResponse = await axios.post("http://localhost:8089/user/register", {
-          email: values.email,
-          password: values.password
-        });
-        if (registrationResponse.status === 201
-        ) {
+        localStorage.setItem("email", values.email);
+        const registrationResponse = await axios.post(
+          "http://localhost:8089/user/register",
+          {
+            email: values.email,
+            password: values.password,
+          }
+        );
+        if (registrationResponse.status === 201) {
           // const otpResponse = await axios.post("http://localhost:8080/otp/send_otp", {
           //   email: values.email,
           // });
@@ -47,10 +58,10 @@ const RegistrationForm = () => {
           alert("Error registering user:", registrationResponse);
         }
       } catch (error) {
-        console.log(error)
+        console.log(error);
         alert("Error:", error);
       }
-    }
+    },
   });
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
@@ -58,12 +69,19 @@ const RegistrationForm = () => {
   return (
     <>
       <Container className="centered-container">
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <AccountCircle style={{ fontSize: "64px", color: "#FBC91B" }} /> {/* Signup icon */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <AccountCircle style={{ fontSize: "64px", color: "#FBC91B" }} />{" "}
+          {/* Signup icon */}
           <h1 style={{ fontSize: "24px", color: "black" }}>Signup</h1>
           <img src={logoImage} alt="Your Logo" />
         </div>
-        <h4>PYRA-FIN</h4>
+        <h4 style={{ alignItems: "center" }}>PYRA-FIN</h4>
         {!otpSent ? (
           <form onSubmit={formik.handleSubmit}>
             <TextField
@@ -123,7 +141,10 @@ const RegistrationForm = () => {
           </form>
         ) : (
           <div>
-            <OTPValidationForm email={formik.values.email} password={formik.values.password} />
+            <OTPValidationForm
+              email={formik.values.email}
+              password={formik.values.password}
+            />
           </div>
         )}
       </Container>

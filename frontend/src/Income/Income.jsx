@@ -88,102 +88,106 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
     ) {
       alert(`Mandatory fields should not be empty`);
     } else {
-      const total =
-        (adddetails.CGST / 100) * adddetails.Rate +
-        (adddetails.SGST / 100) * adddetails.Rate +
-        (adddetails.IGST / 100) * adddetails.Rate +
-        adddetails.Rate;
-      setAddDetails({
-        ...adddetails,
-        TotalAmount: total,
-        BalanceDue: total,
-      });
-      if (actionTake) {
-        ApiCalls.updateIncome(adddetails.id, {
+      if (adddetails.ActionDate <= adddetails.DueDate) {
+        const total =
+          (adddetails.CGST / 100) * adddetails.Rate +
+          (adddetails.SGST / 100) * adddetails.Rate +
+          (adddetails.IGST / 100) * adddetails.Rate +
+          adddetails.Rate;
+        setAddDetails({
           ...adddetails,
           TotalAmount: total,
           BalanceDue: total,
-          CGST: Number(adddetails.CGST),
-          SGST: Number(adddetails.SGST),
-          IGST: Number(adddetails.IGST),
-        })
-          .then((res) => {
-            if (res.status == 200 || 201) {
-              window.alert("Income Updated Successfully");
-              totalIncomecall();
-              totalunpaidincomecall();
-              setOpen(false);
-              getIncomeRecord();
-              setAddDetails({
-                id: "",
-                InvoiceNumber: "",
-                CompanyName: "",
-                StreetAddress: "",
-                City: "",
-                Pincode: "",
-                State: "",
-                PlaceofSupply: "",
-                Particulars: "",
-                PSYear: "23-24",
-                Items: "",
-                HSNSAC: "",
-                Rate: "",
-                CGST: "",
-                SGST: "",
-                IGST: "",
-                Status: "",
-                DueDate: "",
-                ActionDate: "",
-                GSTIN: "",
-                TotalAmount: 0,
-                BalanceDue: 0,
-              });
-            }
+        });
+        if (actionTake) {
+          ApiCalls.updateIncome(adddetails.id, {
+            ...adddetails,
+            TotalAmount: total,
+            BalanceDue: total,
+            CGST: Number(adddetails.CGST),
+            SGST: Number(adddetails.SGST),
+            IGST: Number(adddetails.IGST),
           })
-          .catch((err) => window.alert("Sorry!Try Again"));
+            .then((res) => {
+              if (res.status == 200 || 201) {
+                window.alert("Income Updated Successfully");
+                totalIncomecall();
+                totalunpaidincomecall();
+                setOpen(false);
+                getIncomeRecord();
+                setAddDetails({
+                  id: "",
+                  InvoiceNumber: "",
+                  CompanyName: "",
+                  StreetAddress: "",
+                  City: "",
+                  Pincode: "",
+                  State: "",
+                  PlaceofSupply: "",
+                  Particulars: "",
+                  PSYear: "23-24",
+                  Items: "",
+                  HSNSAC: "",
+                  Rate: "",
+                  CGST: "",
+                  SGST: "",
+                  IGST: "",
+                  Status: "",
+                  DueDate: "",
+                  ActionDate: "",
+                  GSTIN: "",
+                  TotalAmount: 0,
+                  BalanceDue: 0,
+                });
+              }
+            })
+            .catch((err) => window.alert("Sorry!Try Again"));
+        } else {
+          ApiCalls.addIncome({
+            ...adddetails,
+            TotalAmount: total,
+            BalanceDue: total,
+            CGST: Number(adddetails.CGST),
+            SGST: Number(adddetails.SGST),
+            IGST: Number(adddetails.IGST),
+          })
+            .then((res) => {
+              if (res.status == 200 || 201) {
+                window.alert("Income Created Successfully");
+                totalIncomecall();
+                totalunpaidincomecall();
+                setOpen(false);
+                getIncomeRecord();
+                setAddDetails({
+                  id: "",
+                  InvoiceNumber: "",
+                  CompanyName: "",
+                  StreetAddress: "",
+                  City: "",
+                  Pincode: "",
+                  State: "",
+                  PlaceofSupply: "",
+                  Particulars: "",
+                  PSYear: "23-24",
+                  Items: "",
+                  HSNSAC: "",
+                  Rate: "",
+                  CGST: "",
+                  SGST: "",
+                  IGST: "",
+                  Status: "",
+                  DueDate: "",
+                  ActionDate: "",
+                  GSTIN: "",
+                  TotalAmount: 0,
+                  BalanceDue: 0,
+                });
+              }
+            })
+            .catch((err) => window.alert("Sorry!Try Again"));
+        }
       } else {
-        ApiCalls.addIncome({
-          ...adddetails,
-          TotalAmount: total,
-          BalanceDue: total,
-          CGST: Number(adddetails.CGST),
-          SGST: Number(adddetails.SGST),
-          IGST: Number(adddetails.IGST),
-        })
-          .then((res) => {
-            if (res.status == 200 || 201) {
-              window.alert("Income Created Successfully");
-              totalIncomecall();
-              totalunpaidincomecall();
-              setOpen(false);
-              getIncomeRecord();
-              setAddDetails({
-                id: "",
-                InvoiceNumber: "",
-                CompanyName: "",
-                StreetAddress: "",
-                City: "",
-                Pincode: "",
-                State: "",
-                PlaceofSupply: "",
-                Particulars: "",
-                PSYear: "23-24",
-                Items: "",
-                HSNSAC: "",
-                Rate: "",
-                CGST: "",
-                SGST: "",
-                IGST: "",
-                Status: "",
-                DueDate: "",
-                ActionDate: "",
-                GSTIN: "",
-                TotalAmount: 0,
-                BalanceDue: 0,
-              });
-            }
-          })
-          .catch((err) => window.alert("Sorry!Try Again"));
+        window.alert("Invoice date should be less than or equal to due date");
       }
     }
   };
