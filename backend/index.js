@@ -4,6 +4,19 @@ const cors=require('cors')
 var bodyParser = require('body-parser');
 const moment = require('moment-timezone');
 const { v4: uuidv4 } = require('uuid');
+const userRoutes = require('./routes/userRoutes');
+const otpRoutes = require('./routes/otpRoutes');
+const pool = require('./db/db');
+const corsOpts = {
+  origin: '*',
+  methods: [
+    'GET',
+    'POST',
+  ],
+  allowedHeaders: [
+    'Content-Type',
+  ],
+};
 const app = express();
 
 
@@ -18,24 +31,37 @@ app.use(express.json())
 
 
 app.use(cors())
+app.use((req, res, next) => {
+  //allow access from every, elminate CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.removeHeader('x-powered-by');
+  //set the allowed HTTP methods to be requested
+  res.setHeader('Access-Control-Allow-Methods', 'POST');
+  //headers clients can use in their requests
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  //allow request to continue and be handled by routes
+  next();
+});
+app.use('/user', userRoutes);
+app.use('/otp', otpRoutes);
 function generateShortRandomName() {
   const uuid = uuidv4();
   const shortName = uuid.replace(/-/g, '').substr(0, 10);
   return shortName;
 }
 
-const db=mysql.createConnection({
-    host:"localhost",
-    user:"root",
-    password:"aafiya.",
-    database:"finance"
+// const db=mysql.createPool({
+//     host:"localhost",
+//     user:"root",
+//     password:"aafiya.",
+//     database:"finance"
 
-})
+// })
 
-db.connect(function (err) {
-  if (err) throw err;
-  console.log("Connected!");
-});
+// db.connect(function (err) {
+//   if (err) throw err;
+//   console.log("Connected!");
+// });
 
 function numberToWords(number) {
     const units = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
@@ -80,8 +106,7 @@ function numberToWords(number) {
 
 
 app.post('/addincome',(req,res)=>{
-  console.log(req.body)
-    console.log(req.body)
+ 
     const companyname=req.body.CompanyName;
     const streetaddress=req.body.StreetAddress;
     const city=req.body.City;
@@ -106,7 +131,7 @@ app.post('/addincome',(req,res)=>{
     const details=req.body.Items;
     const sql="INSERT INTO income_table (CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,`Status`,Items,ActionDate) VALUES ?";
     const value=[[companyname,streetaddress,city,state,pincode,placeofsupply,duedate,GSTIN,particulars,psyear,hsnsac,rate,cgst,sgst,igst,totalamount,balancedue,status,details,actiondate]];
-    db.query(sql,[value],(err,data)=>{
+    pool.query(sql,[value],(err,data)=>{
      if(err){
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
@@ -114,7 +139,7 @@ app.post('/addincome',(req,res)=>{
      let id=data.insertId;
      req.body.id=id;
     const sql=`UPDATE income_table SET InvoiceNumber='PS/${psyear}/00${id}' where id=${id}`
-    db.query(sql,(err,data)=>{
+    pool.query(sql,(err,data)=>{
          if(err){
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
@@ -151,7 +176,7 @@ const companyname=req.body.CompanyName;
     const status=req.body.Status;
     const details=req.body.Items;
     const sql=`Select InvoiceNumber,Status from income_table where id=${id}`;
-    db.query(sql,(err,data)=>{
+    pool.query(sql,(err,data)=>{
       if(err)
       {
          console.error("Error executing query: " + err.stack);
@@ -162,7 +187,7 @@ const companyname=req.body.CompanyName;
       {
         
         const sql=`Update income_table SET Status='Paid' where id=${id}`;
-        db.query(sql,(err,data)=>{
+        pool.query(sql,(err,data)=>{
              if(err){
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
@@ -173,7 +198,7 @@ const companyname=req.body.CompanyName;
       else{
        
         const sql="UPDATE income_table SET CompanyName=?,StreetAddress=?,City=?,State=?,Pincode=?,PlaceofSupply=?,GSTIN=?,Particulars=?,PSYear=?,HSNSAC=?,Rate=?,DueDate=?,CGST=?,SGST=?,IGST=?,TotalAmount=?,BalanceDue=?,`Status`=?,Items=?,ActionDate=? where id=?";
-db.query(sql,[companyname,streetaddress,city,state,pincode,placeofsupply,GSTIN,particulars,psyear,hsnsac,rate,duedate,cgst,sgst,igst,totalamount,balancedue,status,details,actiondate,id],(err,data)=>{
+pool.query(sql,[companyname,streetaddress,city,state,pincode,placeofsupply,GSTIN,particulars,psyear,hsnsac,rate,duedate,cgst,sgst,igst,totalamount,balancedue,status,details,actiondate,id],(err,data)=>{
      if(err){
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
@@ -188,7 +213,7 @@ db.query(sql,[companyname,streetaddress,city,state,pincode,placeofsupply,GSTIN,p
 
 app.get('/getTotalIncomeRate',(req,res)=>{
     const sql=`Select sum(TotalAmount) as Total from income_table where Status='Paid' and IsDeleted=0`;
-    db.query(sql,(err,data)=>{
+    pool.query(sql,(err,data)=>{
          if(err){
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
@@ -199,7 +224,7 @@ app.get('/getTotalIncomeRate',(req,res)=>{
 
 app.get('/getUnpaidTotalIncomeRate',(req,res)=>{
     const sql=`Select sum(TotalAmount) as Total from income_table where Status='UnPaid' and IsDeleted=0`;
-    db.query(sql,(err,data)=>{
+    pool.query(sql,(err,data)=>{
          if(err){
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
@@ -212,7 +237,7 @@ app.get('/getUnpaidTotalIncomeRate',(req,res)=>{
 app.get('/getincomedetails',(req,res)=>{
    
     const sql="Select id,InvoiceNumber,CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,`Status`,Items,ActionDate,CreatedAt from income_table where IsDeleted=0";
-    db.query(sql,(err,data)=>{
+    pool.query(sql,(err,data)=>{
          if(err){
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
@@ -225,7 +250,7 @@ app.get('/getsingleincomedetails/:id',(req,res)=>{
     
     const id=req.params.id;
     const sql=`Select id,InvoiceNumber,CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,Status,Items,ActionDate,CreatedAt from income_table where id=${id}`;
-    db.query(sql,(err,data)=>{
+    pool.query(sql,(err,data)=>{
          if(err){
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
@@ -233,7 +258,7 @@ app.get('/getsingleincomedetails/:id',(req,res)=>{
          const randomFilename = generateShortRandomName() + '.pdf';
     generatepdf.mypdf(data,randomFilename)
     const sql=`UPDATE income_table SET InvoiceFile='Invoice${randomFilename}',InvoiceNumber='PS/${data[0].PSYear}/00${id}' where id=${id}`
-    db.query(sql,(err,data)=>{
+    pool.query(sql,(err,data)=>{
          if(err){
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
@@ -248,7 +273,7 @@ app.get('/generatereceipt/:id',(req,res)=>{
     
     const id=req.params.id;
     const sql=`Select id,InvoiceNumber,CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,Status,Items,ActionDate,CreatedAt from income_table where id=${id}`;
-    db.query(sql,(err,data)=>{
+    pool.query(sql,(err,data)=>{
          if(err){
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
@@ -257,7 +282,7 @@ app.get('/generatereceipt/:id',(req,res)=>{
     const randomFilename = generateShortRandomName() + '.pdf';
     generatepdf2.mypdf2(data,words,randomFilename)
     const sql=`UPDATE income_table SET PaymentReceiptFile='PaymentReceipt${id}(${(new Date(data[0].ActionDate)).toISOString().split("T")[0]})${randomFilename}' where id=${id}`
-    db.query(sql,(err,data)=>{
+    pool.query(sql,(err,data)=>{
          if(err){
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
@@ -274,7 +299,7 @@ app.get('/generatereceipt/:id',(req,res)=>{
 app.put('/deletesinglerecord/:id',(req,res)=>{
     const id=req.params.id;
     const sql=`UPDATE income_table SET IsDeleted=1 where id=${id}`
-    db.query(sql,(err,data)=>{
+    pool.query(sql,(err,data)=>{
          if(err){
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
@@ -302,7 +327,7 @@ app.post('/addexpense',(req,res)=>{
     const totalamount=req.body.TotalAmount;
     const sql="INSERT INTO expense_table (InvoiceNumber,Particulars,PaymentType,Amount,CGST,SGST,IGST,TotalAmount,DueDate,ActionDate) VALUES ?";
     const value=[[invoicenumber,particulars,paymentType,amount,cgst,sgst,igst,totalamount,duedate,actiondate]];
- db.query(sql,[value],(err,data)=>{
+ pool.query(sql,[value],(err,data)=>{
      if(err){
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
@@ -327,7 +352,7 @@ const id=req.params.id;
     const igst=req.body.IGST;
     const totalamount=req.body.TotalAmount;
 const sql="UPDATE expense_table SET InvoiceNumber=?,Particulars=?,DueDate=?,PaymentType=?,Amount=?,CGST=?,SGST=?,IGST=?,TotalAmount=?,ActionDate=? where id=?";
-db.query(sql,[invoicenumber,particulars,duedate,paymentType,amount,cgst,sgst,igst,totalamount,actiondate,id],(err,data)=>{
+pool.query(sql,[invoicenumber,particulars,duedate,paymentType,amount,cgst,sgst,igst,totalamount,actiondate,id],(err,data)=>{
     if(err){
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
@@ -342,7 +367,7 @@ db.query(sql,[invoicenumber,particulars,duedate,paymentType,amount,cgst,sgst,igs
 
 app.get('/getDirectTotalExpenseRate',(req,res)=>{
     const sql="Select sum(TotalAmount) as Total from expense_table where PaymentType='Direct' and IsDeleted=0";
-    db.query(sql,(err,data)=>{
+    pool.query(sql,(err,data)=>{
         if(err){
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
@@ -353,7 +378,7 @@ app.get('/getDirectTotalExpenseRate',(req,res)=>{
 
 app.get('/getIndirectTotalExpenseRate',(req,res)=>{
     const sql=`Select sum(TotalAmount) as Total from expense_table where PaymentType='Indirect' and IsDeleted=0`;
-    db.query(sql,(err,data)=>{
+    pool.query(sql,(err,data)=>{
         if(err){
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
@@ -363,7 +388,7 @@ app.get('/getIndirectTotalExpenseRate',(req,res)=>{
 })
 app.get('/getexpensedetails',(req,res)=>{
     const sql="SELECT id,InvoiceNumber,CGST,Particulars,PaymentType,Amount,SGST,IGST,TotalAmount,DueDate,ActionDate from expense_table where  IsDeleted=0";
-    db.query(sql,(err,data)=>{
+    pool.query(sql,(err,data)=>{
         if(err){
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
@@ -375,7 +400,7 @@ app.get('/getexpensedetails',(req,res)=>{
 app.put('/deletesingleexpenserecord/:id',(req,res)=>{
     const id=req.params.id;
     const sql=`UPDATE expense_table SET IsDeleted=1 where id=${id}`
-    db.query(sql,(err,data)=>{
+    pool.query(sql,(err,data)=>{
         if(err){
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
@@ -390,7 +415,7 @@ app.put('/deletesingleexpenserecord/:id',(req,res)=>{
 
 app.get("/api/account-summary", (req, res) => {
   const query = "SELECT * FROM account_summary";
-  db.query(query, (err, results) => {
+  pool.query(query, (err, results) => {
     if (err) {
       console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
@@ -404,7 +429,7 @@ app.post("/api/account-summary", (req, res) => {
   const query =
     "INSERT INTO account_summary (account, limit_amount, balance, date, created_at, updated_at, is_deleted) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0)";
   const values = [account, limit_amount, balance, date];
-  db.query(query, values, (err, result) => {
+  pool.query(query, values, (err, result) => {
     if (err) {
       console.error("Error adding a new record: " + err.stack);
       return res.status(500).json({ error: "Database error" });
@@ -420,7 +445,7 @@ app.put("/api/account-summary/:id", (req, res) => {
   const query =
     "UPDATE account_summary SET account = ?, limit_amount = ?, balance = ?, date = ? WHERE id = ?";
   const values = [account, limit_amount, balance, date, accountId];
-  db.query(query, values, (err, result) => {
+  pool.query(query, values, (err, result) => {
     if (err) {
       console.error("Error updating record: " + err.stack);
       return res.status(500).json({ error: "Database error" });
@@ -438,7 +463,7 @@ app.delete("/api/account-summary/:id", (req, res) => {
   const accountId = req.params.id;
   const query = "DELETE FROM account_summary WHERE id = ?";
   const values = [accountId];
-  db.query(query, values, (err, result) => {
+  pool.query(query, values, (err, result) => {
     if (err) {
       console.error("Error deleting record: " + err.stack);
       return res.status(500).json({ error: "Database error" });
@@ -454,8 +479,9 @@ app.delete("/api/account-summary/:id", (req, res) => {
 app.post("/api/login", async (req, res) => {
   console.log("api login")
   const { email, password } = req.body;
-  const getUserQuery = "SELECT * FROM untitled WHERE email = ?";
-  db.query(getUserQuery, [email], (error, results) => {
+  console.log(req.body)
+  const getUserQuery = "SELECT * FROM userlogin WHERE email = ?";
+  pool.query(getUserQuery, [email], (error, results) => {
     if (error) {
       console.error(error);
       res.status(500).json({ error: "Database error" });
@@ -477,6 +503,9 @@ app.post("/api/login", async (req, res) => {
 });
 
 
+
+
 app.listen(8089,()=>{
     console.log("listening backend")
 })
+

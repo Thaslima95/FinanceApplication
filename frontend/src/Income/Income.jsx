@@ -111,6 +111,29 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               totalunpaidincomecall();
               setOpen(false);
               getIncomeRecord();
+              setAddDetails({
+                InvoiceNumber: "",
+                CompanyName: "",
+                StreetAddress: "",
+                City: "",
+                Pincode: "",
+                State: "",
+                PlaceofSupply: "",
+                Particulars: "",
+                PSYear: "23-24",
+                Items: "",
+                HSNSAC: "",
+                Rate: "",
+                CGST: "",
+                SGST: "",
+                IGST: "",
+                Status: "",
+                DueDate: "",
+                ActionDate: "",
+                GSTIN: "",
+                TotalAmount: 0,
+                BalanceDue: 0,
+              });
             }
           })
           .catch((err) => window.alert("Sorry!Try Again"));
@@ -185,6 +208,9 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
       .then((res) => {
         window.alert("Income deleted");
         getIncomeRecord();
+        totalIncomecall();
+        totalunpaidincomecall();
+        setdeleteOpen(false);
       })
       .catch((err) => window.alert("Sorry!Try Again"));
   };
@@ -384,11 +410,18 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
                   : "green",
             }}
           >
-            {value == "Paid" ? `${value}` : value}
+            {value} &nbsp;
             {value == "Paid" && (
-              <span onClick={() => generatereceipt(params.id)}>
+              <span
+                style={{
+                  cursor: "pointer",
+                  borderBottom: "1px solid blue",
+                  color: "blue",
+                }}
+                onClick={() => generatereceipt(params.id)}
+              >
                 {" "}
-                &nbsp; receipt
+                receipt
               </span>
             )}
           </div>

@@ -38,6 +38,7 @@ export default function ExpenseRecord({
   const [rows, setRows] = useState([]);
   const [fullWidth, setFullWidth] = React.useState(true);
   const [rowModesModel, setRowModesModel] = useState({});
+  const [validationError, setValidationError] = useState("");
   const [actionTake, setActionTake] = useState(false);
   const [adddetails, setAddDetails] = useState({
     InvoiceNumber: "",
@@ -49,7 +50,6 @@ export default function ExpenseRecord({
     PaymentType: "",
     DueDate: "",
     ActionDate: "",
-
     TotalAmount: 0,
     BalanceDue: 0,
   });
@@ -62,7 +62,7 @@ export default function ExpenseRecord({
 
   const handleClose = () => {
     setOpen(false);
-    window.location.reload();
+    // window.location.reload();
   };
   const handleDeleteClose = () => {
     setdeleteOpen(false);
@@ -101,6 +101,7 @@ export default function ExpenseRecord({
               totalExpenseDetails();
               totalIndirectExpenseDetails();
               getExpenseRecord();
+              setOpen(false);
             }
           })
           .catch((err) => window.alert("Sorry!Try Again"));
@@ -114,6 +115,9 @@ export default function ExpenseRecord({
             if (res.status == 200 || 201) {
               window.alert("Expense Created Successfully");
               getExpenseRecord();
+              totalExpenseDetails();
+              totalIndirectExpenseDetails();
+              setOpen(false);
             }
           })
           .catch((err) => window.alert("Sorry!Try Again"));
@@ -157,7 +161,10 @@ export default function ExpenseRecord({
     ApiCalls.deleteSingleExpense(id)
       .then((res) => {
         window.alert("Expense deleted");
-        window.location.reload();
+        totalExpenseDetails();
+        totalIndirectExpenseDetails();
+        setdeleteOpen(false);
+        getExpenseRecord();
       })
       .catch((err) => window.alert("Sorry!Try Again"));
   };
@@ -469,21 +476,38 @@ export default function ExpenseRecord({
                 sx={{ marginBottom: "28px" }}
                 value={adddetails.InvoiceNumber}
               />
-              <TextField
-                id="standard-number"
-                label={<span>CGST %</span>}
-                type="number"
-                variant="standard"
-                sx={{ marginBottom: "25px", width: 218 }}
-                className="red-asterisk"
-                onChange={(e) =>
-                  setAddDetails({
-                    ...adddetails,
-                    CGST: Number(e.target.value),
-                  })
-                }
-                value={Number(adddetails.CGST) || ""}
-              />
+              <div>
+                <TextField
+                  id="standard-number"
+                  label={<span>CGST %</span>}
+                  type="number"
+                  variant="standard"
+                  sx={{ marginBottom: "25px", width: 218 }}
+                  className="red-asterisk"
+                  onChange={(e) => {
+                    if (
+                      /^\d*\.?\d*$/.test(e.target.value) &&
+                      parseFloat(e.target.value) >= 0
+                    ) {
+                      setAddDetails({
+                        ...adddetails,
+                        CGST: Number(e.target.value),
+                      });
+                      setValidationError("");
+                    } else {
+                      setAddDetails({
+                        ...adddetails,
+                        CGST: Number(e.target.value),
+                      });
+                      setValidationError("Please enter a positive number.");
+                    }
+                  }}
+                  value={Number(adddetails.CGST) || ""}
+                />
+                {validationError && (
+                  <div style={{ color: "red" }}>{validationError}</div>
+                )}
+              </div>
               <FormControl sx={{ m: 1, minWidth: 220 }}>
                 <InputLabel
                   id="demo-simple-select-label"

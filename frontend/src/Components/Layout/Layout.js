@@ -117,7 +117,7 @@ const Layout = () => {
           </List>
         </Drawer>
       )}
-      <div style={{ flex: 1, background: "#dedede",height:"100vh" }}>
+      <div style={{ flex: 1 }}>
         {renderSelectedComponent()}
       </div>
     </div>

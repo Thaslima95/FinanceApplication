@@ -8,9 +8,7 @@ import ExpenseImg from "../../src/assets/Images/expense.png";
 export default function ExpenseDashboard() {
   const [totalExpense, setTotalExpense] = useState(0);
   const [unpaidExpense, setUnpaidExpense] = useState(0);
-  useMemo(() => {
-    totalExpenseDetails();
-  }, []);
+
   const totalExpenseDetails = () => {
     ApiCalls.getTotalExpense()
       .then((res) => {
@@ -18,9 +16,7 @@ export default function ExpenseDashboard() {
       })
       .catch((err) => console.log(err));
   };
-  useMemo(() => {
-    totalIndirectExpenseDetails();
-  }, []);
+
   const totalIndirectExpenseDetails = () => {
     ApiCalls.getUnpaidTotalExpense()
       .then((res) => {
@@ -28,6 +24,12 @@ export default function ExpenseDashboard() {
       })
       .catch((err) => console.log(err));
   };
+  useMemo(() => {
+    totalExpenseDetails();
+  }, []);
+  useMemo(() => {
+    totalIndirectExpenseDetails();
+  }, []);
   return (
     <Grid container sx={{ flexGrow: 1 }}>
       <Grid container xs={12}>

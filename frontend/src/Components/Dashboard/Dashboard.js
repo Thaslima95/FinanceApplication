@@ -33,7 +33,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { Menu, MenuItem } from "@mui/material";
 import Axios from "axios";
-import ApiCalls from "../../API/ApiCalls"
+import ApiCalls from "../../API/ApiCalls";
 import { useMemo } from "react";
 import { Date } from "core-js";
 
@@ -47,7 +47,7 @@ const theme = createTheme({
 
 const Dashboard = () => {
   const [tableData, setTableData] = useState([]);
-let colorval="";
+  let colorval = "";
   const [isAddDialogOpen, setAddDialogOpen] = useState(false);
   const [newRowData, setNewRowData] = useState({
     account: "",
@@ -59,9 +59,9 @@ let colorval="";
   const [editMode, setEditMode] = useState({});
   const [totalIncome, setTotalIncome] = useState(0);
   const [totalExpense, setTotalExpense] = useState(0);
-  const [val,setVal]=useState("")
-    //  {(totalIncome-totalExpense) < 0 ?  setVal("red"): setVal("green")}
-    const style=totalIncome-totalExpense <0 ? "redcolor" :"greencolor"
+  const [val, setVal] = useState("");
+  //  {(totalIncome-totalExpense) < 0 ?  setVal("red"): setVal("green")}
+  const style = totalIncome - totalExpense < 0 ? "redcolor" : "greencolor";
 
   const handleAddRow = () => {
     setNewRowData({
@@ -296,7 +296,7 @@ let colorval="";
       });
   }, []);
 
-   useMemo(() => {
+  useMemo(() => {
     ApiCalls.getTotalIncome()
       .then((res) => {
         console.log(res);
@@ -305,7 +305,7 @@ let colorval="";
       .catch((err) => console.log(err));
   }, []);
 
-   useMemo(() => {
+  useMemo(() => {
     ApiCalls.getTotalExpense()
       .then((res) => {
         setTotalExpense(res[0].Total);
@@ -315,8 +315,10 @@ let colorval="";
 
   return (
     <ThemeProvider theme={theme}>
-      <div style={{ display: "flex" }}>
+      <div style={{}}>
         <CssBaseline />
+
+        <h1 style={{ color: "#2196F3" }}>Dashboard</h1>
 
         <main style={{ flexGrow: 1 }}>
           <Toolbar />
@@ -329,17 +331,25 @@ let colorval="";
               width: "100%",
             }}
           >
-            <h1>Dashboard</h1>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <Grid item xs={12} sm={4}>
                 <Box
                   sx={{
-                    width: "300px",
+                    width: "200px",
                     boxShadow: "10px 10px 4px 0px #00000050",
-                    borderRadius: "5px",
+                    // display: { xs: "block", md: "block" },
+                    // height: "100px",
+                    // paddingLeft: "20px",
+                    marginTop: "20px",
+                    borderRadius: "25px",
                     display: { xs: "block", md: "block" },
-                    height: "100px",
+                    height: "150px",
                     paddingLeft: "20px",
+                    background: "#47A9F5",
+                    color: "white",
+                    marginLeft: "20px",
+                    paddingTop: "10px",
+                    marginRight: "30px",
                   }}
                 >
                   <Typography sx={{ fontSize: { md: "30px", xs: "1rem" } }}>
@@ -351,19 +361,31 @@ let colorval="";
                       color: "green",
                       fontSize: { md: "30px", xs: "1rem" },
                     }}
-                  >Rs.{totalIncome}</Typography>
+                  >
+                    Rs.{totalIncome}
+                  </Typography>
                 </Box>
               </Grid>
 
               <Grid item xs={12} sm={4}>
                 <Box
                   sx={{
-                    width: "300px",
+                    width: "200px",
                     boxShadow: "10px 10px 4px 0px #00000050",
-                    borderRadius: "5px",
+                    // borderRadius: "5px",
+                    // display: { xs: "block", md: "block" },
+                    // height: "100px",
+                    // paddingLeft: "20px",
+                    marginTop: "20px",
+                    borderRadius: "25px",
                     display: { xs: "block", md: "block" },
-                    height: "100px",
+                    height: "150px",
                     paddingLeft: "20px",
+                    background: "#47A9F5",
+                    color: "white",
+                    marginLeft: "20px",
+                    paddingTop: "10px",
+                    marginRight: "30px",
                   }}
                 >
                   <Typography sx={{ fontSize: { md: "30px", xs: "1rem" } }}>
@@ -374,31 +396,45 @@ let colorval="";
                       color: "green",
                       fontSize: { md: "30px", xs: "1rem" },
                     }}
-                  >Rs.{totalExpense}</Typography>
+                  >
+                    Rs.{totalExpense}
+                  </Typography>
                 </Box>
               </Grid>
 
               <Grid item xs={12} sm={4}>
                 <Box
                   sx={{
-                    width: "300px",
+                    width: "200px",
                     boxShadow: "10px 10px 4px 0px #00000050",
-                    borderRadius: "5px",
+                    // borderRadius: "5px",
+                    // display: { xs: "block", md: "block" },
+                    // height: "100px",
+                    // paddingLeft: "20px",
+                    marginTop: "20px",
+                    borderRadius: "25px",
                     display: { xs: "block", md: "block" },
-                    height: "100px",
+                    height: "150px",
                     paddingLeft: "20px",
+                    background: "#47A9F5",
+                    color: "white",
+                    marginLeft: "20px",
+                    paddingTop: "10px",
+                    marginRight: "30px",
                   }}
                 >
                   <Typography sx={{ fontSize: { md: "30px", xs: "1rem" } }}>
                     Profit/Loss
                   </Typography>
-                    
 
-                  <Typography className={style}
-                    sx={{ 
+                  <Typography
+                    className={style}
+                    sx={{
                       fontSize: { md: "30px", xs: "1rem" },
                     }}
-                  >{totalIncome-totalExpense }</Typography>
+                  >
+                    {totalIncome - totalExpense}
+                  </Typography>
                 </Box>
               </Grid>
             </div>
@@ -457,7 +493,7 @@ let colorval="";
                 </div>
               </div>
               <TableContainer
-                style={{ border: "3px solid #000000", width: "900px" }}
+                style={{ border: "3px solid #000000", width: "1700px" }}
               >
                 <Table>
                   <TableHead>
