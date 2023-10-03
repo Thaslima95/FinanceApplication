@@ -317,8 +317,8 @@ app.post('/addexpense',(req,res)=>{
     console.log(req.body)
     const invoicenumber=req.body.InvoiceNumber;
     const particulars=req.body.Particulars;
-    const duedate = req.body.DueDate!=null ? new Date(req.body.DueDate).toISOString().slice(0, 19).replace('T', ' '):null;
-    const actiondate =req.body.ActionDate!=null ? new Date(req.body.ActionDate).toISOString().slice(0, 19).replace('T', ' '):null; 
+    const duedate = req.body.DueDate;
+    const actiondate =req.body.ActionDate; 
     const paymentType=req.body.PaymentType;
     const amount=req.body.Amount;
     const cgst=req.body.CGST;
@@ -343,8 +343,8 @@ app.put('/updateexpense/:id',(req,res)=>{
 const id=req.params.id;
   const invoicenumber=req.body.InvoiceNumber;
     const particulars=req.body.Particulars;
-    const duedate = req.body.DueDate!=null ? new Date(req.body.DueDate).toISOString().slice(0, 19).replace('T', ' '):null;
-    const actiondate =req.body.ActionDate!=null ? new Date(req.body.ActionDate).toISOString().slice(0, 19).replace('T', ' '):null; 
+    const duedate = req.body.DueDate;
+    const actiondate =req.body.ActionDate; 
     const paymentType=req.body.PaymentType;
     const amount=req.body.Amount;
     const cgst=req.body.CGST;
