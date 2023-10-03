@@ -3,7 +3,6 @@ import axios from "axios";
 
 export default {
   addIncome: async function (newRow) {
-    console.log(newRow);
     try {
       const response = await axios.post(`/addincome`, newRow);
       return response.data;
@@ -44,6 +43,15 @@ export default {
     }
   },
 
+  generatereceipt: async function (id) {
+    try {
+      const response = await axios.get(`/generatereceipt/${id}`);
+      return response.data;
+    } catch (err) {
+      console.log(err);
+    }
+  },
+
   deleteSingleIncome: async function (id) {
     try {
       const response = await axios.put(`/deletesinglerecord/${id}`);
@@ -78,8 +86,6 @@ export default {
   },
   updateExpense: async function (id, newRow) {
     try {
-      console.log(newRow.DueDate);
-      console.log("updateExpense");
       const response = await axios.put(`/updateexpense/${id}`, newRow);
       return response;
     } catch (err) {

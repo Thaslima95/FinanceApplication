@@ -7,7 +7,6 @@ import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import Dialog from "@mui/material/Dialog";
-import Moment from "react-moment";
 import moment from "moment";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -23,21 +22,18 @@ import InputLabel from "@mui/material/InputLabel";
 import { Grid } from "@mui/material";
 
 import axios from "axios";
-import {
-  GridRowModes,
-  DataGrid,
-  GridToolbarContainer,
-  GridActionsCellItem,
-  GridRowEditStopReasons,
-} from "@mui/x-data-grid";
-import { randomId } from "@mui/x-data-grid-generator";
+import { GridRowModes, DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import ApiCalls from "../API/ApiCalls";
 
-export default function ExpenseRecord() {
+export default function ExpenseRecord({
+  totalExpenseDetails,
+  totalIndirectExpenseDetails,
+}) {
   const [open, setOpen] = React.useState(false);
   const [deleteopen, setdeleteOpen] = React.useState(false);
   const [deleteid, setDeleteId] = useState(0);
+  let show = true;
   let updatedrow = [];
   const [rows, setRows] = useState([]);
   const [fullWidth, setFullWidth] = React.useState(true);
@@ -94,41 +90,30 @@ export default function ExpenseRecord() {
         BalanceDue: total,
       });
       if (actionTake) {
-        console.log("due date update" + adddetails.DueDate);
-        console.log(typeof adddetails.DueDate);
-        const duedate = new Date(adddetails.DueDate);
-        const actiondate = new Date(adddetails.ActionDate);
         ApiCalls.updateExpense(adddetails.id, {
           ...adddetails,
           TotalAmount: total,
           BalanceDue: total,
-          // DueDate: duedate.setDate(duedate.getDate() + 1),
-          // Actiondate: actiondate.setDate(actiondate.getDate() + 1),
-          // DueDate: adddetails.DueDate.add(1, "days"),
-          // ActionDate: adddetails.ActionDate.add(1, "days"),
         })
           .then((res) => {
             if (res.status == 200 || 201) {
               window.alert("Expense Updated Successfully");
-              window.location.reload();
+              totalExpenseDetails();
+              totalIndirectExpenseDetails();
+              getExpenseRecord();
             }
           })
           .catch((err) => window.alert("Sorry!Try Again"));
       } else {
-        console.log("add api");
-        console.log(typeof adddetails.DueDate);
-        console.log(adddetails.DueDate + "add due date");
         ApiCalls.addExpense({
           ...adddetails,
           TotalAmount: total,
           BalanceDue: total,
-          DueDate: adddetails.DueDate.add(1, "days"),
-          ActionDate: adddetails.ActionDate.add(1, "days"),
         })
           .then((res) => {
             if (res.status == 200 || 201) {
               window.alert("Expense Created Successfully");
-              window.location.reload();
+              getExpenseRecord();
             }
           })
           .catch((err) => window.alert("Sorry!Try Again"));
@@ -137,22 +122,25 @@ export default function ExpenseRecord() {
   };
 
   useEffect(() => {
+    getExpenseRecord();
+  }, []);
+  const getExpenseRecord = () => {
     axios
       .get(`/getexpensedetails`)
       .then((res) => setRows(res.data))
       .catch((err) => console.log(err));
-  }, []);
+  };
 
   const handleEditClick = (id) => {
     setActionTake(true);
     setOpen(true);
     updatedrow = rows.filter((e) => e.id == id);
-
+    let updateduedate = moment(updatedrow[0].DueDate);
+    let updateactiondate = moment(updatedrow[0].ActionDate);
     setAddDetails({
       ...updatedrow[0],
-      // ActionDate: new Date(updatedrow[0].ActionDate)
-      //   .toISOString()
-      //   .split("T")[0],
+      DueDate: updateduedate.format("YYYY-MM-DD"),
+      ActionDate: updateactiondate.format("YYYY-MM-DD"),
     });
   };
 
@@ -168,10 +156,8 @@ export default function ExpenseRecord() {
   const handleDelete = (id) => {
     ApiCalls.deleteSingleExpense(id)
       .then((res) => {
-        if (res.status == 300 || 301) {
-          window.alert("Expense deleted");
-          window.location.reload();
-        }
+        window.alert("Expense deleted");
+        window.location.reload();
       })
       .catch((err) => window.alert("Sorry!Try Again"));
   };
@@ -200,8 +186,10 @@ export default function ExpenseRecord() {
           <b>Invoice Number </b>
         </div>
       ),
-      width: 140,
+      width: 160,
       editable: true,
+      align: "left",
+      headerAlign: "center",
       headerClassName: "super-app-theme--header",
     },
     {
@@ -211,8 +199,10 @@ export default function ExpenseRecord() {
           <b>Particulars </b>
         </div>
       ),
-      width: 130,
+      width: 200,
       editable: true,
+      align: "left",
+      headerAlign: "center",
       headerClassName: "super-app-theme--header",
     },
     {
@@ -223,8 +213,10 @@ export default function ExpenseRecord() {
         </div>
       ),
       type: "number",
-      width: 100,
+      width: 160,
       editable: true,
+      align: "left",
+      headerAlign: "center",
       headerClassName: "super-app-theme--header",
     },
     {
@@ -235,8 +227,10 @@ export default function ExpenseRecord() {
         </div>
       ),
       type: "number",
-      width: 100,
+      width: 160,
       editable: true,
+      align: "left",
+      headerAlign: "center",
       headerClassName: "super-app-theme--header",
     },
     {
@@ -247,8 +241,10 @@ export default function ExpenseRecord() {
         </div>
       ),
       type: "number",
-      width: 100,
+      width: 160,
       editable: true,
+      align: "left",
+      headerAlign: "center",
       headerClassName: "super-app-theme--header",
     },
     {
@@ -259,8 +255,10 @@ export default function ExpenseRecord() {
         </div>
       ),
       type: "number",
-      width: 100,
+      width: 160,
       editable: true,
+      align: "left",
+      headerAlign: "center",
       headerClassName: "super-app-theme--header",
     },
     {
@@ -271,8 +269,10 @@ export default function ExpenseRecord() {
         </div>
       ),
       type: "number",
-      width: 120,
+      width: 160,
       editable: true,
+      align: "left",
+      headerAlign: "center",
       renderCell: (params) => {
         const value = params.value || 0;
         return (
@@ -290,26 +290,28 @@ export default function ExpenseRecord() {
           <b>Payment Type </b>
         </div>
       ),
-      width: 140,
+      width: 160,
       editable: true,
+      align: "left",
+      headerAlign: "center",
       type: "singleSelect",
       valueOptions: ["Direct", "Indirect"],
       headerClassName: "super-app-theme--header",
     },
-    {
+    show && {
       field: "DueDate",
       headerName: (
         <div>
-          <b>DueDate </b>
+          <b>Due Date </b>
         </div>
       ),
       type: "date",
-      width: 120,
+      width: 150,
       align: "left",
-      headerAlign: "left",
+      headerAlign: "center",
+
       editable: true,
       valueGetter: (params) => {
-        console.log(params.row.duedate + "due date");
         const dueDate = params.row.DueDate;
         if (dueDate === null || dueDate === undefined) {
           return null;
@@ -324,13 +326,13 @@ export default function ExpenseRecord() {
       field: "ActionDate",
       headerName: (
         <div>
-          <b>ActionDate </b>
+          <b>Action Date </b>
         </div>
       ),
       type: "date",
-      width: 120,
+      width: 150,
       align: "left",
-      headerAlign: "left",
+      headerAlign: "center",
       editable: true,
       valueGetter: (params) => {
         const actionDate = params.row.ActionDate;
@@ -346,8 +348,10 @@ export default function ExpenseRecord() {
       field: "actions",
       type: "actions",
       headerName: "Actions",
-      width: 100,
+      width: 120,
       cellClassName: "actions",
+      align: "left",
+      headerAlign: "center",
       headerClassName: "super-app-theme--header",
 
       getActions: ({ id }) => {
@@ -408,17 +412,28 @@ export default function ExpenseRecord() {
           backgroundColor: "#676767",
           color: "white",
           fontSize: "17px",
+          border: "1px solid #fff",
+          borderRadius: "5px",
         },
       }}
     >
-      <Button
-        variant="contained"
-        startIcon={<AddIcon />}
-        onClick={handleClick}
-        sx={{ marginBottom: "50px", background: "#FBC91B" }}
-      >
-        Add record
-      </Button>
+      <Grid container>
+        <Grid item lg={12}>
+          <Button
+            sx={{
+              marginBottom: "50px",
+              float: "right",
+              right: "60px",
+            }}
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={handleClick}
+          >
+            Add record
+          </Button>
+        </Grid>
+      </Grid>
       <DataGrid
         rows={rows}
         columns={columns}
@@ -470,8 +485,11 @@ export default function ExpenseRecord() {
                 value={Number(adddetails.CGST) || ""}
               />
               <FormControl sx={{ m: 1, minWidth: 220 }}>
-                <InputLabel id="demo-simple-select-label">
-                  PaymentType <span style={{ color: "red" }}>*</span>
+                <InputLabel
+                  id="demo-simple-select-label"
+                  placeholder="Payment Type"
+                >
+                  Payment Type <span style={{ color: "red" }}>*</span>
                 </InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
@@ -545,8 +563,9 @@ export default function ExpenseRecord() {
               <br />
               <input
                 type="date"
-                label="DueDate"
+                label={adddetails.DueDate}
                 style={{ width: "200px", height: "60px" }}
+                value={adddetails.DueDate}
                 onChange={(e) =>
                   setAddDetails({ ...adddetails, DueDate: e.target.value })
                 }
@@ -605,8 +624,9 @@ export default function ExpenseRecord() {
               <br />
               <input
                 type="date"
-                label="DueDate"
+                label="ActionDate"
                 style={{ width: "200px", height: "60px" }}
+                value={adddetails.ActionDate}
                 onChange={(e) =>
                   setAddDetails({ ...adddetails, ActionDate: e.target.value })
                 }

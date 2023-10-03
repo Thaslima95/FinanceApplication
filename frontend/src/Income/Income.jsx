@@ -24,12 +24,7 @@ import TextField from "@mui/material/TextField";
 import { Grid } from "@mui/material";
 import axios from "axios";
 
-import {
-  GridRowModes,
-  DataGrid,
-  GridActionsCellItem,
-  GridRowEditStopReasons,
-} from "@mui/x-data-grid";
+import { GridRowModes, DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import ApiCalls from "../API/ApiCalls";
 const currentYear = new Date().getFullYear();
@@ -37,19 +32,18 @@ const nextYear = currentYear + 1;
 const lastTwoDigitsCurrentYear = currentYear % 100;
 const lastTwoDigitsNextYear = nextYear % 100;
 
-export default function Income2() {
+export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
   const [open, setOpen] = React.useState(false);
   const [deleteopen, setdeleteOpen] = React.useState(false);
   const [fullWidth, setFullWidth] = React.useState(true);
   const [deleteid, setDeleteId] = useState(0);
   const [rows, setRows] = useState([]);
-  const [rerun, setrerun] = useState(false);
 
   let updatedrow = [];
 
   const [rowModesModel, setRowModesModel] = useState({});
   const [actionTake, setActionTake] = useState(false);
-  const [paymentreceipt, setPaymentReceipt] = useState(false);
+
   const [adddetails, setAddDetails] = useState({
     InvoiceNumber: "",
     CompanyName: "",
@@ -105,39 +99,34 @@ export default function Income2() {
         BalanceDue: total,
       });
       if (actionTake) {
-        console.log(typeof adddetails.DueDate);
-        console.log(adddetails.DueDate);
-        console.log(adddetails.ActionDate);
         ApiCalls.updateIncome(adddetails.id, {
           ...adddetails,
           TotalAmount: total,
           BalanceDue: total,
-          // DueDate: adddetails.DueDate.add(1, "days"),
-          // ActionDate: adddetails.ActionDate.add(1, "days"),
         })
           .then((res) => {
             if (res.status == 200 || 201) {
               window.alert("Income Updated Successfully");
-              // window.location.reload();
-              setrerun(true);
+              totalIncomecall();
+              totalunpaidincomecall();
               setOpen(false);
+              getIncomeRecord();
             }
           })
           .catch((err) => window.alert("Sorry!Try Again"));
       } else {
-        console.log(adddetails);
         ApiCalls.addIncome({
           ...adddetails,
           TotalAmount: total,
           BalanceDue: total,
-          // DueDate: adddetails.DueDate.add(1, "days"),
-          // ActionDate: adddetails.ActionDate.add(1, "days"),
         })
           .then((res) => {
             if (res.status == 200 || 201) {
               window.alert("Income Created Successfully");
-              window.location.reload();
+              totalIncomecall();
+              totalunpaidincomecall();
               setOpen(false);
+              getIncomeRecord();
             }
           })
           .catch((err) => window.alert("Sorry!Try Again"));
@@ -147,7 +136,7 @@ export default function Income2() {
 
   const handleClose = () => {
     setOpen(false);
-    window.location.reload();
+    // getIncomeRecord();
   };
   const handleDeleteClose = () => {
     setdeleteOpen(false);
@@ -157,24 +146,28 @@ export default function Income2() {
   };
 
   useEffect(() => {
+    getIncomeRecord();
+  }, []);
+
+  const getIncomeRecord = () => {
     axios
       .get(`/getincomedetails`)
       .then((res) => setRows(res.data))
       .catch((err) => console.log(err));
-  }, [rerun]);
+  };
 
   const handleEditClick = (id) => {
     setActionTake(true);
     setOpen(true);
     updatedrow = rows.filter((e) => e.id == id);
-    // console.log(updatedrow[0].ActionDate);
-    // console.log(new Date(updatedrow[0].ActionDate).toISOString().split("T")[0]);
+
+    let updateduedate = moment(updatedrow[0].DueDate);
+    let updateactiondate = moment(updatedrow[0].ActionDate);
+
     setAddDetails({
       ...updatedrow[0],
-      // DueDate: new Date(updatedrow[0].DueDate).toISOString().split("T")[0],
-      // ActionDate: new Date(updatedrow[0].ActionDate)
-      //   .toISOString()
-      //   .split("T")[0],
+      DueDate: updateduedate.format("YYYY-MM-DD"),
+      ActionDate: updateactiondate.format("YYYY-MM-DD"),
     });
   };
 
@@ -191,7 +184,7 @@ export default function Income2() {
     ApiCalls.deleteSingleIncome(id)
       .then((res) => {
         window.alert("Income deleted");
-        window.location.reload();
+        getIncomeRecord();
       })
       .catch((err) => window.alert("Sorry!Try Again"));
   };
@@ -202,7 +195,17 @@ export default function Income2() {
           window.alert("Download success");
         }
       })
-      .catch((err) => console.log("error"));
+      .catch((err) => window.alert("Try again!"));
+  };
+
+  const generatereceipt = (id) => {
+    ApiCalls.generatereceipt(id)
+      .then((res) => {
+        if (res.status == 200 || 201) {
+          window.alert("Download success");
+        }
+      })
+      .catch((err) => window.alert("Try again!"));
   };
 
   const handleCancelClick = (id) => () => {
@@ -225,7 +228,8 @@ export default function Income2() {
           <b>Invoice Number </b>
         </div>
       ),
-      width: 140,
+      headerAlign: "center",
+      width: 150,
       editable: true,
       headerClassName: "super-app-theme--header",
     },
@@ -236,7 +240,8 @@ export default function Income2() {
           <b>Company Name </b>
         </div>
       ),
-      width: 140,
+      headerAlign: "center",
+      width: 200,
       editable: true,
       headerClassName: "super-app-theme--header",
     },
@@ -247,7 +252,8 @@ export default function Income2() {
           <b>Particulars</b>
         </div>
       ),
-      width: 120,
+      headerAlign: "center",
+      width: 180,
       editable: true,
       headerClassName: "super-app-theme--header",
     },
@@ -260,34 +266,12 @@ export default function Income2() {
         </div>
       ),
       type: "number",
-      width: 100,
-      editable: true,
-      headerAlign: "left",
-      headerClassName: "super-app-theme--header",
-      headerAlign: "left",
-      align: "left",
-    },
-    {
-      field: "DueDate",
-      headerName: (
-        <div>
-          <b>DueDate </b>
-        </div>
-      ),
-      type: "date",
       width: 120,
-      align: "left",
-      headerAlign: "left",
       editable: true,
-      valueGetter: (params) => {
-        const dueDate = params.row.DueDate;
-        if (dueDate === null || dueDate === undefined) {
-          return null;
-        }
-        return new Date(dueDate);
-      },
-      min: { today },
+      headerAlign: "center",
       headerClassName: "super-app-theme--header",
+
+      align: "left",
     },
 
     {
@@ -298,10 +282,10 @@ export default function Income2() {
         </div>
       ),
       type: "number",
-      width: 80,
+      width: 100,
       editable: true,
       headerClassName: "super-app-theme--header",
-      headerAlign: "left",
+      headerAlign: "center",
       align: "left",
     },
     {
@@ -312,10 +296,10 @@ export default function Income2() {
         </div>
       ),
       type: "number",
-      width: 80,
+      width: 100,
       editable: true,
       headerClassName: "super-app-theme--header",
-      headerAlign: "left",
+      headerAlign: "center",
       align: "left",
     },
     {
@@ -326,10 +310,10 @@ export default function Income2() {
         </div>
       ),
       type: "number",
-      width: 80,
+      width: 100,
       editable: true,
       headerClassName: "super-app-theme--header",
-      headerAlign: "left",
+      headerAlign: "center",
       align: "left",
     },
     {
@@ -340,8 +324,9 @@ export default function Income2() {
         </div>
       ),
       type: "number",
-      width: 120,
+      width: 150,
       editable: true,
+      headerAlign: "center",
       renderCell: (params) => {
         const value = params.value || 0;
         return (
@@ -351,7 +336,7 @@ export default function Income2() {
         );
       },
       headerClassName: "super-app-theme--header",
-      headerAlign: "left",
+
       align: "left",
     },
     {
@@ -362,10 +347,10 @@ export default function Income2() {
         </div>
       ),
       type: "number",
-      width: 120,
+      width: 150,
       editable: true,
       headerClassName: "super-app-theme--header",
-      headerAlign: "left",
+      headerAlign: "center",
       align: "left",
     },
     {
@@ -375,13 +360,13 @@ export default function Income2() {
           <b>Status</b>
         </div>
       ),
-      width: 100,
+      width: 120,
       editable: true,
+      headerAlign: "center",
       type: "singleSelect",
       renderCell: (params) => {
         const value = params.value;
         if (params.value == "Paid") {
-          setPaymentReceipt(true);
         }
         let color = "green";
         if (params.value == "UnPaid" || "Overdue" || "Declined") {
@@ -391,7 +376,7 @@ export default function Income2() {
         }
 
         return (
-          <span
+          <div
             style={{
               color:
                 value == "UnPaid" || value == "Overdue" || value == "Declined"
@@ -399,10 +384,40 @@ export default function Income2() {
                   : "green",
             }}
           >
-            {value}
-          </span>
+            {value == "Paid" ? `${value}` : value}
+            {value == "Paid" && (
+              <span onClick={() => generatereceipt(params.id)}>
+                {" "}
+                &nbsp; receipt
+              </span>
+            )}
+          </div>
         );
       },
+      headerClassName: "super-app-theme--header",
+    },
+    {
+      field: "DueDate",
+      headerName: (
+        <div>
+          <b>Due Date </b>
+        </div>
+      ),
+      type: "date",
+      width: 130,
+      align: "left",
+      headerAlign: "center",
+      editable: true,
+      valueGetter: (params) => {
+        const dueDate = params.row.DueDate;
+
+        if (dueDate === null || dueDate === undefined) {
+          return null;
+        }
+
+        return new Date(dueDate);
+      },
+      min: { today },
       headerClassName: "super-app-theme--header",
     },
     {
@@ -413,9 +428,9 @@ export default function Income2() {
         </div>
       ),
       type: "date",
-      width: 120,
+      width: 130,
       align: "left",
-      headerAlign: "left",
+      headerAlign: "center",
       editable: true,
       valueGetter: (params) => {
         const actionDate = params.row.ActionDate;
@@ -431,32 +446,13 @@ export default function Income2() {
       field: "actions",
       type: "actions",
       headerName: "Actions",
-      width: 100,
+      width: 120,
       cellClassName: "actions",
       headerClassName: "super-app-theme--header",
+      headerAlign: "center",
 
       getActions: ({ id }) => {
         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-
-        if (isInEditMode) {
-          return [
-            <GridActionsCellItem
-              icon={<SaveIcon sx={{ color: "secondary" }} />}
-              label="Save"
-              sx={{
-                color: "secondary.main",
-              }}
-              onClick={handleSaveClick(id)}
-            />,
-            <GridActionsCellItem
-              icon={<CancelIcon sx={{ color: "secondary" }} />}
-              label="Cancel"
-              className="textPrimary"
-              onClick={handleCancelClick(id)}
-              color="inherit"
-            />,
-          ];
-        }
 
         return [
           <GridActionsCellItem
@@ -501,17 +497,28 @@ export default function Income2() {
           backgroundColor: "#676767",
           color: "white",
           fontSize: "17px",
+          border: "1px solid #fff",
+          borderRadius: "5px",
         },
       }}
     >
-      <Button
-        sx={{ background: "#FBC91B", marginBottom: "50px" }}
-        variant="contained"
-        startIcon={<AddIcon />}
-        onClick={handleClick}
-      >
-        Add record
-      </Button>
+      <Grid container>
+        <Grid item lg={12} md={12} xs={12}>
+          <Button
+            sx={{
+              marginBottom: "50px",
+              float: "right",
+              right: "60px",
+            }}
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={handleClick}
+          >
+            Add record
+          </Button>
+        </Grid>
+      </Grid>
 
       <DataGrid
         rows={rows}
@@ -533,8 +540,8 @@ export default function Income2() {
           <DialogContentText sx={{ fontWeight: 800 }}>
             Add Income Details
           </DialogContentText>
-          <Grid container lg={12} sx={{ display: "flex" }}>
-            <Grid item lg={4}>
+          <Grid container lg={12} md={12} sx={{ display: "flex" }}>
+            <Grid item lg={4} md={6} xs={8}>
               <TextField
                 id="filled-basic"
                 label={
@@ -598,7 +605,7 @@ export default function Income2() {
                 label={<span>CGST %</span>}
                 type="number"
                 variant="standard"
-                sx={{ marginBottom: "25px", width: 218 }}
+                sx={{ marginBottom: "37px", width: 218 }}
                 className="red-asterisk"
                 onChange={(e) =>
                   setAddDetails({
@@ -608,7 +615,7 @@ export default function Income2() {
                 }
                 value={Number(adddetails.CGST) || ""}
               />
-              <FormControl sx={{ m: 1, minWidth: 220 }}>
+              <FormControl sx={{ m: 1, minWidth: 250 }}>
                 <InputLabel id="demo-simple-select-label">
                   Status <span style={{ color: "red" }}>*</span>
                 </InputLabel>
@@ -631,7 +638,7 @@ export default function Income2() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item lg={4}>
+            <Grid item lg={4} md={6} xs={8}>
               <TextField
                 id="filled-basic"
                 label={<span>Street Address</span>}
@@ -721,18 +728,21 @@ export default function Income2() {
                   }
                 />
               </LocalizationProvider> */}
-              <label htmlFor=""> DueDate</label>
-              <br />
-              <input
-                type="date"
-                label="DueDate"
-                style={{ width: "200px", height: "60px" }}
-                onChange={(e) =>
-                  setAddDetails({ ...adddetails, DueDate: e.target.value })
-                }
-              ></input>
+              <div>
+                <label htmlFor=""> DueDate</label>
+                <br />
+                <input
+                  type="date"
+                  label="DueDate"
+                  style={{ width: "200px", height: "55px" }}
+                  value={adddetails.DueDate}
+                  onChange={(e) =>
+                    setAddDetails({ ...adddetails, DueDate: e.target.value })
+                  }
+                ></input>
+              </div>
             </Grid>
-            <Grid item lg={4}>
+            <Grid item lg={4} md={6} xs={10}>
               <TextField
                 id="filled-basic"
                 label={<span>City</span>}
@@ -816,16 +826,19 @@ export default function Income2() {
                   }
                 />
               </LocalizationProvider> */}
-              <label htmlFor=""> ActionDate</label>
-              <br />
-              <input
-                type="date"
-                label="DueDate"
-                style={{ width: "200px", height: "60px" }}
-                onChange={(e) =>
-                  setAddDetails({ ...adddetails, ActionDate: e.target.value })
-                }
-              ></input>
+              <div>
+                <label htmlFor=""> ActionDate</label>
+                <br />
+                <input
+                  type="date"
+                  label="DueDate"
+                  style={{ width: "200px", height: "55px" }}
+                  value={adddetails.ActionDate}
+                  onChange={(e) =>
+                    setAddDetails({ ...adddetails, ActionDate: e.target.value })
+                  }
+                ></input>
+              </div>
             </Grid>
           </Grid>
         </DialogContent>

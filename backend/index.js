@@ -92,8 +92,10 @@ app.post('/addincome',(req,res)=>{
     const psyear=req.body.PSYear;
     const GSTIN=req.body.GSTIN;
     const hsnsac=req.body.HSNSAC;
-    const duedate = req.body.DueDate!=null ? new Date(req.body.DueDate).toISOString().slice(0, 19).replace('T', ' '):null;
-    const actiondate =req.body.ActionDate!=null ? new Date(req.body.ActionDate).toISOString().slice(0, 19).replace('T', ' '):null; 
+    console.log(req.body.DueDate)
+    console.log(new Date(req.body.DueDate).toUTCString())
+    const duedate = req.body.DueDate;
+    const actiondate =req.body.ActionDate; 
     const rate=req.body.Rate;
     const cgst=req.body.CGST;
     const sgst=req.body.SGST;
@@ -124,10 +126,8 @@ app.post('/addincome',(req,res)=>{
     
 })
 app.put('/updateincome/:id',(req,res)=>{
-    console.log(req.params.id)
+   
 const id=req.params.id;
-console.log(req.body.DueDate)
-console.log(req.body.ActionDate)
 
 const companyname=req.body.CompanyName;
     const streetaddress=req.body.StreetAddress;
@@ -137,11 +137,11 @@ const companyname=req.body.CompanyName;
     const placeofsupply=req.body.PlaceofSupply;
     const particulars=req.body.Particulars;
     const psyear=req.body.PSYear;
-    const GSTN=req.body.GSTN;
     const GSTIN=req.body.GSTIN;
     const hsnsac=req.body.HSNSAC;
-    const duedate = req.body.DueDate!=null ? new Date(req.body.DueDate).toISOString().slice(0, 19).replace('T', ' '):null;
-    const actiondate =req.body.ActionDate!=null ? new Date(req.body.ActionDate).toISOString().slice(0, 19).replace('T', ' '):null; 
+    console.log(req.body.DueDate)
+    const duedate = req.body.DueDate;
+    const actiondate =req.body.ActionDate; 
     const rate=req.body.Rate;
     const cgst=req.body.CGST;
     const sgst=req.body.SGST;
@@ -167,49 +167,20 @@ const companyname=req.body.CompanyName;
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
     }
-    const words=numberToWords(req.body.TotalAmount)+" "+"only";
-    const randomFilename = generateShortRandomName() + '.pdf';
-    generatepdf2.mypdf2([req.body],words,randomFilename)
-    const sql=`UPDATE income_table SET PaymentReceiptFile='PaymentReceipt${id}(${(new Date(req.body.ActionDate)).toISOString().split("T")[0]})${randomFilename}' where id=${id}`
-    db.query(sql,(err,data)=>{
-         if(err){
-        console.error("Error executing query: " + err.stack);
-      return res.status(500).json({ error: "Database error" });
-    }
-          if (data.affectedRows === 0) {
-      return res.status(404).json({ error: "Record not updated" });
-    }
     res.status(200).json({status:200, message: "Record updated successfully" });
-    })
-
-
         })
       }
       else{
-        console.log(duedate+"due date")
-        console.log(actiondate+"actiondate")
+       
         const sql="UPDATE income_table SET CompanyName=?,StreetAddress=?,City=?,State=?,Pincode=?,PlaceofSupply=?,GSTIN=?,Particulars=?,PSYear=?,HSNSAC=?,Rate=?,DueDate=?,CGST=?,SGST=?,IGST=?,TotalAmount=?,BalanceDue=?,`Status`=?,Items=?,ActionDate=? where id=?";
 db.query(sql,[companyname,streetaddress,city,state,pincode,placeofsupply,GSTIN,particulars,psyear,hsnsac,rate,duedate,cgst,sgst,igst,totalamount,balancedue,status,details,actiondate,id],(err,data)=>{
      if(err){
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
     }
-     const randomFilename = generateShortRandomName() + '.pdf';
-    generatepdf.mypdf([req.body],randomFilename)
-    const sql=`UPDATE income_table SET InvoiceFile='Invoice${randomFilename}' where id=${id}`
-    db.query(sql,(err,data)=>{
-         if(err){
-        console.error("Error executing query: " + err.stack);
-      return res.status(500).json({ error: "Database error" });
-    }
-          if (data.affectedRows === 0) {
-      return res.status(404).json({ error: "Record not updated" });
-    }
-    res.status(200).json({status:200, message: "Record updated successfully" });
-    })
+     res.status(200).json({status:200, message: "Record updated successfully" });
    
 })
-
       }
     })
 
@@ -246,7 +217,6 @@ app.get('/getincomedetails',(req,res)=>{
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
     }
-       
         return res.json(data)
     })
 })
@@ -272,6 +242,34 @@ app.get('/getsingleincomedetails/:id',(req,res)=>{
     })
     })
 })
+
+
+app.get('/generatereceipt/:id',(req,res)=>{
+    
+    const id=req.params.id;
+    const sql=`Select id,InvoiceNumber,CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,Status,Items,ActionDate,CreatedAt from income_table where id=${id}`;
+    db.query(sql,(err,data)=>{
+         if(err){
+        console.error("Error executing query: " + err.stack);
+      return res.status(500).json({ error: "Database error" });
+    }
+         const words=numberToWords(data[0].TotalAmount)+" "+"only";
+    const randomFilename = generateShortRandomName() + '.pdf';
+    generatepdf2.mypdf2(data,words,randomFilename)
+    const sql=`UPDATE income_table SET PaymentReceiptFile='PaymentReceipt${id}(${(new Date(data[0].ActionDate)).toISOString().split("T")[0]})${randomFilename}' where id=${id}`
+    db.query(sql,(err,data)=>{
+         if(err){
+        console.error("Error executing query: " + err.stack);
+      return res.status(500).json({ error: "Database error" });
+    }
+          if (data.affectedRows === 0) {
+      return res.status(404).json({ error: "Record not updated" });
+    }
+    res.status(200).json({status:200, message: "Record updated successfully" });
+    })
+    })
+})
+
 
 app.put('/deletesinglerecord/:id',(req,res)=>{
     const id=req.params.id;
@@ -316,12 +314,7 @@ app.post('/addexpense',(req,res)=>{
     
 })
 app.put('/updateexpense/:id',(req,res)=>{
-  console.log("update")
-  const utcDateTimeString = req.body.DueDate;
-const newYorkDateTime = moment.tz(utcDateTimeString, 'America/New_York');
-console.log('Original UTC Date:', utcDateTimeString);
-console.log('Converted New York Time:', newYorkDateTime.format());
-  console.log(req.body)
+
 const id=req.params.id;
   const invoicenumber=req.body.InvoiceNumber;
     const particulars=req.body.Particulars;
