@@ -60,8 +60,8 @@ export default function ExpenseRecord({
 
   const handleClose = () => {
     setOpen(false);
+    setActionTake(false);
     setAddDetails({
-      id: "",
       InvoiceNumber: "",
       Particulars: "",
       Amount: "",
@@ -115,6 +115,7 @@ export default function ExpenseRecord({
                 totalExpenseDetails();
                 totalIndirectExpenseDetails();
                 getExpenseRecord();
+                setActionTake(false);
                 setOpen(false);
                 setAddDetails({
                   id: "",
@@ -135,9 +136,6 @@ export default function ExpenseRecord({
             })
             .catch((err) => window.alert("Sorry!Try Again"));
         } else {
-          {
-            console.log(adddetails);
-          }
           ApiCalls.addExpense({
             ...adddetails,
             TotalAmount: total,
@@ -170,7 +168,7 @@ export default function ExpenseRecord({
                 });
               }
             })
-            .catch((err) => window.alert("Sorry!Try Again"));
+            .catch((err) => window.alert("Sorry!Try Again", err));
         }
       } else {
         window.alert("Invoice date should be less than or equal to due date");
@@ -205,10 +203,6 @@ export default function ExpenseRecord({
     });
   };
 
-  const handleSaveClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-  };
-
   const handleDeleteClick = (id) => {
     setDeleteId(id);
     setdeleteOpen(true);
@@ -224,22 +218,6 @@ export default function ExpenseRecord({
         getExpenseRecord();
       })
       .catch((err) => window.alert("Sorry!Try Again"));
-  };
-
-  const handleCancelClick = (id) => () => {
-    setRowModesModel({
-      ...rowModesModel,
-      [id]: { mode: GridRowModes.View, ignoreModifications: true },
-    });
-
-    const editedRow = rows.find((row) => row.id === id);
-    if (editedRow.isNew) {
-      setRows(rows.filter((row) => row.id !== id));
-    }
-  };
-
-  const handleRowModesModelChange = (newRowModesModel) => {
-    setRowModesModel(newRowModesModel);
   };
 
   const columns = [
@@ -520,7 +498,7 @@ export default function ExpenseRecord({
         columns={columns}
         editMode="row"
         rowModesModel={rowModesModel}
-        onRowModesModelChange={handleRowModesModelChange}
+        // onRowModesModelChange={handleRowModesModelChange}
         slotProps={{
           toolbar: { setRows, setRowModesModel },
         }}
