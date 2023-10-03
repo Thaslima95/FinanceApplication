@@ -1,5 +1,5 @@
 module.exports=function(){
-this.mypdf2=function(data,words,randomFilename){
+this.myreceiptpdf=function(data,words,randomFilename){
 const puppeteer = require('puppeteer')
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');

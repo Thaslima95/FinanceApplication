@@ -3,6 +3,7 @@ const mysql=require('mysql')
 const cors=require('cors')
 var jwt = require('jsonwebtoken');
 var bodyParser = require('body-parser');
+var path=require('path')
 const { v4: uuidv4 } = require('uuid');
 const userRoutes = require('./routes/userRoutes');
 const otpRoutes = require('./routes/otpRoutes');
@@ -11,8 +12,9 @@ const pool = require('./db/db');
 const app = express();
 
 
-const generatepdf = new(require('./sample'))()
-const generatepdf2 = new(require('./sample2'))()
+
+const generateinvoicepdf = new(require('./sample'))()
+const generatereceiptpdf = new(require('./sample2'))()
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -118,8 +120,14 @@ app.post('/addincome',(req,res)=>{
     const balancedue=req.body.BalanceDue;
     const status=req.body.Status;
     const details=req.body.Items;
-    const sql="INSERT INTO income_table (CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,`Status`,Items,ActionDate) VALUES ?";
-    const value=[[companyname,streetaddress,city,state,pincode,placeofsupply,duedate,GSTIN,particulars,psyear,hsnsac,rate,cgst,sgst,igst,totalamount,balancedue,status,details,actiondate]];
+    const bankname=req.body.BankName;
+    const branch=req.body.Branch;
+    const beneficiaryname=req.body.BeneficiaryName;
+    const accountdetails=req.body.AccountDetails;
+    const acno=req.body.ACNO;
+    const ifsccode=req.body.IFSCCode;
+    const sql="INSERT INTO income_table (CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,`Status`,Items,ActionDate,BankName,Branch,BeneficiaryName,AccountDetails,ACNO,IFSCCode) VALUES ?";
+    const value=[[companyname,streetaddress,city,state,pincode,placeofsupply,duedate,GSTIN,particulars,psyear,hsnsac,rate,cgst,sgst,igst,totalamount,balancedue,status,details,actiondate,bankname,branch,beneficiaryname,accountdetails,acno,ifsccode]];
     pool.query(sql,[value],(err,data)=>{
      if(err){
         console.error("Error executing query: " + err.stack);
@@ -154,7 +162,6 @@ const companyname=req.body.CompanyName;
     const psyear=req.body.PSYear;
     const GSTIN=req.body.GSTIN;
     const hsnsac=req.body.HSNSAC;
-    console.log(req.body.DueDate)
     const duedate = req.body.DueDate;
     const actiondate =req.body.ActionDate; 
     const rate=req.body.Rate;
@@ -165,6 +172,12 @@ const companyname=req.body.CompanyName;
     const balancedue=req.body.BalanceDue;
     const status=req.body.Status;
     const details=req.body.Items;
+     const bankname=req.body.BankName;
+    const branch=req.body.Branch;
+    const beneficiaryname=req.body.BeneficiaryName;
+    const accountdetails=req.body.AccountDetails;
+    const acno=req.body.ACNO;
+    const ifsccode=req.body.IFSCCode;
     const sql=`Select InvoiceNumber,Status from income_table where id=${id}`;
     pool.query(sql,(err,data)=>{
       if(err)
@@ -187,8 +200,8 @@ const companyname=req.body.CompanyName;
       }
       else{
        
-        const sql="UPDATE income_table SET CompanyName=?,StreetAddress=?,City=?,State=?,Pincode=?,PlaceofSupply=?,GSTIN=?,Particulars=?,PSYear=?,HSNSAC=?,Rate=?,DueDate=?,CGST=?,SGST=?,IGST=?,TotalAmount=?,BalanceDue=?,`Status`=?,Items=?,ActionDate=? where id=?";
-pool.query(sql,[companyname,streetaddress,city,state,pincode,placeofsupply,GSTIN,particulars,psyear,hsnsac,rate,duedate,cgst,sgst,igst,totalamount,balancedue,status,details,actiondate,id],(err,data)=>{
+        const sql="UPDATE income_table SET CompanyName=?,StreetAddress=?,City=?,State=?,Pincode=?,PlaceofSupply=?,GSTIN=?,Particulars=?,PSYear=?,HSNSAC=?,Rate=?,DueDate=?,CGST=?,SGST=?,IGST=?,TotalAmount=?,BalanceDue=?,`Status`=?,Items=?,ActionDate=?,BankName=?,Branch=?,BeneficiaryName=?,AccountDetails=?,ACNO=?,IFSCCode=? where id=?";
+pool.query(sql,[companyname,streetaddress,city,state,pincode,placeofsupply,GSTIN,particulars,psyear,hsnsac,rate,duedate,cgst,sgst,igst,totalamount,balancedue,status,details,actiondate,bankname,branch,beneficiaryname,accountdetails,acno,ifsccode,id],(err,data)=>{
      if(err){
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
@@ -226,7 +239,7 @@ app.get('/getUnpaidTotalIncomeRate',(req,res)=>{
 
 app.get('/getincomedetails',(req,res)=>{
    
-    const sql="Select id,InvoiceNumber,CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,`Status`,Items,ActionDate,CreatedAt from income_table where IsDeleted=0";
+    const sql="Select id,InvoiceNumber,CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,`Status`,Items,ActionDate,CreatedAt,BankName,Branch,BeneficiaryName,AccountDetails,ACNO,IFSCCode from income_table where IsDeleted=0";
     pool.query(sql,(err,data)=>{
          if(err){
         console.error("Error executing query: " + err.stack);
@@ -239,22 +252,38 @@ app.get('/getincomedetails',(req,res)=>{
 app.get('/getsingleincomedetails/:id',(req,res)=>{
     
     const id=req.params.id;
-    const sql=`Select id,InvoiceNumber,CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,Status,Items,ActionDate,CreatedAt from income_table where id=${id}`;
+    const sql=`Select id,InvoiceNumber,CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,Status,Items,ActionDate,CreatedAt,BankName,Branch,BeneficiaryName,AccountDetails,ACNO,IFSCCode from income_table where id=${id}`;
     pool.query(sql,(err,data)=>{
          if(err){
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
     }
          const randomFilename = generateShortRandomName() + '.pdf';
-    generatepdf.mypdf(data,randomFilename)
-    const sql=`UPDATE income_table SET InvoiceFile='Invoice${randomFilename}',InvoiceNumber='PS/${data[0].PSYear}/00${id}' where id=${id}`
+         const fileName=`Invoice${data[0].id}(${(new Date(data[0].ActionDate)).toISOString().split("T")[0]})${randomFilename}`
+    
+    const invoicePath = path.join(__dirname, `${fileName}`);
+    generateinvoicepdf.mypdf(data,invoicePath)
+    const sql=`UPDATE income_table SET InvoiceFile='${fileName}',InvoiceNumber='PS/${data[0].PSYear}/00${id}' where id=${id}`
     pool.query(sql,(err,data)=>{
          if(err){
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
     }
         //  return res.status(200).json({"message":"Download Success"})
-        res.download(filePath, fileName); 
+        console.log(invoicePath)
+        res.status(200).json({path:invoicePath,message:"Download sucess"})
+//         res.download(invoicePath, (err) => {
+//   if (err) {
+   
+//     console.error('Error downloading the file:', err);
+    
+   
+//     res.status(500).json({
+//       status: 'error',
+//       message: 'Failed to download the file. Please try again later.',
+//     });
+//   }
+// });
     })
     })
 })

@@ -43,8 +43,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
 
   const [rowModesModel, setRowModesModel] = useState({});
   const [actionTake, setActionTake] = useState(false);
-
-  const [adddetails, setAddDetails] = useState({
+  let initialvalue = {
     InvoiceNumber: "",
     CompanyName: "",
     StreetAddress: "",
@@ -64,9 +63,16 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
     DueDate: "",
     ActionDate: "",
     GSTIN: "",
+    BankName: "ICICI Bank Nugapakkam",
+    Branch: "Chennai",
+    BeneficiaryName: "Pyramidion Solutions Private Limited",
+    AccountDetails: "Current",
+    ACNO: "000905027741",
+    IFSCCode: "ICIC0000009",
     TotalAmount: 0,
     BalanceDue: 0,
-  });
+  };
+  const [adddetails, setAddDetails] = useState(initialvalue);
   const today = new Date().toISOString().split("T")[0];
 
   const handleaddIncome = () => {
@@ -115,30 +121,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
                 totalunpaidincomecall();
                 setOpen(false);
                 getIncomeRecord();
-                setAddDetails({
-                  id: "",
-                  InvoiceNumber: "",
-                  CompanyName: "",
-                  StreetAddress: "",
-                  City: "",
-                  Pincode: "",
-                  State: "",
-                  PlaceofSupply: "",
-                  Particulars: "",
-                  PSYear: "23-24",
-                  Items: "",
-                  HSNSAC: "",
-                  Rate: "",
-                  CGST: "",
-                  SGST: "",
-                  IGST: "",
-                  Status: "",
-                  DueDate: "",
-                  ActionDate: "",
-                  GSTIN: "",
-                  TotalAmount: 0,
-                  BalanceDue: 0,
-                });
+                setAddDetails({ ...initialvalue, id: "" });
               }
             })
             .catch((err) => window.alert("Sorry!Try Again"));
@@ -158,30 +141,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
                 totalunpaidincomecall();
                 setOpen(false);
                 getIncomeRecord();
-                setAddDetails({
-                  id: "",
-                  InvoiceNumber: "",
-                  CompanyName: "",
-                  StreetAddress: "",
-                  City: "",
-                  Pincode: "",
-                  State: "",
-                  PlaceofSupply: "",
-                  Particulars: "",
-                  PSYear: "23-24",
-                  Items: "",
-                  HSNSAC: "",
-                  Rate: "",
-                  CGST: "",
-                  SGST: "",
-                  IGST: "",
-                  Status: "",
-                  DueDate: "",
-                  ActionDate: "",
-                  GSTIN: "",
-                  TotalAmount: 0,
-                  BalanceDue: 0,
-                });
+                setAddDetails({ ...initialvalue, id: "" });
               }
             })
             .catch((err) => window.alert("Sorry!Try Again"));
@@ -194,30 +154,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
 
   const handleClose = () => {
     setOpen(false);
-    setAddDetails({
-      id: "",
-      InvoiceNumber: "",
-      CompanyName: "",
-      StreetAddress: "",
-      City: "",
-      Pincode: "",
-      State: "",
-      PlaceofSupply: "",
-      Particulars: "",
-      PSYear: "23-24",
-      Items: "",
-      HSNSAC: "",
-      Rate: "",
-      CGST: "",
-      SGST: "",
-      IGST: "",
-      Status: "",
-      DueDate: "",
-      ActionDate: "",
-      GSTIN: "",
-      TotalAmount: 0,
-      BalanceDue: 0,
-    });
+    setAddDetails({ ...initialvalue, id: "" });
   };
   const handleDeleteClose = () => {
     setdeleteOpen(false);
@@ -252,10 +189,6 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
     });
   };
 
-  const handleSaveClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-  };
-
   const handleDeleteClick = (id) => {
     setDeleteId(id);
     setdeleteOpen(true);
@@ -276,8 +209,9 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
     ApiCalls.donwloadInvoice(id)
       .then((res) => {
         if (res.status == 200 || 201) {
-          window.alert("Download success");
+          window.alert(`Download Success\npath:${res.data.path}`);
         }
+        console.log(res);
       })
       .catch((err) => window.alert("Try again!"));
   };
@@ -290,18 +224,6 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
         }
       })
       .catch((err) => window.alert("Try again!"));
-  };
-
-  const handleCancelClick = (id) => () => {
-    setRowModesModel({
-      ...rowModesModel,
-      [id]: { mode: GridRowModes.View, ignoreModifications: true },
-    });
-
-    const editedRow = rows.find((row) => row.id === id);
-    if (editedRow.isNew) {
-      setRows(rows.filter((row) => row.id !== id));
-    }
   };
 
   const columns = [
@@ -728,6 +650,32 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
                   <MenuItem value={"Declined"}>Declined</MenuItem>
                 </Select>
               </FormControl>
+              <TextField
+                id="filled-basic"
+                label={<span>Bank Name</span>}
+                variant="filled"
+                sx={{ marginBottom: "20px" }}
+                onChange={(e) =>
+                  setAddDetails({
+                    ...adddetails,
+                    BankName: e.target.value,
+                  })
+                }
+                value={adddetails.BankName}
+              />
+              <TextField
+                id="filled-basic"
+                label={<span>Account Details</span>}
+                variant="filled"
+                sx={{ marginBottom: "20px" }}
+                onChange={(e) =>
+                  setAddDetails({
+                    ...adddetails,
+                    AccountDetails: e.target.value,
+                  })
+                }
+                value={adddetails.AccountDetails}
+              />
             </Grid>
             <Grid item lg={4} md={6} xs={8}>
               <TextField
@@ -832,6 +780,33 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
                   }
                 ></input>
               </div>
+              <TextField
+                id="standard-number"
+                label={<span>A/C No:</span>}
+                type="number"
+                variant="standard"
+                sx={{ marginBottom: "20px", width: 218 }}
+                onChange={(e) =>
+                  setAddDetails({
+                    ...adddetails,
+                    ACNO: Number(e.target.value),
+                  })
+                }
+                value={adddetails.ACNO || ""}
+              />
+              <TextField
+                id="filled-basic"
+                label={<span>Branch</span>}
+                variant="filled"
+                sx={{ marginBottom: "20px" }}
+                onChange={(e) =>
+                  setAddDetails({
+                    ...adddetails,
+                    Branch: e.target.value,
+                  })
+                }
+                value={adddetails.Branch}
+              />
             </Grid>
             <Grid item lg={4} md={6} xs={10}>
               <TextField
@@ -930,6 +905,32 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
                   }
                 ></input>
               </div>
+              <TextField
+                id="filled-basic"
+                label={<span>Beneficiary Name</span>}
+                variant="filled"
+                sx={{ marginBottom: "20px" }}
+                onChange={(e) =>
+                  setAddDetails({
+                    ...adddetails,
+                    BeneficiaryName: e.target.value,
+                  })
+                }
+                value={adddetails.BeneficiaryName}
+              />
+              <TextField
+                id="filled-basic"
+                label={<span>IFSC Code</span>}
+                variant="filled"
+                sx={{ marginBottom: "20px" }}
+                onChange={(e) =>
+                  setAddDetails({
+                    ...adddetails,
+                    IFSCCode: e.target.value,
+                  })
+                }
+                value={adddetails.IFSCCode}
+              />
             </Grid>
           </Grid>
         </DialogContent>

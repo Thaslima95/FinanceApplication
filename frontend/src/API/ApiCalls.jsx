@@ -37,7 +37,8 @@ export default {
   donwloadInvoice: async function (id) {
     try {
       const response = await axios.get(`/getsingleincomedetails/${id}`);
-      return response.data;
+      console.log("response");
+      return response;
     } catch (err) {
       console.log(err);
     }
