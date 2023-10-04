@@ -36,8 +36,7 @@ export default {
   },
   donwloadInvoice: async function (id) {
     try {
-      const response = await axios.get(`/getsingleincomedetails/${id}`);
-      console.log("response");
+      const response = await axios.get(`/generateinvoice/${id}`);
       return response;
     } catch (err) {
       console.log(err);
@@ -47,7 +46,7 @@ export default {
   generatereceipt: async function (id) {
     try {
       const response = await axios.get(`/generatereceipt/${id}`);
-      return response.data;
+      return response;
     } catch (err) {
       console.log(err);
     }

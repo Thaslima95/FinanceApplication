@@ -1,5 +1,5 @@
 module.exports=function(){
-this.myreceiptpdf=function(data,words,randomFilename){
+this.myreceiptpdf=function(data,words,receiptPath){
 const puppeteer = require('puppeteer')
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
@@ -27,7 +27,7 @@ const html=`<!doctypehtml><meta charset=utf-8><title>Invoice</title><style>.rota
   await page.pdf({
     format: 'A4',
     printBackground: true,
-    path: `D:/PaymentReceipt${data[0].id}(${(new Date(data[0].ActionDate)).toISOString().split("T")[0]})${randomFilename}`
+    path: receiptPath
   })
 
   // close the browser

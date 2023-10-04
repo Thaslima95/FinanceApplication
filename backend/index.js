@@ -186,7 +186,7 @@ app.post('/addincome',(req,res)=>{
 app.put('/updateincome/:id',(req,res)=>{
    
 const id=req.params.id;
-
+const invoicenumber=req.body.InvoiceNumber;
 const companyname=req.body.CompanyName;
     const streetaddress=req.body.StreetAddress;
     const city=req.body.City;
@@ -213,30 +213,17 @@ const companyname=req.body.CompanyName;
     const accountdetails=req.body.AccountDetails;
     const acno=req.body.ACNO;
     const ifsccode=req.body.IFSCCode;
-    const sql=`Select InvoiceNumber,Status from income_table where id=${id}`;
+    console.log(invoicenumber)
+    const sql=`Select * from income_table where InvoiceNumber='${invoicenumber}'`;
     pool.query(sql,(err,data)=>{
       if(err)
       {
          console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
       }
-      const oldStatus=data[0].Status;
-      if(req.body.Status=='Paid' && oldStatus=='UnPaid')
-      {
-        
-        const sql=`Update income_table SET Status='Paid' where id=${id}`;
-        pool.query(sql,(err,data)=>{
-             if(err){
-        console.error("Error executing query: " + err.stack);
-      return res.status(500).json({ error: "Database error" });
-    }
-    res.status(200).json({status:200, message: "Record updated successfully" });
-        })
-      }
-      else{
-       
-        const sql="UPDATE income_table SET CompanyName=?,StreetAddress=?,City=?,State=?,Pincode=?,PlaceofSupply=?,GSTIN=?,Particulars=?,PSYear=?,HSNSAC=?,Rate=?,DueDate=?,CGST=?,SGST=?,IGST=?,TotalAmount=?,BalanceDue=?,`Status`=?,Items=?,ActionDate=?,BankName=?,Branch=?,BeneficiaryName=?,AccountDetails=?,ACNO=?,IFSCCode=? where id=?";
-pool.query(sql,[companyname,streetaddress,city,state,pincode,placeofsupply,GSTIN,particulars,psyear,hsnsac,rate,duedate,cgst,sgst,igst,totalamount,balancedue,status,details,actiondate,bankname,branch,beneficiaryname,accountdetails,acno,ifsccode,id],(err,data)=>{
+      if(data.length > 0){
+        const sql="UPDATE income_table SET CompanyName=?,StreetAddress=?,City=?,State=?,Pincode=?,PlaceofSupply=?,GSTIN=?,Particulars=?,PSYear=?,HSNSAC=?,Rate=?,DueDate=?,CGST=?,SGST=?,IGST=?,TotalAmount=?,BalanceDue=?,`Status`=?,Items=?,ActionDate=?,BankName=?,Branch=?,BeneficiaryName=?,AccountDetails=?,ACNO=?,IFSCCode=? where InvoiceNumber=?";
+pool.query(sql,[companyname,streetaddress,city,state,pincode,placeofsupply,GSTIN,particulars,psyear,hsnsac,rate,duedate,cgst,sgst,igst,totalamount,balancedue,status,details,actiondate,bankname,branch,beneficiaryname,accountdetails,acno,ifsccode,invoicenumber],(err,data)=>{
      if(err){
         console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
@@ -244,7 +231,22 @@ pool.query(sql,[companyname,streetaddress,city,state,pincode,placeofsupply,GSTIN
      res.status(200).json({status:200, message: "Record updated successfully" });
    
 })
+      
       }
+      else{
+       
+              const sql="UPDATE income_table SET CompanyName=?,StreetAddress=?,City=?,State=?,Pincode=?,PlaceofSupply=?,GSTIN=?,Particulars=?,PSYear=?,HSNSAC=?,Rate=?,DueDate=?,CGST=?,SGST=?,IGST=?,TotalAmount=?,BalanceDue=?,`Status`=?,Items=?,ActionDate=?,BankName=?,Branch=?,BeneficiaryName=?,AccountDetails=?,ACNO=?,IFSCCode=?,InvoiceNumber=? where id=?";
+pool.query(sql,[companyname,streetaddress,city,state,pincode,placeofsupply,GSTIN,particulars,psyear,hsnsac,rate,duedate,cgst,sgst,igst,totalamount,balancedue,status,details,actiondate,bankname,branch,beneficiaryname,accountdetails,acno,ifsccode,invoicenumber,id],(err,data)=>{
+     if(err){
+        console.error("Error executing query: " + err.stack);
+      return res.status(500).json({ error: "Database error" });
+    }
+     res.status(200).json({status:200, message: "Record updated successfully" });
+   
+})
+
+      }
+     
     })
 
 })
@@ -284,8 +286,8 @@ app.get('/getincomedetails',(req,res)=>{
     })
 })
 
-app.get('/getsingleincomedetails/:id',(req,res)=>{
-    
+app.get('/generateinvoice/:id',(req,res)=>{
+    console.log("invoice")
     const id=req.params.id;
     const sql=`Select id,InvoiceNumber,CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,Status,Items,ActionDate,CreatedAt,BankName,Branch,BeneficiaryName,AccountDetails,ACNO,IFSCCode from income_table where id=${id}`;
     pool.query(sql,(err,data)=>{
@@ -294,31 +296,20 @@ app.get('/getsingleincomedetails/:id',(req,res)=>{
       return res.status(500).json({ error: "Database error" });
     }
          const randomFilename = generateShortRandomName() + '.pdf';
-         const fileName=`Invoice${data[0].id}(${(new Date(data[0].ActionDate)).toISOString().split("T")[0]})${randomFilename}`
+         const fileName=`Invoice(${data[0].id})(${(new Date(data[0].ActionDate)).toISOString().split("T")[0]})${randomFilename}`
     
     const invoicePath = path.join(__dirname, `${fileName}`);
     generateinvoicepdf.mypdf(data,invoicePath)
-    const sql=`UPDATE income_table SET InvoiceFile='${fileName}',InvoiceNumber='PS/${data[0].PSYear}/00${id}' where id=${id}`
+    const sql=`UPDATE income_table SET InvoiceFile='${fileName}' where id=${id}`
     pool.query(sql,(err,data)=>{
          if(err){
-        console.error("Error executing query: " + err.stack);
-      return res.status(500).json({ error: "Database error" });
+        res.status(500).json({
+      status: 'error',
+      message: 'Failed to download the file. Please try again later.',
+    });
     }
-        //  return res.status(200).json({"message":"Download Success"})
-        console.log(invoicePath)
         res.status(200).json({path:invoicePath,message:"Download sucess"})
-//         res.download(invoicePath, (err) => {
-//   if (err) {
-   
-//     console.error('Error downloading the file:', err);
-    
-   
-//     res.status(500).json({
-//       status: 'error',
-//       message: 'Failed to download the file. Please try again later.',
-//     });
-//   }
-// });
+
     })
     })
 })
@@ -334,18 +325,22 @@ app.get('/generatereceipt/:id',(req,res)=>{
       return res.status(500).json({ error: "Database error" });
     }
          const words=numberToWords(data[0].TotalAmount)+" "+"only";
-    const randomFilename = generateShortRandomName() + '.pdf';
-    generatepdf2.mypdf2(data,words,randomFilename)
-    const sql=`UPDATE income_table SET PaymentReceiptFile='PaymentReceipt${id}(${(new Date(data[0].ActionDate)).toISOString().split("T")[0]})${randomFilename}' where id=${id}`
-    pool.query(sql,(err,data)=>{
+         const randomFilename = generateShortRandomName() + '.pdf';
+         const fileName=`PaymentReceipt(${id})(${(new Date(data[0].ActionDate)).toISOString().split("T")[0]})${randomFilename}`
+    
+    const receiptPath = path.join(__dirname, `${fileName}`);
+   
+    generatereceiptpdf.myreceiptpdf(data,words,receiptPath)
+    const sql=`UPDATE income_table SET PaymentReceiptFile='${fileName}' where id=${id}`
+   pool.query(sql,(err,data)=>{
          if(err){
-        console.error("Error executing query: " + err.stack);
-      return res.status(500).json({ error: "Database error" });
+        res.status(500).json({
+      status: 'error',
+      message: 'Failed to download the file. Please try again later.',
+    });
     }
-          if (data.affectedRows === 0) {
-      return res.status(404).json({ error: "Record not updated" });
-    }
-    res.status(200).json({status:200, message: "Record updated successfully" });
+        res.status(200).json({path:receiptPath,message:"Download success"})
+
     })
     })
 })

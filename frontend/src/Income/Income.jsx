@@ -211,19 +211,18 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
         if (res.status == 200 || 201) {
           window.alert(`Download Success\npath:${res.data.path}`);
         }
-        console.log(res);
       })
-      .catch((err) => window.alert("Try again!"));
+      .catch((err) => window.alert("Download Failed!Try again!"));
   };
 
   const generatereceipt = (id) => {
     ApiCalls.generatereceipt(id)
       .then((res) => {
         if (res.status == 200 || 201) {
-          window.alert("Download success");
+          window.alert(`Download Success\npath:${res.data.path}`);
         }
       })
-      .catch((err) => window.alert("Try again!"));
+      .catch((err) => window.alert("Download Failed!Try again!"));
   };
 
   const columns = [
