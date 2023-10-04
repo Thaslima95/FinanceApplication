@@ -52,7 +52,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
     State: "",
     PlaceofSupply: "",
     Particulars: "",
-    PSYear: "23-24",
+    PSYear: `${lastTwoDigitsCurrentYear}-${lastTwoDigitsNextYear}`,
     Items: "",
     HSNSAC: "",
     Rate: "",
@@ -594,7 +594,11 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
 
               <TextField
                 id="standard-number"
-                label={<span style={{ marginTop: -20 }}>Pincode</span>}
+                label={
+                  <span style={{ marginTop: -20 }}>
+                    Pincode <span style={{ color: "red" }}>*</span>
+                  </span>
+                }
                 type="number"
                 variant="standard"
                 sx={{ marginBottom: "20px", width: 218 }}
@@ -608,7 +612,11 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               />
               <TextField
                 id="filled-basic"
-                label={<span>GSTIN</span>}
+                label={
+                  <span>
+                    GSTIN <span style={{ color: "red" }}>*</span>
+                  </span>
+                }
                 variant="filled"
                 sx={{ marginBottom: "20px" }}
                 onChange={(e) =>
@@ -621,7 +629,11 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               />
               <TextField
                 id="filled-basic"
-                label={<span>Items</span>}
+                label={
+                  <span>
+                    Items <span style={{ color: "red" }}>*</span>
+                  </span>
+                }
                 variant="filled"
                 sx={{ marginBottom: "20px" }}
                 onChange={(e) =>
@@ -671,7 +683,11 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               </FormControl>
               <TextField
                 id="filled-basic"
-                label={<span>Bank Name</span>}
+                label={
+                  <span>
+                    Bank Name <span style={{ color: "red" }}>*</span>
+                  </span>
+                }
                 variant="filled"
                 sx={{ marginBottom: "20px" }}
                 onChange={(e) =>
@@ -684,7 +700,11 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               />
               <TextField
                 id="filled-basic"
-                label={<span>Account Details</span>}
+                label={
+                  <span>
+                    Account Details <span style={{ color: "red" }}>*</span>
+                  </span>
+                }
                 variant="filled"
                 sx={{ marginBottom: "20px" }}
                 onChange={(e) =>
@@ -699,7 +719,11 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
             <Grid item lg={4} md={6} xs={8}>
               <TextField
                 id="filled-basic"
-                label={<span>Street Address</span>}
+                label={
+                  <span>
+                    Street Address <span style={{ color: "red" }}>*</span>
+                  </span>
+                }
                 variant="filled"
                 onChange={(e) =>
                   setAddDetails({
@@ -712,7 +736,11 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               />
               <TextField
                 id="filled-basic"
-                label={<span>State</span>}
+                label={
+                  <span>
+                    State <span style={{ color: "red" }}>*</span>
+                  </span>
+                }
                 variant="filled"
                 sx={{ marginBottom: "20px" }}
                 onChange={(e) =>
@@ -725,7 +753,11 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               />
               <TextField
                 id="filled-basic"
-                label={<span>Particulars</span>}
+                label={
+                  <span>
+                    Particulars <span style={{ color: "red" }}>*</span>
+                  </span>
+                }
                 variant="filled"
                 sx={{ marginBottom: "28px" }}
                 onChange={(e) =>
@@ -738,7 +770,11 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               />
               <TextField
                 id="standard-number"
-                label={<span>HSNSAC</span>}
+                label={
+                  <span>
+                    HSNSAC <span style={{ color: "red" }}>*</span>
+                  </span>
+                }
                 type="number"
                 variant="standard"
                 sx={{ marginBottom: "20px", width: 218 }}
@@ -752,11 +788,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               />
               <TextField
                 id="standard-number"
-                label={
-                  <span>
-                    SGST % <span style={{ color: "red" }}>*</span>
-                  </span>
-                }
+                label={<span>SGST %</span>}
                 type="number"
                 variant="standard"
                 sx={{ marginBottom: "25px", width: 218 }}
@@ -768,31 +800,21 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
                 }
                 value={Number(adddetails.SGST) || ""}
               />
-              {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  label={
-                    <span>
-                      {actionTake
-                        ? moment(adddetails.DueDate).format("YYYY-MM-DD")
-                        : "Due Date"}
-                    </span>
-                  }
-                  sx={{ m: 1, width: 200 }}
-                  onChange={(e) =>
-                    setAddDetails({
-                      ...adddetails,
-                      DueDate: e,
-                    })
-                  }
-                />
-              </LocalizationProvider> */}
+
               <div>
-                <label htmlFor=""> DueDate</label>
+                <label htmlFor="">
+                  {" "}
+                  DueDate <span style={{ color: "red" }}>*</span>
+                </label>
                 <br />
                 <input
                   type="date"
                   label="DueDate"
-                  style={{ width: "200px", height: "55px" }}
+                  style={{
+                    width: "200px",
+                    height: "55px",
+                    marginBottom: "14px",
+                  }}
                   value={adddetails.DueDate}
                   onChange={(e) =>
                     setAddDetails({ ...adddetails, DueDate: e.target.value })
@@ -801,7 +823,11 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               </div>
               <TextField
                 id="standard-number"
-                label={<span>A/C No:</span>}
+                label={
+                  <span>
+                    A/C No:<span style={{ color: "red" }}>*</span>
+                  </span>
+                }
                 type="number"
                 variant="standard"
                 sx={{ marginBottom: "20px", width: 218 }}
@@ -815,7 +841,11 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               />
               <TextField
                 id="filled-basic"
-                label={<span>Branch</span>}
+                label={
+                  <span>
+                    Branch <span style={{ color: "red" }}>*</span>
+                  </span>
+                }
                 variant="filled"
                 sx={{ marginBottom: "20px" }}
                 onChange={(e) =>
@@ -830,7 +860,11 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
             <Grid item lg={4} md={6} xs={10}>
               <TextField
                 id="filled-basic"
-                label={<span>City</span>}
+                label={
+                  <span>
+                    City <span style={{ color: "red" }}>*</span>
+                  </span>
+                }
                 variant="filled"
                 sx={{ marginBottom: "20px" }}
                 onChange={(e) =>
@@ -843,7 +877,11 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               />
               <TextField
                 id="filled-basic"
-                label={<span>Place of Supply</span>}
+                label={
+                  <span>
+                    Place of Supply <span style={{ color: "red" }}>*</span>
+                  </span>
+                }
                 variant="filled"
                 sx={{ marginBottom: "20px" }}
                 onChange={(e) =>
@@ -856,7 +894,11 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               />
               <TextField
                 id="filled-basic"
-                label={<span>PS Year</span>}
+                label={
+                  <span>
+                    PS Year <span style={{ color: "red" }}>*</span>
+                  </span>
+                }
                 variant="filled"
                 sx={{ marginBottom: "28px" }}
                 onChange={(e) =>
@@ -869,7 +911,11 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               />
               <TextField
                 id="standard-number"
-                label={<span>Rate</span>}
+                label={
+                  <span>
+                    Rate <span style={{ color: "red" }}>*</span>
+                  </span>
+                }
                 type="number"
                 variant="standard"
                 sx={{ marginBottom: "20px", width: 218 }}
@@ -895,29 +941,21 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
                 }
                 value={Number(adddetails.IGST) || ""}
               />
-              {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  label={
-                    <span>
-                      {moment(adddetails.ActionDate).format("YYYY-MM-DD")}
-                    </span>
-                  }
-                  sx={{ m: 1, width: 200 }}
-                  onChange={(e) =>
-                    setAddDetails({
-                      ...adddetails,
-                      ActionDate: e,
-                    })
-                  }
-                />
-              </LocalizationProvider> */}
+
               <div>
-                <label htmlFor=""> ActionDate</label>
+                <label htmlFor="">
+                  {" "}
+                  InvoiceDate <span style={{ color: "red" }}>*</span>
+                </label>
                 <br />
                 <input
                   type="date"
                   label="DueDate"
-                  style={{ width: "200px", height: "55px" }}
+                  style={{
+                    width: "200px",
+                    height: "55px",
+                    marginBottom: "10px",
+                  }}
                   value={adddetails.ActionDate}
                   onChange={(e) =>
                     setAddDetails({ ...adddetails, ActionDate: e.target.value })
@@ -926,7 +964,11 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               </div>
               <TextField
                 id="filled-basic"
-                label={<span>Beneficiary Name</span>}
+                label={
+                  <span>
+                    Beneficiary Name <span style={{ color: "red" }}>*</span>
+                  </span>
+                }
                 variant="filled"
                 sx={{ marginBottom: "20px" }}
                 onChange={(e) =>
@@ -939,7 +981,11 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               />
               <TextField
                 id="filled-basic"
-                label={<span>IFSC Code</span>}
+                label={
+                  <span>
+                    IFSC Code <span style={{ color: "red" }}>*</span>
+                  </span>
+                }
                 variant="filled"
                 sx={{ marginBottom: "20px" }}
                 onChange={(e) =>
