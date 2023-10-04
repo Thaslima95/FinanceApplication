@@ -565,6 +565,19 @@ app.post("/api/login", async (req, res) => {
   });
 });
 
+const jwtBlacklist = []; // Store invalidated tokens here
+app.post("/api/logout", (req, res) => {
+ 
+  // Assuming you have the JWT token in the request header
+  const token = req.header("Authorization");
+  // Check if the token exists in the blacklist
+  if (jwtBlacklist.includes(token)) {
+    return res.status(401).json({ error: "Token already revoked" });
+  }
+  // Add the token to the blacklist to invalidate it
+  jwtBlacklist.push(token);
+  res.status(200).json({ message: "Logout successful" });
+});
 
 
 

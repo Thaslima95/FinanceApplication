@@ -20,6 +20,45 @@ router.post('/addincome', [
 
   })
 
+  router.post('/addincome', [
+    check('Company Name')
+      .isLength({ min: 1 })
+      .withMessage('Invalid: Company Name must have at least 1 character')
+  ],function(request, response) {
+     
+            // var userControllerObject = new userController()
+            IncomeController.addIncomeController(request, function({message,status}) {
+                console.log(message)
+                console.log(status,'status')
+                return response.status(status).send(message)
+            })
+        
+
+  })
+
+  router.get('/getTotalIncomeRate',function(request, response) {
+     
+            // var userControllerObject = new userController()
+            IncomeController.getTotalIncomeController(request, function({message,status}) {
+                console.log(message)
+                console.log(status,'status')
+                return response.status(status).send(message)
+            })
+        
+
+  })
+
+//   app.get('/getTotalIncomeRate',(req,res)=>{
+//     const sql=`Select sum(TotalAmount) as Total from income_table where Status='Paid' and IsDeleted=0`;
+//     pool.query(sql,(err,data)=>{
+//          if(err){
+//         console.error("Error executing query: " + err.stack);
+//       return res.status(500).json({ error: "Database error" });
+//     }
+//         return res.json(data)
+//     })
+// })
+
 
 module.exports = router;
 
