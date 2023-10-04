@@ -8,10 +8,7 @@ const { v4: uuidv4 } = require('uuid');
 const userRoutes = require('./routes/userRoutes');
 const otpRoutes = require('./routes/otpRoutes');
 const pool = require('./db/db');
-
 const app = express();
-
-
 
 const generateinvoicepdf = new(require('./sample'))()
 const generatereceiptpdf = new(require('./sample2'))()
@@ -43,18 +40,6 @@ function generateShortRandomName() {
   return shortName;
 }
 
-// const db=mysql.createPool({
-//     host:"localhost",
-//     user:"root",
-//     password:"aafiya.",
-//     database:"finance"
-
-// })
-
-// db.connect(function (err) {
-//   if (err) throw err;
-//   console.log("Connected!");
-// });
 
 function numberToWords(number) {
     const units = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
