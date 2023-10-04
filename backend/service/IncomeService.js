@@ -28,9 +28,12 @@ module.exports = function() {
                 var addIncomeresult = await incomedataObject.addIncomeData(incomeData)
                 console.log(addIncomeresult)
                 if (addIncomeresult.result.length > 0) {
+                    console.log(addIncomeresult.status)
                     if (addIncomeresult.error == 'true') {
+                        console.log("here")
                         response.error = "true"
-                        response.message = "admin login failed"
+                        response.message = "already exists"
+                        response.status=addIncomeresult.status
                         resolve(response)
                     } else {
                             response.error = "false"

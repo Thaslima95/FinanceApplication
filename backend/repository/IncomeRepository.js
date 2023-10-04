@@ -2,9 +2,6 @@ module.exports = function() {
     const pool = require('../db/db')
 
     this.addIncomeData = (req) => {
-        console.log(req)
-        console.log(req.body.CompanyName)
-        console.log("repo")
         var output = {}
         return new Promise(async function(resolve) {
             var output = {}
@@ -46,10 +43,10 @@ module.exports = function() {
     resolve({status:500,message:"databaserror"})
         }
         else{
-          
+          console.log(data,'length')
           if(data.length>0)
           {
-             resolve({status:500,message:"already exists"})
+             resolve({result:data,error:"true",status:403,message:"already exists"})
           }
           else{
  const sql="INSERT INTO income_table (CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,`Status`,Items,ActionDate,BankName,Branch,BeneficiaryName,AccountDetails,ACNO,IFSCCode,InvoiceNumber) VALUES ?";

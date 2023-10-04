@@ -11,8 +11,10 @@ router.post('/addincome', [
   ],function(request, response) {
      
             // var userControllerObject = new userController()
-            IncomeController.addIncomeController(request, function(message) {
-                return response.send(message)
+            IncomeController.addIncomeController(request, function({message,status}) {
+                console.log(message)
+                console.log(status,'status')
+                return response.status(status).send(message)
             })
         
 
