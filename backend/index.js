@@ -7,6 +7,7 @@ var path=require('path')
 const { v4: uuidv4 } = require('uuid');
 const userRoutes = require('./routes/userRoutes');
 const otpRoutes = require('./routes/otpRoutes');
+const IncomeRoutes=require('./routes/IncomeRoutes')
 const pool = require('./db/db');
 const app = express();
 
@@ -34,6 +35,9 @@ app.use((req, res, next) => {
 });
 app.use('/user', userRoutes);
 app.use('/otp', otpRoutes);
+
+app.use('/file', express.static(path.join(__dirname)));
+// app.use('/income', IncomeRoutes);
 function generateShortRandomName() {
   const uuid = uuidv4();
   const shortName = uuid.replace(/-/g, '').substr(0, 10);
@@ -311,7 +315,7 @@ app.get('/generateinvoice/:id',(req,res)=>{
       message: 'Failed to download the file. Please try again later.',
     });
     }
-        res.status(200).json({path:invoicePath,message:"Download sucess"})
+        res.status(200).json({fileName:fileName,message:"Download sucess"})
 
     })
     })
