@@ -7,7 +7,7 @@ module.exports = function() {
         var addIncomeServiceObject = new incomeService()
         var addIncomeService = await addIncomeServiceObject.addIncomeService(req)
         if (addIncomeService.error == "true") {
-            console.log(addIncomeService.message)
+            
             response.error = "true"
             response.message = addIncomeService.message
             response.status=addIncomeService.status
@@ -17,7 +17,7 @@ module.exports = function() {
             response.data = addIncomeService.result
              response.status=addIncomeService.status
         }
-        console.log(response)
+        
         callback(response)
     }
 
@@ -25,18 +25,37 @@ module.exports = function() {
         var response = {}
         var addIncomeServiceObject = new incomeService()
         var addIncomeService = await addIncomeServiceObject.getTotalIncomeService(req)
+         
         if (addIncomeService.error == "true") {
-            console.log(addIncomeService.message)
+           
             response.error = "true"
             response.message = addIncomeService.message
             response.status=addIncomeService.status
         } else {
             response.error = "false"
-            response.message = addIncomeService.message
-            response.data = addIncomeService.result
-             response.status=addIncomeService.status
+            response.data = addIncomeService.data
         }
-        console.log(response)
+        
+        callback(response)
+    }
+
+
+    
+        this.getUnpaidTotalIncomeController = async (req, callback) => {
+        var response = {}
+        var addIncomeServiceObject = new incomeService()
+        var addIncomeService = await addIncomeServiceObject.getUnpaidTotalIncomeService(req)
+         
+        if (addIncomeService.error == "true") {
+           
+            response.error = "true"
+            response.message = addIncomeService.message
+            response.status=addIncomeService.status
+        } else {
+            response.error = "false"
+            response.data = addIncomeService.data
+        }
+        
         callback(response)
     }
 }

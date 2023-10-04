@@ -39,10 +39,21 @@ router.post('/addincome', [
   router.get('/getTotalIncomeRate',function(request, response) {
      
             // var userControllerObject = new userController()
-            IncomeController.getTotalIncomeController(request, function({message,status}) {
-                console.log(message)
-                console.log(status,'status')
-                return response.status(status).send(message)
+            IncomeController.getTotalIncomeController(request, function({data}) {
+               console.log(data)
+                return response.send(data)
+            })
+        
+
+  })
+
+    router.get('/getUnpaidTotalIncomeRate',function(request, response) {
+        console.log("unpaid")
+     
+            // var userControllerObject = new userController()
+            IncomeController.getUnpaidTotalIncomeController(request, function({data}) {
+               console.log(data)
+                return response.send(data)
             })
         
 
