@@ -126,27 +126,62 @@ app.post('/addincome',(req,res)=>{
     const accountdetails=req.body.AccountDetails;
     const acno=req.body.ACNO;
     const ifsccode=req.body.IFSCCode;
-    const sql="INSERT INTO income_table (CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,`Status`,Items,ActionDate,BankName,Branch,BeneficiaryName,AccountDetails,ACNO,IFSCCode) VALUES ?";
-    const value=[[companyname,streetaddress,city,state,pincode,placeofsupply,duedate,GSTIN,particulars,psyear,hsnsac,rate,cgst,sgst,igst,totalamount,balancedue,status,details,actiondate,bankname,branch,beneficiaryname,accountdetails,acno,ifsccode]];
-    pool.query(sql,[value],(err,data)=>{
-     if(err){
-        console.error("Error executing query: " + err.stack);
+    if(req.body.InvoiceNumber!="")
+    {
+      const sql=`SELECT InvoiceNumber from income_table where InvoiceNumber=? and IsDeleted=0`;
+      pool.query(sql,[req.body.InvoiceNumber],(err,data)=>{
+        if(err){
+          console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
+        }
+        else{
+          console.log(data)
+          if(data.length>0)
+          {
+            return res.status(403).json({message:"Invoice Number already exists"})
+          }
+          const sql="INSERT INTO income_table (CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,`Status`,Items,ActionDate,BankName,Branch,BeneficiaryName,AccountDetails,ACNO,IFSCCode,InvoiceNumber) VALUES ?";
+          const value=[[companyname,streetaddress,city,state,pincode,placeofsupply,duedate,GSTIN,particulars,psyear,hsnsac,rate,cgst,sgst,igst,totalamount,balancedue,status,details,actiondate,bankname,branch,beneficiaryname,accountdetails,acno,ifsccode,req.body.InvoiceNumber]];
+          pool.query(sql,[value],(err,data)=>{
+            if(err)
+            {
+              console.error("Error executing query: " + err.stack);
+      return res.status(500).json({ error: "Database error" });
+            }
+             return res.status(200).json({"message":"Record Inserted"})
+          })
+        }
+      })
     }
-     let id=data.insertId;
-     req.body.id=id;
-     console.log(id)
-    const sql=`UPDATE income_table SET InvoiceNumber='PS/${psyear}/00${id}' where id=${id}`
+    else{
+       const sql=`SELECT InvoiceNumber FROM income_table ORDER BY InvoiceNumber DESC`
     pool.query(sql,(err,data)=>{
-         if(err){
-        console.error("Error executing query: " + err.stack);
+        if(err)
+            {
+              console.error("Error executing query: " + err.stack);
       return res.status(500).json({ error: "Database error" });
-    }
-         return res.status(200).json({"message":"Record Inserted"})
+            }
+            if(data.length>0)
+            {
+              const match = data[0].InvoiceNumber.match(/00(\d+)/);
+              let num=match[1]+1;
+              let invoiceNumber=`PS/${psyear}/00${num}`
+              const sql="INSERT INTO income_table (CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,`Status`,Items,ActionDate,BankName,Branch,BeneficiaryName,AccountDetails,ACNO,IFSCCode,InvoiceNumber) VALUES ?";
+    const value=[[companyname,streetaddress,city,state,pincode,placeofsupply,duedate,GSTIN,particulars,psyear,hsnsac,rate,cgst,sgst,igst,totalamount,balancedue,status,details,actiondate,bankname,branch,beneficiaryname,accountdetails,acno,ifsccode,invoiceNumber]];
+            pool.query(sql,[value],(err,data)=>{
+              if(err)
+              {
+                console.error("Error executing query: " + err.stack);
+      return res.status(500).json({ error: "Database error" });
+              }
+              return res.status(200).json({"message":"Record Inserted"})
+            })
+  }
     })
-      
-})
-    
+
+    }
+   
+  
 })
 app.put('/updateincome/:id',(req,res)=>{
    

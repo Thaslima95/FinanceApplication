@@ -553,6 +553,26 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
           <DialogContentText sx={{ fontWeight: 800 }}>
             Add Income Details
           </DialogContentText>
+          <Grid item lg={4} md={6} xs={8}>
+            {" "}
+            <TextField
+              id="filled-basic"
+              label={
+                <span>
+                  Invoice Number <span style={{ color: "red" }}>*</span>
+                </span>
+              }
+              variant="filled"
+              onChange={(e) =>
+                setAddDetails({
+                  ...adddetails,
+                  InvoiceNumber: e.target.value,
+                })
+              }
+              sx={{ marginBottom: "28px" }}
+              value={adddetails.InvoiceNumber}
+            />
+          </Grid>
           <Grid container lg={12} md={12} sx={{ display: "flex" }}>
             <Grid item lg={4} md={6} xs={8}>
               <TextField
