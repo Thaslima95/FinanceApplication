@@ -5,17 +5,19 @@ export default {
   addIncome: async function (newRow) {
     try {
       const response = await axios.post(`/addincome`, newRow);
-      return response.data;
+      console.log(response);
+      return response;
     } catch (err) {
-      console.log(err);
+      return err;
     }
   },
   updateIncome: async function (id, newRow) {
     try {
       const response = await axios.put(`/updateincome/${id}`, newRow);
+      console.log(response);
       return response;
     } catch (err) {
-      console.log(err);
+      return err;
     }
   },
   getTotalIncome: async function () {

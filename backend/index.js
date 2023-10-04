@@ -135,12 +135,13 @@ app.post('/addincome',(req,res)=>{
       return res.status(500).json({ error: "Database error" });
         }
         else{
-          console.log(data)
+          
           if(data.length>0)
           {
             return res.status(403).json({message:"Invoice Number already exists"})
           }
-          const sql="INSERT INTO income_table (CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,`Status`,Items,ActionDate,BankName,Branch,BeneficiaryName,AccountDetails,ACNO,IFSCCode,InvoiceNumber) VALUES ?";
+          else{
+ const sql="INSERT INTO income_table (CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,`Status`,Items,ActionDate,BankName,Branch,BeneficiaryName,AccountDetails,ACNO,IFSCCode,InvoiceNumber) VALUES ?";
           const value=[[companyname,streetaddress,city,state,pincode,placeofsupply,duedate,GSTIN,particulars,psyear,hsnsac,rate,cgst,sgst,igst,totalamount,balancedue,status,details,actiondate,bankname,branch,beneficiaryname,accountdetails,acno,ifsccode,req.body.InvoiceNumber]];
           pool.query(sql,[value],(err,data)=>{
             if(err)
@@ -150,11 +151,13 @@ app.post('/addincome',(req,res)=>{
             }
              return res.status(200).json({"message":"Record Inserted"})
           })
+          }
+         
         }
       })
     }
     else{
-       const sql=`SELECT InvoiceNumber FROM income_table ORDER BY InvoiceNumber DESC`
+       const sql=`SELECT InvoiceNumber FROM income_table where IsDeleted=0 ORDER BY InvoiceNumber DESC`
     pool.query(sql,(err,data)=>{
         if(err)
             {
@@ -164,7 +167,7 @@ app.post('/addincome',(req,res)=>{
             if(data.length>0)
             {
               const match = data[0].InvoiceNumber.match(/00(\d+)/);
-              let num=match[1]+1;
+              let num=Number(match[1])+1;
               let invoiceNumber=`PS/${psyear}/00${num}`
               const sql="INSERT INTO income_table (CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,`Status`,Items,ActionDate,BankName,Branch,BeneficiaryName,AccountDetails,ACNO,IFSCCode,InvoiceNumber) VALUES ?";
     const value=[[companyname,streetaddress,city,state,pincode,placeofsupply,duedate,GSTIN,particulars,psyear,hsnsac,rate,cgst,sgst,igst,totalamount,balancedue,status,details,actiondate,bankname,branch,beneficiaryname,accountdetails,acno,ifsccode,invoiceNumber]];
@@ -186,6 +189,8 @@ app.post('/addincome',(req,res)=>{
 app.put('/updateincome/:id',(req,res)=>{
    
 const id=req.params.id;
+console.log(req.params.id)
+console.log(req.body.InvoiceNumber)
 const invoicenumber=req.body.InvoiceNumber;
 const companyname=req.body.CompanyName;
     const streetaddress=req.body.StreetAddress;
@@ -213,8 +218,8 @@ const companyname=req.body.CompanyName;
     const accountdetails=req.body.AccountDetails;
     const acno=req.body.ACNO;
     const ifsccode=req.body.IFSCCode;
-    console.log(invoicenumber)
-    const sql=`Select * from income_table where InvoiceNumber='${invoicenumber}'`;
+    console.log(invoicenumber,id)
+    const sql=`Select * from income_table where InvoiceNumber='${invoicenumber}' and id=${id}`;
     pool.query(sql,(err,data)=>{
       if(err)
       {
@@ -222,6 +227,7 @@ const companyname=req.body.CompanyName;
       return res.status(500).json({ error: "Database error" });
       }
       if(data.length > 0){
+        console.log(data.length,'length')
         const sql="UPDATE income_table SET CompanyName=?,StreetAddress=?,City=?,State=?,Pincode=?,PlaceofSupply=?,GSTIN=?,Particulars=?,PSYear=?,HSNSAC=?,Rate=?,DueDate=?,CGST=?,SGST=?,IGST=?,TotalAmount=?,BalanceDue=?,`Status`=?,Items=?,ActionDate=?,BankName=?,Branch=?,BeneficiaryName=?,AccountDetails=?,ACNO=?,IFSCCode=? where InvoiceNumber=?";
 pool.query(sql,[companyname,streetaddress,city,state,pincode,placeofsupply,GSTIN,particulars,psyear,hsnsac,rate,duedate,cgst,sgst,igst,totalamount,balancedue,status,details,actiondate,bankname,branch,beneficiaryname,accountdetails,acno,ifsccode,invoicenumber],(err,data)=>{
      if(err){
@@ -234,8 +240,15 @@ pool.query(sql,[companyname,streetaddress,city,state,pincode,placeofsupply,GSTIN
       
       }
       else{
-       
-              const sql="UPDATE income_table SET CompanyName=?,StreetAddress=?,City=?,State=?,Pincode=?,PlaceofSupply=?,GSTIN=?,Particulars=?,PSYear=?,HSNSAC=?,Rate=?,DueDate=?,CGST=?,SGST=?,IGST=?,TotalAmount=?,BalanceDue=?,`Status`=?,Items=?,ActionDate=?,BankName=?,Branch=?,BeneficiaryName=?,AccountDetails=?,ACNO=?,IFSCCode=?,InvoiceNumber=? where id=?";
+        const sql=`Select * from income_table where InvoiceNumber='${invoicenumber}' and IsDeleted=0`
+        pool.query(sql,(err,data)=>{
+          console.log(data)
+           if(data?.length>0)
+           {
+            res.status(403).json({message:"Invoice Number already exists"})
+           }
+           else{
+            const sql="UPDATE income_table SET CompanyName=?,StreetAddress=?,City=?,State=?,Pincode=?,PlaceofSupply=?,GSTIN=?,Particulars=?,PSYear=?,HSNSAC=?,Rate=?,DueDate=?,CGST=?,SGST=?,IGST=?,TotalAmount=?,BalanceDue=?,`Status`=?,Items=?,ActionDate=?,BankName=?,Branch=?,BeneficiaryName=?,AccountDetails=?,ACNO=?,IFSCCode=?,InvoiceNumber=? where id=?";
 pool.query(sql,[companyname,streetaddress,city,state,pincode,placeofsupply,GSTIN,particulars,psyear,hsnsac,rate,duedate,cgst,sgst,igst,totalamount,balancedue,status,details,actiondate,bankname,branch,beneficiaryname,accountdetails,acno,ifsccode,invoicenumber,id],(err,data)=>{
      if(err){
         console.error("Error executing query: " + err.stack);
@@ -244,6 +257,11 @@ pool.query(sql,[companyname,streetaddress,city,state,pincode,placeofsupply,GSTIN
      res.status(200).json({status:200, message: "Record updated successfully" });
    
 })
+
+           }
+        })
+       
+              
 
       }
      

@@ -115,13 +115,17 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
             IGST: Number(adddetails.IGST),
           })
             .then((res) => {
-              if (res.status == 200 || 201) {
+              console.log(res);
+              if (res.status === 200) {
                 window.alert("Income Updated Successfully");
                 totalIncomecall();
                 totalunpaidincomecall();
+                setActionTake(false);
                 setOpen(false);
                 getIncomeRecord();
                 setAddDetails({ ...initialvalue, id: "" });
+              } else if (res.response.status == 403) {
+                window.alert("Invoice Number Already exists");
               }
             })
             .catch((err) => window.alert("Sorry!Try Again"));
@@ -135,16 +139,19 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
             IGST: Number(adddetails.IGST),
           })
             .then((res) => {
-              if (res.status == 200 || 201) {
+              console.log(res);
+              if (res.status == 200) {
                 window.alert("Income Created Successfully");
                 totalIncomecall();
                 totalunpaidincomecall();
                 setOpen(false);
                 getIncomeRecord();
                 setAddDetails({ ...initialvalue, id: "" });
+              } else if (res.response.status == 403) {
+                window.alert("Invoice Number Already exists");
               }
             })
-            .catch((err) => window.alert("Sorry!Try Again"));
+            .catch((err) => window.alert("Sorry Try Again Later "));
         }
       } else {
         window.alert("Invoice date should be less than or equal to due date");
