@@ -2,25 +2,22 @@ const express = require('express');
 const router = express.Router();
 const {check,validationResult}=require('express-validator')
 const pool = require('../db/db');
-const IncomeCtrlr=new (require('../Controller/IncomeController'))()
+const IncomeController=new (require('../Controller/IncomeController'))()
 
 router.post('/addincome', [
     check('Company Name')
       .isLength({ min: 1 })
       .withMessage('Invalid: Company Name must have at least 1 character')
-  ],(req,res)=>{
+  ],function(request, response) {
+     
+            // var userControllerObject = new userController()
+            IncomeController.addIncomeController(request, function(message) {
+                return response.send(message)
+            })
+        
 
-const error=validationResult(req)
-if(error.array().length)
-{
-    
-}
-else{
-    var body=req.body;
-    IncomeCtrlr.addCtrlr(body,(result)=>{
-        console.log(result)
-    })
-}
-})
+  })
+
+
 module.exports = router;
 
