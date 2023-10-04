@@ -346,7 +346,7 @@ app.get('/generatereceipt/:id',(req,res)=>{
       message: 'Failed to download the file. Please try again later.',
     });
     }
-        res.status(200).json({path:receiptPath,message:"Download success"})
+        res.status(200).json({fileName:fileName,message:"Download sucess"})
 
     })
     })

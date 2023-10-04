@@ -4,7 +4,7 @@ const {check,validationResult}=require('express-validator')
 const pool = require('../db/db');
 const IncomeCtrlr=new (require('../Controller/IncomeController'))()
 console.log(IncomeCtrlr)
-router.post('/addincome',[check('CompanyName').isLength[{min:1}].withMessage['Invalid:$[1],Company Name']],(req,res)=>{
+router.post('/addincome',(req,res)=>{
 
 const error=validationResult(req)
 if(error.array().length)
