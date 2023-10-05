@@ -147,7 +147,7 @@ export default function ExpenseRecord({
             IGST: Number(adddetails.IGST),
           })
             .then((res) => {
-              if (res.status == 200 || 201) {
+              if (res.response.status === 200 || res.status === 200) {
                 window.alert("Expense Created Successfully");
                 getExpenseRecord();
                 totalExpenseDetails();
