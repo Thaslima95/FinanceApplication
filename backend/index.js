@@ -1,54 +1,46 @@
-const express=require('express')
+const express = require("express");
 
-const cors=require('cors')
+const cors = require("cors");
 
-var bodyParser = require('body-parser');
-var path=require('path')
-const userRoutes = require('./routes/userRoutes');
-const otpRoutes = require('./routes/otpRoutes');
-const IncomeRoutes=require('./routes/IncomeRoutes')
-const ExpenseRoutes=require('./routes/ExpenseRoutes')
-const LoginRoutes=require('./routes/LoginRoutes')
-
+var bodyParser = require("body-parser");
+var path = require("path");
+const userRoutes = require("./routes/userRoutes");
+const otpRoutes = require("./routes/otpRoutes");
+const IncomeRoutes = require("./routes/IncomeRoutes");
+const ExpenseRoutes = require("./routes/ExpenseRoutes");
+const LoginRoutes = require("./routes/LoginRoutes");
+const AccountSummaryRoutes = require("./routes/AccountSummaryRoutes");
 
 const app = express();
 
-
-
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use(express.json());
 
-app.use(express.json()) 
-
-
-app.use(cors())
+app.use(cors());
 app.use((req, res, next) => {
   //allow access from every, elminate CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.removeHeader('x-powered-by');
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.removeHeader("x-powered-by");
   //set the allowed HTTP methods to be requested
-  res.setHeader('Access-Control-Allow-Methods', 'POST');
+  res.setHeader("Access-Control-Allow-Methods", "POST");
   //headers clients can use in their requests
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   //allow request to continue and be handled by routes
   next();
 });
-app.use('/user', userRoutes);
-app.use('/otp', otpRoutes);
+app.use("/user", userRoutes);
+app.use("/otp", otpRoutes);
 
-app.use('/file', express.static(path.join(__dirname)));
-app.use('/income', IncomeRoutes);
-app.use('/expense', ExpenseRoutes);
-app.use('/login',LoginRoutes)
-
-
-
-
-
+app.use("/file", express.static(path.join(__dirname)));
+app.use("/income", IncomeRoutes);
+app.use("/expense", ExpenseRoutes);
+app.use("/login", LoginRoutes);
+app.use("/account", AccountSummaryRoutes);
 
 // app.post('/addincome',(req,res)=>{
- 
+
 //     const companyname=req.body.CompanyName;
 //     const streetaddress=req.body.StreetAddress;
 //     const city=req.body.City;
@@ -60,7 +52,7 @@ app.use('/login',LoginRoutes)
 //     const GSTIN=req.body.GSTIN;
 //     const hsnsac=req.body.HSNSAC;
 //     const duedate = req.body.DueDate;
-//     const actiondate =req.body.ActionDate; 
+//     const actiondate =req.body.ActionDate;
 //     const rate=req.body.Rate;
 //     const cgst=req.body.CGST;
 //     const sgst=req.body.SGST;
@@ -84,7 +76,7 @@ app.use('/login',LoginRoutes)
 //       return res.status(500).json({ error: "Database error" });
 //         }
 //         else{
-          
+
 //           if(data.length>0)
 //           {
 //             return res.status(403).json({message:"Invoice Number already exists"})
@@ -101,7 +93,7 @@ app.use('/login',LoginRoutes)
 //              return res.status(200).json({"message":"Record Inserted"})
 //           })
 //           }
-         
+
 //         }
 //       })
 //     }
@@ -132,11 +124,10 @@ app.use('/login',LoginRoutes)
 //     })
 
 //     }
-   
-  
+
 // })
 // app.put('/updateincome/:id',(req,res)=>{
-   
+
 // const id=req.params.id;
 // console.log(req.params.id)
 // console.log(req.body.InvoiceNumber)
@@ -152,7 +143,7 @@ app.use('/login',LoginRoutes)
 //     const GSTIN=req.body.GSTIN;
 //     const hsnsac=req.body.HSNSAC;
 //     const duedate = req.body.DueDate;
-//     const actiondate =req.body.ActionDate; 
+//     const actiondate =req.body.ActionDate;
 //     const rate=req.body.Rate;
 //     const cgst=req.body.CGST;
 //     const sgst=req.body.SGST;
@@ -184,9 +175,9 @@ app.use('/login',LoginRoutes)
 //       return res.status(500).json({ error: "Database error" });
 //     }
 //      res.status(200).json({status:200, message: "Record updated successfully" });
-   
+
 // })
-      
+
 //       }
 //       else{
 //         const sql=`Select * from income_table where InvoiceNumber='${invoicenumber}' and IsDeleted=0`
@@ -204,16 +195,14 @@ app.use('/login',LoginRoutes)
 //       return res.status(500).json({ error: "Database error" });
 //     }
 //      res.status(200).json({status:200, message: "Record updated successfully" });
-   
+
 // })
 
 //            }
 //         })
-       
-              
 
 //       }
-     
+
 //     })
 
 // })
@@ -240,9 +229,8 @@ app.use('/login',LoginRoutes)
 //     })
 // })
 
-
 // app.get('/getincomedetails',(req,res)=>{
-   
+
 //     const sql="Select id,InvoiceNumber,CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,`Status`,Items,ActionDate,CreatedAt,BankName,Branch,BeneficiaryName,AccountDetails,ACNO,IFSCCode from income_table where IsDeleted=0";
 //     pool.query(sql,(err,data)=>{
 //          if(err){
@@ -264,7 +252,7 @@ app.use('/login',LoginRoutes)
 //     }
 //          const randomFilename = generateShortRandomName() + '.pdf';
 //          const fileName=`Invoice(${data[0].id})(${(new Date(data[0].ActionDate)).toISOString().split("T")[0]})${randomFilename}`
-    
+
 //     const invoicePath = path.join(__dirname, `${fileName}`);
 //     generateinvoicepdf.mypdf(data,invoicePath)
 //     const sql=`UPDATE income_table SET InvoiceFile='${fileName}' where id=${id}`
@@ -281,9 +269,8 @@ app.use('/login',LoginRoutes)
 //     })
 // })
 
-
 // app.get('/generatereceipt/:id',(req,res)=>{
-    
+
 //     const id=req.params.id;
 //     const sql=`Select id,InvoiceNumber,CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,Status,Items,ActionDate,CreatedAt from income_table where id=${id}`;
 //     pool.query(sql,(err,data)=>{
@@ -294,9 +281,9 @@ app.use('/login',LoginRoutes)
 //          const words=numberToWords(data[0].TotalAmount)+" "+"only";
 //          const randomFilename = generateShortRandomName() + '.pdf';
 //          const fileName=`PaymentReceipt(${id})(${(new Date(data[0].ActionDate)).toISOString().split("T")[0]})${randomFilename}`
-    
+
 //     const receiptPath = path.join(__dirname, `${fileName}`);
-   
+
 //     generatereceiptpdf.myreceiptpdf(data,words,receiptPath)
 //     const sql=`UPDATE income_table SET PaymentReceiptFile='${fileName}' where id=${id}`
 //    pool.query(sql,(err,data)=>{
@@ -312,7 +299,6 @@ app.use('/login',LoginRoutes)
 //     })
 // })
 
-
 // app.put('/deletesinglerecord/:id',(req,res)=>{
 //     const id=req.params.id;
 //     const sql=`UPDATE income_table SET IsDeleted=1 where id=${id}`
@@ -325,17 +311,16 @@ app.use('/login',LoginRoutes)
 //       return res.status(404).json({ error: "Record not found" });
 //     }
 //     res.status(300).json({ message: "Record deleted successfully" });
-        
+
 //     })
 // })
-
 
 // app.post('/addexpense',(req,res)=>{
 //     console.log(req.body)
 //     const invoicenumber=req.body.InvoiceNumber;
 //     const particulars=req.body.Particulars;
 //     const duedate = req.body.DueDate;
-//     const actiondate =req.body.ActionDate; 
+//     const actiondate =req.body.ActionDate;
 //     const paymentType=req.body.PaymentType;
 //     const accountType=req.body.AccountType;
 //     const amount=req.body.Amount;
@@ -350,11 +335,10 @@ app.use('/login',LoginRoutes)
 //         console.error("Error executing query: " + err.stack);
 //       return res.status(500).json({ error: "Database error" });
 //     }
-    
+
 //     return res.status(200).json({"message":"Record Inserted"})
 //  })
-   
-    
+
 // })
 // app.put('/updateexpense/:id',(req,res)=>{
 //   console.log(req.body)
@@ -363,7 +347,7 @@ app.use('/login',LoginRoutes)
 //   const invoicenumber=req.body.InvoiceNumber;
 //     const particulars=req.body.Particulars;
 //     const duedate = req.body.DueDate;
-//     const actiondate =req.body.ActionDate; 
+//     const actiondate =req.body.ActionDate;
 //     const paymentType=req.body.PaymentType;
 //     const accountType=req.body.AccountType;
 //     const amount=req.body.Amount;
@@ -383,7 +367,6 @@ app.use('/login',LoginRoutes)
 //     res.status(200).json({ message: "Record updated successfully" });
 // })
 // })
-
 
 // app.get('/getDirectTotalExpenseRate',(req,res)=>{
 //     const sql="Select sum(TotalAmount) as Total from expense_table where PaymentType='Direct' and IsDeleted=0";
@@ -429,7 +412,7 @@ app.use('/login',LoginRoutes)
 //       return res.status(404).json({ error: "Record not found" });
 //     }
 //     res.status(300).json({ message: "Record deleted successfully" });
-        
+
 //     })
 // })
 
@@ -512,10 +495,9 @@ app.use('/login',LoginRoutes)
 //       const user = results[0];
 //       console.log(user, "user", "password", password);
 //       if (user.password === password) {
-//         var token = jwt.sign({email:req.body.email,id:results[0].id}, 'mysecret');   
+//         var token = jwt.sign({email:req.body.email,id:results[0].id}, 'mysecret');
 //   res.status(200).json({ userId: user.id, message: "Login successful" ,token:token});
 
-        
 //       } else {
 //         res.status(401).json({ error: "Invalid email or password" });
 //       }
@@ -527,7 +509,7 @@ app.use('/login',LoginRoutes)
 
 // const jwtBlacklist = []; // Store invalidated tokens here
 // app.post("/api/logout", (req, res) => {
- 
+
 //   // Assuming you have the JWT token in the request header
 //   const token = req.header("Authorization");
 //   // Check if the token exists in the blacklist
@@ -539,9 +521,6 @@ app.use('/login',LoginRoutes)
 //   res.status(200).json({ message: "Logout successful" });
 // });
 
-
-
-app.listen(8089,()=>{
-    console.log("listening backend")
-})
-
+app.listen(8089, () => {
+  console.log("listening backend");
+});

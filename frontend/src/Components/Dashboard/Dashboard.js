@@ -255,11 +255,11 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    Axios.get("/api/account-summary")
+    Axios.get("/account/api/account-summary")
       .then((response) => {
         console.log(response);
-        if (response.status === 200) {
-          setTableData(response.data.results);
+        if (response.status == 200) {
+          setTableData(response.data);
         } else {
           console.error("Error fetching data from the API");
         }
@@ -273,7 +273,7 @@ const Dashboard = () => {
     ApiCalls.getTotalIncome()
       .then((res) => {
         console.log(res);
-        setTotalIncome(res[0].Total);
+        setTotalIncome(res.data.Total);
       })
       .catch((err) => console.log(err));
   }, []);
@@ -281,7 +281,7 @@ const Dashboard = () => {
   useMemo(() => {
     ApiCalls.getTotalExpense()
       .then((res) => {
-        setTotalExpense(res[0].Total);
+        setTotalExpense(res.data.Total);
       })
       .catch((err) => console.log(err));
   }, []);
