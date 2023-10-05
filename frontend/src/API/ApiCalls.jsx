@@ -38,8 +38,10 @@ export default {
     }
   },
   donwloadInvoice: async function (id) {
+    console.log("api download");
     try {
-      const response = await axios.get(`/generateinvoice/${id}`);
+      const response = await axios.get(`/income/generateinvoice/${id}`);
+      console.log(response);
       return response;
     } catch (err) {
       console.log(err);
@@ -48,7 +50,7 @@ export default {
 
   generatereceipt: async function (id) {
     try {
-      const response = await axios.get(`/generatereceipt/${id}`);
+      const response = await axios.get(`/income/generatereceipt/${id}`);
       return response;
     } catch (err) {
       console.log(err);

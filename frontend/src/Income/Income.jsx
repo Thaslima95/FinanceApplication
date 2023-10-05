@@ -225,7 +225,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               `http://localhost:8089/file/${res.data.fileName}`,
               "__blank"
             );
-          }, 5000);
+          }, 3000);
         }
       })
       .catch((err) => window.alert("Download Failed!Try again!"));

@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {check,validationResult}=require('express-validator')
-const generateShortRandomName=require('../utils/generateShortRandomName')
-const numberToWords=require('../utils/numberToWords')
+
 const IncomeController=new (require('../Controller/IncomeController'))()
 
 router.post('/addincome', [
@@ -91,6 +90,28 @@ router.post('/addincome', [
             })
         
 
+  })
+
+  router.get('/generateinvoice/:id',function(request, response) {
+     
+            // var userControllerObject = new userController()
+            IncomeController.generateInvoiceController(request, function({message,status,fileName}) {
+               console.log(message)
+                console.log(status,'status')
+                console.log(fileName)
+                return response.status(status).send({fileName:fileName,message:message})
+            })
+  })
+
+    router.get('/generatereceipt/:id',function(request, response) {
+     
+            // var userControllerObject = new userController()
+            IncomeController.generateReceiptController(request, function({message,status,fileName}) {
+                console.log(message)
+                console.log(status,'status')
+                console.log(fileName)
+                return response.status(status).send({fileName:fileName,message:message})
+            })
   })
 
 

@@ -230,4 +230,77 @@ module.exports = function() {
             }
         })
     }
+
+
+       this.generateInvoiceService = (incomeData) => {
+      
+        return new Promise(async function(resolve) {
+            var response = {}
+            var resp = {}
+            var incomedataObject = new addIncomeRepo()
+            try {
+                var addIncomeresult = await incomedataObject.generateInvoiceData(incomeData)
+              
+                   console.log(addIncomeresult)
+                   
+                    if (addIncomeresult.error == 'true') {
+                       
+                        response.error = "true"
+                        response.message = "record not found"
+                        response.status=addIncomeresult.status
+                        resolve(response)
+                    } else {
+                      
+                            response.error = "false"
+                            response.message = addIncomeresult.message
+                            response.status=addIncomeresult.status
+                            response.fileName=addIncomeresult.fileName
+                          
+                            resolve(response)
+                         
+                    }
+               
+            } catch (err) {
+                response.error = "true"
+                response.message = "OOPS Service Error"
+                resolve(response)
+            }
+        })
+    }
+
+     this.generateReceiptService = (incomeData) => {
+      
+        return new Promise(async function(resolve) {
+            var response = {}
+            var resp = {}
+            var incomedataObject = new addIncomeRepo()
+            try {
+                var addIncomeresult = await incomedataObject.generateReceiptData(incomeData)
+              
+                   console.log(addIncomeresult)
+                   
+                    if (addIncomeresult.error == 'true') {
+                       
+                        response.error = "true"
+                        response.message = "record not found"
+                        response.status=addIncomeresult.status
+                        resolve(response)
+                    } else {
+                      
+                            response.error = "false"
+                            response.message = addIncomeresult.message
+                            response.status=addIncomeresult.status
+                            response.fileName=addIncomeresult.fileName
+                          
+                            resolve(response)
+                         
+                    }
+               
+            } catch (err) {
+                response.error = "true"
+                response.message = "OOPS Service Error"
+                resolve(response)
+            }
+        })
+    }
 }

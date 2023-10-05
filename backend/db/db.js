@@ -28,12 +28,14 @@ module.exports = function() {
                         if (error) {
                             output.error = "true"
                             output.message = error
+                             console.log(output)
                             resolve(output)
                             connection.destroy()
                         } else {
                             output.error = "false"
                             output.message = error
                             output.result = results
+                            console.log(output)
                             resolve(output)
                             connection.destroy()
                         }

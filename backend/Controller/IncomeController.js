@@ -133,6 +133,44 @@ module.exports = function() {
         callback(response)
     }
 
+       this.generateInvoiceController = async (req, callback) => {
+        var response = {}
+        var addIncomeServiceObject = new incomeService()
+        var addIncomeService = await addIncomeServiceObject.generateInvoiceService(req)
+        if (addIncomeService.error == "true") {
+            
+            response.error = "true"
+            response.message = addIncomeService.message
+            response.status=addIncomeService.status
+        } else {
+            response.error = "false"
+            response.message = addIncomeService.message
+            response.fileName = addIncomeService.fileName
+             response.status=addIncomeService.status
+        }
+        
+        callback(response)
+    }
+
+       this.generateReceiptController = async (req, callback) => {
+        var response = {}
+        var addIncomeServiceObject = new incomeService()
+        var addIncomeService = await addIncomeServiceObject.generateReceiptService(req)
+        if (addIncomeService.error == "true") {
+            
+            response.error = "true"
+            response.message = addIncomeService.message
+            response.status=addIncomeService.status
+        } else {
+            response.error = "false"
+            response.message = addIncomeService.message
+            response.fileName = addIncomeService.fileName
+             response.status=addIncomeService.status
+        }
+        
+        callback(response)
+    }
+
 }
 
 

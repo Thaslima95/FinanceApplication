@@ -1,8 +1,12 @@
 module.exports = function() {
    
      var mysqlExecute = require('../db/db')
+     const generateShortRandomName=require('../utils/generateShortRandomName')
+const numberToWords=require('../utils/numberToWords')
+const generateinvoicepdf = new(require('../sample'))()
+const generatereceiptpdf = new(require('../sample2'))()
     //  console.log(mysqlExecute)
-  
+  console.log(generatereceiptpdf)
    
 
     this.addIncomeData = (req) => {
@@ -280,6 +284,93 @@ if (queryResponse.error == 'false') {
                 err.error = "true"
                 err.message = "OOPS DAO Exception"
                 resolve(err)
+            }
+        })
+    }
+
+        this.generateInvoiceData = (req) => {
+        var output = {}
+        return new Promise(async function(resolve) {
+            var output = {}
+              try {
+                var mysqlExecuteCall = new mysqlExecute()
+                const id=req.params.id;
+    const query=`Select id,InvoiceNumber,CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,Status,Items,ActionDate,CreatedAt,BankName,Branch,BeneficiaryName,AccountDetails,ACNO,IFSCCode from income_table where id=?`;
+       var queryRequest =[id]
+                         var queryResponse = await mysqlExecuteCall.executeWithParams(query, queryRequest)
+                          console.log(queryResponse)
+                           console.log(queryResponse.result[0])
+                         if (queryResponse.error == 'false') {
+                            console.log(queryResponse.error,'false')
+                            const randomFilename = generateShortRandomName() + '.pdf';
+                            
+                            const fileName=`Invoice(${queryResponse.result[0].id})(${(new Date(queryResponse.result[0].ActionDate)).toISOString().split("T")[0]})${randomFilename}`
+                            // const invoicePath = path.join(__dirname, `${fileName}`);
+    generateinvoicepdf.mypdf(queryResponse.result,fileName)
+                           const query=`UPDATE income_table SET InvoiceFile=? where id=?`
+                            var queryRequest =[fileName,id]
+                         var queryResponse = await mysqlExecuteCall.executeWithParams(query, queryRequest)
+                         if (queryResponse.error == 'false') {
+                            resolve({status:200,fileName:fileName,message:"Download Success"})
+                         }
+                         else{
+                             resolve({status:500,message:"Database Error",error:"true",message:"Dowload Failed"})
+                         }
+
+                          
+                           
+                         }
+                         else{
+                         
+                             resolve({status:500,message:"Database Error",error:"true"})
+                         }
+            } catch (err) {
+                err.error = "true"
+                err.message = "OOPS DAO Exception"
+                console.log(err)
+                // resolve(err)
+            }
+        })
+    }
+
+    this.generateReceiptData = (req) => {
+        var output = {}
+        return new Promise(async function(resolve) {
+            var output = {}
+              try {
+                var mysqlExecuteCall = new mysqlExecute()
+                const id=req.params.id;
+    const query=`Select id,InvoiceNumber,CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,Status,Items,ActionDate,CreatedAt from income_table where id=?`;
+       var queryRequest =[id]
+                         var queryResponse = await mysqlExecuteCall.executeWithParams(query, queryRequest)
+                         if (queryResponse.error == 'false') {
+                            
+                             const words=numberToWords(queryResponse.result[0].TotalAmount)+" "+"only";
+         const randomFilename = generateShortRandomName() + '.pdf';
+         const fileName=`PaymentReceipt(${id})(${(new Date(queryResponse.result[0].ActionDate)).toISOString().split("T")[0]})${randomFilename}`
+    generatereceiptpdf.myreceiptpdf(queryResponse.result,words,fileName)
+                           const query=`UPDATE income_table SET PaymentReceiptFile=? where id=?`
+                            var queryRequest =[fileName,id]
+                         var queryResponse = await mysqlExecuteCall.executeWithParams(query, queryRequest)
+                         if (queryResponse.error == 'false') {
+                            resolve({status:200,fileName:fileName,message:"Download Success"})
+                         }
+                         else{
+                             resolve({status:500,message:"Database Error",error:"true",message:"Dowload Failed"})
+                         }
+
+                          
+                           
+                         }
+                         else{
+                         
+                             resolve({status:500,message:"Database Error",error:"true"})
+                         }
+            } catch (err) {
+                err.error = "true"
+                err.message = "OOPS DAO Exception"
+                console.log(err)
+                // resolve(err)
             }
         })
     }

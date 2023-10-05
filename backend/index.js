@@ -13,8 +13,7 @@ const ExpenseRoutes=require('./routes/ExpenseRoutes')
 
 const app = express();
 
-const generateinvoicepdf = new(require('./sample'))()
-const generatereceiptpdf = new(require('./sample2'))()
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));

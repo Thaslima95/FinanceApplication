@@ -1,7 +1,8 @@
 module.exports=function(){
-this.mypdf=function(data,invoicePath){
+this.mypdf=function(data,fileName){
 const puppeteer = require('puppeteer')
 const fs = require('fs');
+const path=require('path')
 const { v4: uuidv4 } = require('uuid');
 
 (async () => {
@@ -26,7 +27,7 @@ const html=`<!doctypehtml><meta charset=utf-8><title>Invoice</title><style>.rota
   // or a .pdf file
   await page.pdf({
     format: 'A4',
-    path: invoicePath
+    path: path.join(__dirname, `${fileName}`)
   })
 
   // close the browser
