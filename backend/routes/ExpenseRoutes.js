@@ -2,16 +2,16 @@ const express = require('express');
 const router = express.Router();
 const {check,validationResult}=require('express-validator')
 const pool = require('../db/db');
-const Controller=new (require('../Controller/IncomeController'))()
+const ExpenseController=new (require('../Controller/ExpenseController'))()
 
-router.post('/addincome', [
+router.post('/addexpense', [
     check('Company Name')
       .isLength({ min: 1 })
       .withMessage('Invalid: Company Name must have at least 1 character')
   ],function(request, response) {
      
             // var userControllerObject = new userController()
-            IncomeController.addIncomeController(request, function({message,status}) {
+            IncomeController.addExpenseController(request, function({message,status}) {
                 console.log(message)
                 console.log(status,'status')
                 return response.status(status).send(message)
@@ -22,10 +22,10 @@ router.post('/addincome', [
 
 
 
-  router.get('/getincomedetails', function(request, response) {
+  router.get('/getexpensedetails', function(request, response) {
      
             // var userControllerObject = new userController()
-            IncomeController.getListIncomeController(request, function({data}) {
+            IncomeController.getListExpenseController(request, function({data}) {
                 
                 console.log(data)
                 return response.send(data)
@@ -34,14 +34,14 @@ router.post('/addincome', [
 
   })
 
-    router.put('/updateincome/:id', [
+    router.put('/updateexpense/:id', [
     check('Company Name')
       .isLength({ min: 1 })
       .withMessage('Invalid: Company Name must have at least 1 character')
   ],function(request, response) {
           console.log(request.params.id)
             // var userControllerObject = new userController()
-            IncomeController.updateIncomeController(request, function({message,status}) {
+            IncomeController.updateExpenseController(request, function({message,status}) {
                 console.log(message)
                 console.log(status,'status')
                 return response.status(status).send(message)
@@ -50,14 +50,14 @@ router.post('/addincome', [
 
   })
 
-   router.put('/deletesinglerecord/:id', [
+   router.put('/deletesingleexpenserecord/:id', [
     check('Company Name')
       .isLength({ min: 1 })
       .withMessage('Invalid: Company Name must have at least 1 character')
   ],function(request, response) {
           console.log(request.params.id)
             // var userControllerObject = new userController()
-            IncomeController.deleteIncomeController(request, function({message,status}) {
+            IncomeController.deleteExpenseController(request, function({message,status}) {
                 console.log(message)
                 console.log(status,'status')
                 return response.status(status).send(message)
@@ -69,10 +69,10 @@ router.post('/addincome', [
 
 
 
-  router.get('/getTotalIncomeRate',function(request, response) {
+  router.get('/getDirectTotalExpenseRate',function(request, response) {
      
             // var userControllerObject = new userController()
-            IncomeController.getTotalIncomeController(request, function({data}) {
+            IncomeController.getTotalExpenseController(request, function({data}) {
                console.log(data)
                 return response.send(data)
             })
@@ -80,11 +80,11 @@ router.post('/addincome', [
 
   })
 
-    router.get('/getUnpaidTotalIncomeRate',function(request, response) {
+    router.get('/getIndirectTotalExpenseRate',function(request, response) {
         console.log("unpaid")
      
             // var userControllerObject = new userController()
-            IncomeController.getUnpaidTotalIncomeController(request, function({data}) {
+            IncomeController.getIndirectTotalExpenseController(request, function({data}) {
                console.log(data)
                 return response.send(data)
             })
