@@ -83,16 +83,22 @@ export default {
   addExpense: async function (newRow) {
     try {
       const response = await axios.post(`/expense/addexpense`, newRow);
+      console.log(response);
       return response;
     } catch (err) {
+      console.log(err);
       return err;
     }
   },
   updateExpense: async function (id, newRow) {
     try {
       const response = await axios.put(`/expense/updateexpense/${id}`, newRow);
+      console.log(response);
+
       return response;
     } catch (err) {
+      console.log(err);
+
       return err;
     }
   },

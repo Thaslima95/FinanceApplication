@@ -10,7 +10,7 @@ router.post(
     check("PaymentType")
       .notEmpty()
       .isString()
-      .isIn(["Direct", "InDirect"])
+      .isIn(["Direct", "Indirect"])
       .withMessage("Invalid status. Status must be one of: Direct,Indirect"),
     check("AccountType")
       .notEmpty()
@@ -41,8 +41,9 @@ router.post(
       return response.status(500).send(error.errors[0].msg);
     } else {
       ExpenseController.addExpenseController(
-        request,
+        request.body,
         function ({ message, status }) {
+          console.log(status, message);
           return response.status(status).send(message);
         }
       );

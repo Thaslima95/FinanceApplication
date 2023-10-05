@@ -110,7 +110,8 @@ export default function ExpenseRecord({
             IGST: Number(adddetails.IGST),
           })
             .then((res) => {
-              if (res.response.status === 200 || res.status === 200) {
+              console.log(res.status);
+              if (res.status === 200 || res.response.status === 200) {
                 window.alert("Expense Updated Successfully");
                 totalExpenseDetails();
                 totalIndirectExpenseDetails();
@@ -149,7 +150,8 @@ export default function ExpenseRecord({
             IGST: Number(adddetails.IGST),
           })
             .then((res) => {
-              if (res.response.status === 200 || res.status === 200) {
+              console.log(res);
+              if (res.status == 200 || res.response.status == 200) {
                 window.alert("Expense Created Successfully");
                 getExpenseRecord();
                 totalExpenseDetails();

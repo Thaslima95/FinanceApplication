@@ -121,6 +121,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               } else if (res.response.status == 403) {
                 window.alert("Invoice Number Already exists");
               } else if (res.response.status == 500) {
+                console.log(res);
                 window.alert(res.response.data);
               }
             })

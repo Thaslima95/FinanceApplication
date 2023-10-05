@@ -133,7 +133,7 @@ router.put(
     check("PSYear").notEmpty().isString(),
     check("Pincode").notEmpty().isNumeric(),
     check("HSNSAC").notEmpty().isNumeric(),
-    check("ACNO").notEmpty().isLength({ min: 12 }).isNumeric(),
+    check("ACNO").notEmpty().isLength({ min: 5 }).isNumeric(),
     check("BankName")
       .isLength({ min: 5 })
       .withMessage("Invalid: BankName must have at least 1 character"),

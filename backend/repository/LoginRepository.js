@@ -26,6 +26,7 @@ module.exports = function () {
                 id: queryResponse.result[0].id,
                 message: "Login Successfull",
                 error: "false",
+                token: token,
               });
             } else {
               resolve({
