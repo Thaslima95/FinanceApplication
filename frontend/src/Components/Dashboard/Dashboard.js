@@ -231,7 +231,8 @@ const Dashboard = () => {
     } else {
       Axios.delete(`/account/api/account-summary/${accountId}`)
         .then((response) => {
-          if (response.status === 200) {
+          console.log(response);
+          if (response.status == 300) {
             const updatedTableData = [...tableData];
             updatedTableData.splice(index, 1);
             setTableData(updatedTableData);

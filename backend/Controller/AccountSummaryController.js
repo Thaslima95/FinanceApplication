@@ -57,4 +57,23 @@ module.exports = function () {
 
     callback(response);
   };
+
+  this.deleteSummaryController = async (req, callback) => {
+    var response = {};
+    var AccountSummaryServiceObject = new AccountSummaryServices();
+    var accountsummaryresult =
+      await AccountSummaryServiceObject.deleteSummaryService(req);
+    if (accountsummaryresult.error == "true") {
+      response.error = "true";
+      response.message = accountsummaryresult.message;
+      response.status = accountsummaryresult.status;
+    } else {
+      response.error = "false";
+      response.message = accountsummaryresult.message;
+      response.data = accountsummaryresult.result;
+      response.status = accountsummaryresult.status;
+    }
+
+    callback(response);
+  };
 };

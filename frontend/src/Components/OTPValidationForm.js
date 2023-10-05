@@ -1,11 +1,17 @@
-import { Container, Typography, TextField, Button, ListItemIcon } from "@mui/material";
+import {
+  Container,
+  Typography,
+  TextField,
+  Button,
+  ListItemIcon,
+} from "@mui/material";
 import React, { useState, useEffect } from "react";
 import "./OTPValidationForm.css";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 function OTPValidationForm({ email }) {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [otp, setOTP] = useState("");
   const [error, setError] = useState(false);
   const [resendTimer, setResendTimer] = useState(60);
@@ -18,7 +24,10 @@ function OTPValidationForm({ email }) {
     e.preventDefault();
     // if (otp.length === 6) {
     axios
-      .post("http://localhost:8089/otp/verify_otp", { otp, email: localStorage.getItem("email") })
+      .post("http://localhost:8089/otp/verify_otp", {
+        otp,
+        email: localStorage.getItem("email"),
+      })
       .then((response) => {
         const isValid = response.data.isValid;
         console.log(response);
@@ -33,10 +42,6 @@ function OTPValidationForm({ email }) {
         alert("Error validating OTP: " + error.response.data);
         setError(true);
       });
-    // } else {
-    //   alert("Invalid OTP. Please enter a valid OTP.");
-    //   setError(true);
-    // }
   };
   const handleResend = () => {
     setResendTimer(60);
@@ -58,16 +63,12 @@ function OTPValidationForm({ email }) {
         Check your email!
       </Typography>
       <Typography variant="p" gutterBottom>
-        Please enter the verification code that was sent. The code is valid for {resendTimer} seconds.
+        Please enter the verification code that was sent. The code is valid for{" "}
+        {resendTimer} seconds.
       </Typography>
       {signupSuccess ? (
         // Display success message if signupSuccess is true
-        <div>
-          {/* <Typography variant="h4" style={{ color: "green" }}>
-            Signup successfully!
-          </Typography> */}
-          {navigate('/login')}
-        </div>
+        <div>{navigate("/login")}</div>
       ) : (
         // Display the OTP validation form if signupSuccess is false
         <form onSubmit={handleSubmit}>

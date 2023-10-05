@@ -108,4 +108,33 @@ module.exports = function () {
       }
     });
   };
+
+  this.deleteSummaryService = (incomeData) => {
+    return new Promise(async function (resolve) {
+      var response = {};
+
+      var AccountSummarydataObject = new AccountSummaryRepo();
+      try {
+        var accountsummaryresult =
+          await AccountSummarydataObject.deleteSummaryData(incomeData);
+
+        if (accountsummaryresult.error == "true") {
+          response.error = "true";
+          response.message = "record not found";
+          response.status = accountsummaryresult.status;
+          resolve(response);
+        } else {
+          response.error = "false";
+          response.message = "record deleted";
+          response.status = accountsummaryresult.status;
+
+          resolve(response);
+        }
+      } catch (err) {
+        response.error = "true";
+        response.message = "OOPS Service Error";
+        resolve(response);
+      }
+    });
+  };
 };
