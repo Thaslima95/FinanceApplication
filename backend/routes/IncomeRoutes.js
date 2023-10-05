@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const {check,validationResult}=require('express-validator')
-const pool = require('../db/db');
+const generateShortRandomName=require('../utils/generateShortRandomName')
+const numberToWords=require('../utils/numberToWords')
 const IncomeController=new (require('../Controller/IncomeController'))()
 
 router.post('/addincome', [
