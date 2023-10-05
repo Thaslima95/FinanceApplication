@@ -41,7 +41,7 @@ const Login = () => {
     event.preventDefault();
     try {
       const response = await axios.post(
-        "api/login",
+        "/login/api/login",
         formData
       );
       if (response.status === 200) {

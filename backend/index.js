@@ -9,6 +9,7 @@ const userRoutes = require('./routes/userRoutes');
 const otpRoutes = require('./routes/otpRoutes');
 const IncomeRoutes=require('./routes/IncomeRoutes')
 const ExpenseRoutes=require('./routes/ExpenseRoutes')
+const LoginRoutes=require('./routes/LoginRoutes')
 // const pool=require('./db/db1')
 
 const app = express();
@@ -40,6 +41,7 @@ app.use('/otp', otpRoutes);
 app.use('/file', express.static(path.join(__dirname)));
 app.use('/income', IncomeRoutes);
 app.use('/expense', ExpenseRoutes);
+app.use('/login',LoginRoutes)
 
 
 
