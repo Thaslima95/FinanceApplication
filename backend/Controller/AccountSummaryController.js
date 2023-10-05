@@ -14,6 +14,8 @@ module.exports = function () {
     } else {
       response.error = "false";
       response.data = AccountSummaryService.data;
+      response.message = AccountSummaryService.message;
+      response.status = AccountSummaryService.status;
     }
 
     callback(response);

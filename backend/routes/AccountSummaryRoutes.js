@@ -24,12 +24,12 @@ router.post(
 
 router.get("/api/account-summary", function (request, response) {
   AccountController.getAccountSummaryController(request, function ({ data }) {
-    console.log(data);
     return response.send(data);
   });
 });
 
 router.put("/api/account-summary/:id", function (request, response) {
+  console.log("update");
   AccountController.updateSummaryController(
     request,
     function ({ message, status }) {

@@ -79,8 +79,9 @@ module.exports = function () {
       try {
         var accountsummaryresult =
           await AccountSummarydataObject.updateSummaryData(incomeData);
-
+        console.log(accountsummaryresult);
         if (accountsummaryresult.result.length > 0) {
+          console.log(accountsummaryresult);
           if (accountsummaryresult.error == "true") {
             response.error = "true";
             response.message = "already exists";

@@ -109,7 +109,7 @@ const Dashboard = () => {
       newData.balance &&
       newData.date
     ) {
-      Axios.post("/api/account-summary", newData)
+      Axios.post("/account/api/account-summary", newData)
         .then((response) => {
           if (response.status === 200) {
             setTableData((prevTableData) => [...prevTableData, newData]);
@@ -148,6 +148,7 @@ const Dashboard = () => {
         date: updatedTableData[index].date,
       })
         .then((response) => {
+          console.log(response);
           if (response.status === 200) {
             console.log("Record updated successfully");
           } else {
@@ -228,7 +229,7 @@ const Dashboard = () => {
       updatedTableData.splice(index, 1);
       setTableData(updatedTableData);
     } else {
-      Axios.delete(`/api/account-summary/${accountId}`)
+      Axios.delete(`/account/api/account-summary/${accountId}`)
         .then((response) => {
           if (response.status === 200) {
             const updatedTableData = [...tableData];
