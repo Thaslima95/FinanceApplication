@@ -8,6 +8,7 @@ const { v4: uuidv4 } = require('uuid');
 const userRoutes = require('./routes/userRoutes');
 const otpRoutes = require('./routes/otpRoutes');
 const IncomeRoutes=require('./routes/IncomeRoutes')
+const ExpenseRoutes=require('./routes/ExpenseRoutes')
 // const pool=require('./db/db1')
 
 const app = express();
@@ -39,6 +40,7 @@ app.use('/otp', otpRoutes);
 
 app.use('/file', express.static(path.join(__dirname)));
 app.use('/income', IncomeRoutes);
+app.use('/expense', IncomeRoutes);
 function generateShortRandomName() {
   const uuid = uuidv4();
   const shortName = uuid.replace(/-/g, '').substr(0, 10);

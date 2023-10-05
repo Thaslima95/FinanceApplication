@@ -139,7 +139,6 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
             IGST: Number(adddetails.IGST),
           })
             .then((res) => {
-              console.log(res);
               if (res.status == 200) {
                 window.alert("Income Created Successfully");
                 totalIncomecall();

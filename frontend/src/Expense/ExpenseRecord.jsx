@@ -166,6 +166,8 @@ export default function ExpenseRecord({
                   TotalAmount: 0,
                   BalanceDue: 0,
                 });
+              } else if (res.response.status == 403) {
+                window.alert("Invoice Number Already exists");
               }
             })
             .catch((err) => window.alert("Sorry!Try Again", err));
