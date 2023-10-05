@@ -1,5 +1,5 @@
 const express=require('express')
-const mysql=require('mysql')
+
 const cors=require('cors')
 var jwt = require('jsonwebtoken');
 var bodyParser = require('body-parser');
@@ -8,7 +8,8 @@ const { v4: uuidv4 } = require('uuid');
 const userRoutes = require('./routes/userRoutes');
 const otpRoutes = require('./routes/otpRoutes');
 const IncomeRoutes=require('./routes/IncomeRoutes')
-const pool = require('./db/db');
+// const pool=require('./db/db1')
+
 const app = express();
 
 const generateinvoicepdf = new(require('./sample'))()

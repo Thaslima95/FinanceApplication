@@ -4,7 +4,7 @@ import axios from "axios";
 export default {
   addIncome: async function (newRow) {
     try {
-      const response = await axios.post(`/addincome`, newRow);
+      const response = await axios.post(`/income/addincome`, newRow);
       console.log(response);
       return response;
     } catch (err) {
@@ -13,7 +13,8 @@ export default {
   },
   updateIncome: async function (id, newRow) {
     try {
-      const response = await axios.put(`/updateincome/${id}`, newRow);
+      console.log("updatw");
+      const response = await axios.put(`/income/updateincome/${id}`, newRow);
       console.log(response);
       return response;
     } catch (err) {
@@ -22,16 +23,16 @@ export default {
   },
   getTotalIncome: async function () {
     try {
-      const response = await axios.get(`/getTotalIncomeRate`);
-      return response.data;
+      const response = await axios.get(`/income/getTotalIncomeRate`);
+      return response;
     } catch (err) {
       console.log(err);
     }
   },
   getUnpaidTotalIncome: async function () {
     try {
-      const response = await axios.get(`getUnpaidTotalIncomeRate`);
-      return response.data;
+      const response = await axios.get(`/income/getUnpaidTotalIncomeRate`);
+      return response;
     } catch (err) {
       console.log(err);
     }
@@ -56,7 +57,7 @@ export default {
 
   deleteSingleIncome: async function (id) {
     try {
-      const response = await axios.put(`/deletesinglerecord/${id}`);
+      const response = await axios.put(`/income/deletesinglerecord/${id}`);
       return response.data;
     } catch (err) {
       console.log(err);

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from 'axios';
 import {
   Toolbar,
   Typography,
@@ -13,29 +14,55 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import Dashboard from "../Dashboard/Dashboard";
-import Income from "../Income/Income";
-import Expenses from "../Expenses/Expenses";
 import IncomeDashboard from "../../Income/IncomeDashboard";
 import ExpenseDashboard from "../../Expense/ExpenseDashboard";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { useNavigate } from "react-router-dom";
 
 const Layout = () => {
   const [showNavBar, setShowNavBar] = useState(true);
   const [selectedTab, setSelectedTab] = useState("dashboard");
+  const navigate = useNavigate();
 
-  const handleTabClick = (tab) => {
-    setSelectedTab(tab);
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem("userToken");
+
+      await axios.post("/api/logout", null, {
+        headers: {
+          Authorization: token,
+        },
+      });
+
+      localStorage.removeItem("userToken");
+
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   };
 
   const renderSelectedComponent = () => {
     if (selectedTab === "dashboard") {
       return <Dashboard />;
     } else if (selectedTab === "income") {
-      return <IncomeDashboard/>
+      return <IncomeDashboard />;
     } else if (selectedTab === "expenses") {
-      return <ExpenseDashboard/>
+      return <ExpenseDashboard />;
     }
   };
 
+  const handleTabClick = (tab) => {
+    setSelectedTab(tab);
+    localStorage.setItem("selectedTab", tab);
+  };
+
+  useEffect(() => {
+    const storedTab = localStorage.getItem("selectedTab");
+    if (storedTab) {
+      setSelectedTab(storedTab);
+    }
+  }, []);
   return (
     <div style={{ display: "flex" }}>
       {showNavBar && (
@@ -66,14 +93,13 @@ const Layout = () => {
           </Toolbar>
           <List>
             <Divider />
-            {/* Dashboard */}
             <ListItem
               button
               key="dashboard"
               onClick={() => handleTabClick("dashboard")}
               sx={{
                 "&:hover": {
-                  backgroundColor: "#333", // Change the background color on hover
+                  backgroundColor: "#333",
                 },
               }}
             >
@@ -82,14 +108,13 @@ const Layout = () => {
               </ListItemIcon>
               <ListItemText primary="Dashboard" style={{ color: "#FBC91B" }} />
             </ListItem>
-            {/* Income */}
             <ListItem
               button
               key="income"
               onClick={() => handleTabClick("income")}
               sx={{
                 "&:hover": {
-                  backgroundColor: "#333", // Change the background color on hover
+                  backgroundColor: "#333",
                 },
               }}
             >
@@ -98,14 +123,13 @@ const Layout = () => {
               </ListItemIcon>
               <ListItemText primary="Income" style={{ color: "#FBC91B" }} />
             </ListItem>
-            {/* Expenses */}
             <ListItem
               button
               key="expenses"
               onClick={() => handleTabClick("expenses")}
               sx={{
                 "&:hover": {
-                  backgroundColor: "#333", // Change the background color on hover
+                  backgroundColor: "#333",
                 },
               }}
             >
@@ -114,14 +138,26 @@ const Layout = () => {
               </ListItemIcon>
               <ListItemText primary="Expenses" style={{ color: "#FBC91B" }} />
             </ListItem>
+            <ListItem
+              button
+              key="logout"
+              onClick={handleLogout}
+              sx={{
+                "&:hover": {
+                  backgroundColor: "#333",
+                },
+              }}
+            >
+              <ListItemIcon>
+                <LogoutIcon style={{ color: "#FBC91B" }} />
+              </ListItemIcon>
+              <ListItemText primary="Logout" style={{ color: "#FBC91B" }} />
+            </ListItem>
           </List>
         </Drawer>
       )}
-      <div style={{ flex: 1 }}>
-        {renderSelectedComponent()}
-      </div>
+      <div style={{ flex: 1 }}>{renderSelectedComponent()}</div>
     </div>
   );
 };
-
 export default Layout;

@@ -19,14 +19,14 @@ export default function IncomeDashboard() {
   const totalunpaidincomecall = () => {
     ApiCalls.getUnpaidTotalIncome()
       .then((res) => {
-        setUnpaidIncome(res[0].Total);
+        setUnpaidIncome(res.data.Total);
       })
       .catch((err) => console.log(err));
   };
   const totalIncomecall = () => {
     ApiCalls.getTotalIncome()
       .then((res) => {
-        setTotalIncome(res[0].Total);
+        setTotalIncome(res.data.Total);
       })
       .catch((err) => console.log(err));
   };

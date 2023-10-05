@@ -170,17 +170,6 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
     setOpen(true);
   };
 
-  useEffect(() => {
-    getIncomeRecord();
-  }, []);
-
-  const getIncomeRecord = () => {
-    axios
-      .get(`/getincomedetails`)
-      .then((res) => setRows(res.data))
-      .catch((err) => console.log(err));
-  };
-
   const handleEditClick = (id) => {
     setActionTake(true);
     setOpen(true);
@@ -216,7 +205,13 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
     ApiCalls.donwloadInvoice(id)
       .then((res) => {
         if (res.status == 200 || 201) {
-          window.alert(`Download Success\npath:${res.data.path}`);
+          // window.alert(`Download Success\nfilename:${res.data.fileName}`);
+          setTimeout(() => {
+            window.open(
+              `http://localhost:8089/file/${res.data.fileName}`,
+              "__blank"
+            );
+          }, 5000);
         }
       })
       .catch((err) => window.alert("Download Failed!Try again!"));
@@ -226,10 +221,29 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
     ApiCalls.generatereceipt(id)
       .then((res) => {
         if (res.status == 200 || 201) {
-          window.alert(`Download Success\npath:${res.data.path}`);
+          setTimeout(() => {
+            window.open(
+              `http://localhost:8089/file/${res.data.fileName}`,
+              "__blank"
+            );
+          }, 5000);
         }
       })
       .catch((err) => window.alert("Download Failed!Try again!"));
+  };
+
+  useEffect(() => {
+    getIncomeRecord();
+  }, []);
+
+  const getIncomeRecord = () => {
+    axios
+      .get(`/income/getincomedetails`)
+      .then((res) => {
+        console.log(res);
+        setRows(res.data);
+      })
+      .catch((err) => console.log(err));
   };
 
   const columns = [
