@@ -134,6 +134,8 @@ export default function ExpenseRecord({
                 });
               } else if (res.response.status == 403) {
                 window.alert("Invoice Number Already exists");
+              } else if (res.response.status == 500) {
+                window.alert(res.response.data);
               }
             })
             .catch((err) => window.alert("Sorry!Try Again"));
@@ -170,6 +172,8 @@ export default function ExpenseRecord({
                 });
               } else if (res.response.status == 403) {
                 window.alert("Invoice Number Already exists");
+              } else if (res.response.status == 500) {
+                window.alert(res.response.data);
               }
             })
             .catch((err) => window.alert("Sorry!Try Again", err));
@@ -180,15 +184,6 @@ export default function ExpenseRecord({
     }
   };
 
-  useEffect(() => {
-    getExpenseRecord();
-  }, []);
-  const getExpenseRecord = () => {
-    axios
-      .get(`/expense/getexpensedetails`)
-      .then((res) => setRows(res.data))
-      .catch((err) => console.log(err));
-  };
   const handleDeleteClose = () => {
     setdeleteOpen(false);
     getExpenseRecord();
@@ -222,6 +217,16 @@ export default function ExpenseRecord({
         getExpenseRecord();
       })
       .catch((err) => window.alert("Sorry!Try Again"));
+  };
+
+  useEffect(() => {
+    getExpenseRecord();
+  }, []);
+  const getExpenseRecord = () => {
+    axios
+      .get(`/expense/getexpensedetails`)
+      .then((res) => setRows(res.data))
+      .catch((err) => console.log(err));
   };
 
   const columns = [

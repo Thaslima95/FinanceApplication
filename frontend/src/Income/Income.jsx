@@ -4,7 +4,6 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import DownloadIcon from "@mui/icons-material/Download";
-
 import moment from "moment";
 import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
@@ -15,11 +14,9 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
-
 import TextField from "@mui/material/TextField";
 import { Grid } from "@mui/material";
 import axios from "axios";
-
 import { GridRowModes, DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import ApiCalls from "../API/ApiCalls";
@@ -73,6 +70,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
 
   const handleaddIncome = () => {
     if (
+      adddetails.InvoiceNumber == "" ||
       adddetails.CompanyName == "" ||
       adddetails.StreetAddress == "" ||
       adddetails.City == "" ||
@@ -210,7 +208,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               `http://localhost:8089/file/${res.data.fileName}`,
               "__blank"
             );
-          }, 5000);
+          }, 3000);
         }
       })
       .catch((err) => window.alert("Download Failed!Try again!"));

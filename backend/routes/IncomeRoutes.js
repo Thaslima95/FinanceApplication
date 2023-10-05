@@ -69,7 +69,6 @@ router.post(
   function (request, response) {
     const error = validationResult(request);
     if (error.array().length) {
-      console.log(error);
       return response.status(500).send(error.errors[0].msg);
     } else {
       IncomeController.addIncomeController(
@@ -154,7 +153,6 @@ router.put(
   function (request, response) {
     const error = validationResult(request);
     if (error.array().length) {
-      console.log(error);
       return response.status(500).send(error.errors[0].msg);
     } else {
       IncomeController.updateIncomeController(
@@ -169,18 +167,19 @@ router.put(
 
 router.put(
   "/deletesinglerecord/:id",
-  [
-    check("Company Name")
-      .isLength({ min: 1 })
-      .withMessage("Invalid: Company Name must have at least 1 character"),
-  ],
+  [check("id").isLength({ min: 1 }).isNumeric().withMessage("Invalid id")],
   function (request, response) {
-    IncomeController.deleteIncomeController(
-      request,
-      function ({ message, status }) {
-        return response.status(status).send(message);
-      }
-    );
+    const error = validationResult(request);
+    if (error.array().length) {
+      return response.status(500).send(error.errors[0].msg);
+    } else {
+      IncomeController.deleteIncomeController(
+        request,
+        function ({ message, status }) {
+          return response.status(status).send(message);
+        }
+      );
+    }
   }
 );
 
@@ -196,26 +195,44 @@ router.get("/getUnpaidTotalIncomeRate", function (request, response) {
   });
 });
 
-router.get("/generateinvoice/:id", function (request, response) {
-  IncomeController.generateInvoiceController(
-    request,
-    function ({ message, status, fileName }) {
-      return response
-        .status(status)
-        .send({ fileName: fileName, message: message });
+router.get(
+  "/generateinvoice/:id",
+  [check("id").isLength({ min: 1 }).isNumeric().withMessage("Invalid id")],
+  function (request, response) {
+    const error = validationResult(request);
+    if (error.array().length) {
+      return response.status(500).send(error.errors[0].msg);
+    } else {
+      IncomeController.generateInvoiceController(
+        request,
+        function ({ message, status, fileName }) {
+          return response
+            .status(status)
+            .send({ fileName: fileName, message: message });
+        }
+      );
     }
-  );
-});
+  }
+);
 
-router.get("/generatereceipt/:id", function (request, response) {
-  IncomeController.generateReceiptController(
-    request,
-    function ({ message, status, fileName }) {
-      return response
-        .status(status)
-        .send({ fileName: fileName, message: message });
+router.get(
+  "/generatereceipt/:id",
+  [check("id").isLength({ min: 1 }).isNumeric().withMessage("Invalid id")],
+  function (request, response) {
+    const error = validationResult(request);
+    if (error.array().length) {
+      return response.status(500).send(error.errors[0].msg);
+    } else {
+      IncomeController.generateReceiptController(
+        request,
+        function ({ message, status, fileName }) {
+          return response
+            .status(status)
+            .send({ fileName: fileName, message: message });
+        }
+      );
     }
-  );
-});
+  }
+);
 
 module.exports = router;
