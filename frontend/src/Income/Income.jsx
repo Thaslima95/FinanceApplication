@@ -4,12 +4,8 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import DownloadIcon from "@mui/icons-material/Download";
-import SaveIcon from "@mui/icons-material/Save";
-import CancelIcon from "@mui/icons-material/Close";
-import Moment from "react-moment";
+
 import moment from "moment";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
@@ -19,7 +15,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+
 import TextField from "@mui/material/TextField";
 import { Grid } from "@mui/material";
 import axios from "axios";
@@ -116,7 +112,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
           })
             .then((res) => {
               console.log(res);
-              if (res.status === 200) {
+              if (res.status === 200 || res.response.status == 200) {
                 window.alert("Income Updated Successfully");
                 totalIncomecall();
                 totalunpaidincomecall();
@@ -126,6 +122,8 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
                 setAddDetails({ ...initialvalue, id: "" });
               } else if (res.response.status == 403) {
                 window.alert("Invoice Number Already exists");
+              } else if (res.response.status == 500) {
+                window.alert(res.response.data);
               }
             })
             .catch((err) => window.alert("Sorry!Try Again"));
@@ -139,7 +137,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
             IGST: Number(adddetails.IGST),
           })
             .then((res) => {
-              if (res.status == 200) {
+              if (res.status == 200 || res.response.status == 200) {
                 window.alert("Income Created Successfully");
                 totalIncomecall();
                 totalunpaidincomecall();
@@ -148,9 +146,11 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
                 setAddDetails({ ...initialvalue, id: "" });
               } else if (res.response.status == 403) {
                 window.alert("Invoice Number Already exists");
+              } else if (res.response.status == 500) {
+                window.alert(res.response.data);
               }
             })
-            .catch((err) => window.alert("Sorry Try Again Later "));
+            .catch((err) => console.log(err));
         }
       } else {
         window.alert("Invoice date should be less than or equal to due date");
@@ -628,7 +628,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
                     Pincode: Number(e.target.value),
                   })
                 }
-                value={adddetails.Pincode}
+                value={adddetails.Pincode || ""}
               />
               <TextField
                 id="filled-basic"

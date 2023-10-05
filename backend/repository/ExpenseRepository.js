@@ -1,14 +1,14 @@
 module.exports = function() {
    
      var mysqlExecute = require('../db/db')
-    //  console.log(mysqlExecute)
+  
   
    
 
     this.addExpenseData = (req) => {
-        var output = {}
+      
         return new Promise(async function(resolve) {
-            var output = {}
+          
               try {
                 var mysqlExecuteCall = new mysqlExecute()
                  const invoicenumber=req.body.InvoiceNumber;
@@ -57,9 +57,9 @@ if (queryResponse.error == 'false') {
     }
 
       this.updateExpenseData = (req) => {
-        var output = {}
+        
         return new Promise(async function(resolve) {
-            var output = {}
+            
               try {
                 var mysqlExecuteCall = new mysqlExecute()
                 const id=req.params.id;
@@ -113,13 +113,13 @@ if (queryResponse.error == 'false') {
                    
                 } else {
                     resolve(queryResponse)
-                    console.log(queryResponse)
+                   
                 }
 
                     }
                 } else {
                     resolve(queryResponse)
-                    console.log(queryResponse)
+                  
                 }   
             } catch (err) {
                 err.error = "true"
@@ -130,9 +130,9 @@ if (queryResponse.error == 'false') {
     }
 
     this.deleteExpenseData = (req) => {
-        var output = {}
+       
         return new Promise(async function(resolve) {
-            var output = {}
+            
               try {
                 var mysqlExecuteCall = new mysqlExecute()
                 const id=req.params.id;
@@ -159,18 +159,18 @@ if (queryResponse.error == 'false') {
 
 
     this.getTotalExpenseData = (req) => {
-        var output = {}
+        
         return new Promise( async function(resolve) {
-            var output = {}
+           
             try {
                 var mysqlExecuteCall = new mysqlExecute()
                 var query = "Select sum(TotalAmount) as Total from expense_table where PaymentType='Direct' and IsDeleted=0"
                 var queryResponse = await mysqlExecuteCall.executeWithoutParams(query)
                 if (queryResponse.error == 'false') {
-                    console.log(queryResponse)
+                    
                     resolve(queryResponse)
                 } else {
-                    console.log(queryResponse)
+                   
                     resolve(queryResponse)
                 }
             } catch (err) {
@@ -182,18 +182,18 @@ if (queryResponse.error == 'false') {
     }
 
       this.getIndirectTotalExpenseData = (req) => {
-        var output = {}
+      
         return new Promise( async function(resolve) {
-            var output = {}
+            
             try {
                 var mysqlExecuteCall = new mysqlExecute()
                 var query = "Select sum(TotalAmount) as Total from expense_table where PaymentType='Indirect' and IsDeleted=0"
                 var queryResponse = await mysqlExecuteCall.executeWithoutParams(query)
                 if (queryResponse.error == 'false') {
-                    console.log(queryResponse)
+                  
                     resolve(queryResponse)
                 } else {
-                    console.log(queryResponse)
+                 
                     resolve(queryResponse)
                 }
             } catch (err) {
@@ -204,9 +204,9 @@ if (queryResponse.error == 'false') {
         })
     }
    this.getListExpenseData = (req) => {
-        var output = {}
+      
         return new Promise( async function(resolve) {
-            var output = {}
+           
             try {
                 var mysqlExecuteCall = new mysqlExecute()
                 var query = "SELECT id,InvoiceNumber,CGST,Particulars,PaymentType,AccountType,Amount,SGST,IGST,TotalAmount,DueDate,ActionDate from expense_table where  IsDeleted=0"

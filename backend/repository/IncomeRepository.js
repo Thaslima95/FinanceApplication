@@ -1,378 +1,557 @@
-module.exports = function() {
-   
-     var mysqlExecute = require('../db/db')
-     const generateShortRandomName=require('../utils/generateShortRandomName')
-const numberToWords=require('../utils/numberToWords')
-const generateinvoicepdf = new(require('../sample'))()
-const generatereceiptpdf = new(require('../sample2'))()
-    //  console.log(mysqlExecute)
-  console.log(generatereceiptpdf)
-   
+module.exports = function () {
+  var mysqlExecute = require("../db/db");
+  const generateShortRandomName = require("../utils/generateShortRandomName");
+  const numberToWords = require("../utils/numberToWords");
+  const generateinvoicepdf = new (require("../sample"))();
+  const generatereceiptpdf = new (require("../sample2"))();
 
-    this.addIncomeData = (req) => {
-        var output = {}
-        return new Promise(async function(resolve) {
-            var output = {}
-              try {
-                var mysqlExecuteCall = new mysqlExecute()
-                const companyname=req.body.CompanyName;
-    const streetaddress=req.body.StreetAddress;
-    const city=req.body.City;
-    const state=req.body.State;
-    const pincode=req.body.Pincode;
-    const placeofsupply=req.body.PlaceofSupply;
-    const particulars=req.body.Particulars;
-    const psyear=req.body.PSYear;
-    const GSTIN=req.body.GSTIN;
-    const hsnsac=req.body.HSNSAC;
-    const duedate = req.body.DueDate;
-    const actiondate =req.body.ActionDate; 
-    const rate=req.body.Rate;
-    const cgst=req.body.CGST;
-    const sgst=req.body.SGST;
-    const igst=req.body.IGST;
-    const totalamount=req.body.TotalAmount;
-    const balancedue=req.body.BalanceDue;
-    const status=req.body.Status;
-    const details=req.body.Items;
-    const bankname=req.body.BankName;
-    const branch=req.body.Branch;
-    const beneficiaryname=req.body.BeneficiaryName;
-    const accountdetails=req.body.AccountDetails;
-    const acno=req.body.ACNO;
-    const ifsccode=req.body.IFSCCode;
-    if(req.body.InvoiceNumber!="")
-    {
-        var query =`SELECT InvoiceNumber from income_table where InvoiceNumber=? and IsDeleted=0`;
-         var queryRequest =[req.body.InvoiceNumber]
-                         var queryResponse = await mysqlExecuteCall.executeWithParams(query, queryRequest)
+  this.addIncomeData = (data) => {
+    return new Promise(async function (resolve) {
+      try {
+        var mysqlExecuteCall = new mysqlExecute();
+        const companyname = data.CompanyName;
+        const streetaddress = data.StreetAddress;
+        const city = data.City;
+        const state = data.State;
+        const pincode = data.Pincode;
+        const placeofsupply = data.PlaceofSupply;
+        const particulars = data.Particulars;
+        const psyear = data.PSYear;
+        const GSTIN = data.GSTIN;
+        const hsnsac = data.HSNSAC;
+        const duedate = data.DueDate;
+        const actiondate = data.ActionDate;
+        const rate = data.Rate;
+        const cgst = data.CGST;
+        const sgst = data.SGST;
+        const igst = data.IGST;
+        const totalamount = data.TotalAmount;
+        const balancedue = data.BalanceDue;
+        const status = data.Status;
+        const details = data.Items;
+        const bankname = data.BankName;
+        const branch = data.Branch;
+        const beneficiaryname = data.BeneficiaryName;
+        const accountdetails = data.AccountDetails;
+        const acno = data.ACNO;
+        const ifsccode = data.IFSCCode;
+        if (data.InvoiceNumber != "") {
+          var query = `SELECT InvoiceNumber from income_table where InvoiceNumber=? and IsDeleted=0`;
+          var queryRequest = [data.InvoiceNumber];
+          var queryResponse = await mysqlExecuteCall.executeWithParams(
+            query,
+            queryRequest
+          );
 
-         if (queryResponse.error == 'false') {
-                    if(queryResponse.result.length>0)
-                    {
-                      resolve({result:queryResponse.result,error:"true",status:403,message:"already exists"})
-                    }
-                    else{
-                        var query="INSERT INTO income_table (CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,`Status`,Items,ActionDate,BankName,Branch,BeneficiaryName,AccountDetails,ACNO,IFSCCode,InvoiceNumber) VALUES ?";
-         var queryRequest =[[companyname,streetaddress,city,state,pincode,placeofsupply,duedate,GSTIN,particulars,psyear,hsnsac,rate,cgst,sgst,igst,totalamount,balancedue,status,details,actiondate,bankname,branch,beneficiaryname,accountdetails,acno,ifsccode,req.body.InvoiceNumber]]
-                         var queryResponse = await mysqlExecuteCall.executeWithParams(query,[ queryRequest])
-if (queryResponse.error == 'false') {
-                    resolve({status:200,message:"record insert success",result:[]})
-                } else {
-                    resolve(queryResponse)
-                }
-
-                    }
-                } else {
-                    resolve(queryResponse)
-                }
-    }
-    else{
-        var query =`SELECT InvoiceNumber FROM income_table where IsDeleted=0 ORDER BY InvoiceNumber DESC limit 1`;
-                         var queryResponse = await mysqlExecuteCall.executeWithoutParams(query)
- if (queryResponse.error == 'false') {
-                    
-                    if(queryResponse.result.length>0)
-                    {
-                        const match = queryResponse.result[0].InvoiceNumber.match(/00(\d+)/);
-              let num=Number(match[1])+1;
-              let invoiceNumber=`PS/${psyear}/00${num}`
-                var query="INSERT INTO income_table (CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,`Status`,Items,ActionDate,BankName,Branch,BeneficiaryName,AccountDetails,ACNO,IFSCCode,InvoiceNumber) VALUES ?";
-         var queryRequest =[[companyname,streetaddress,city,state,pincode,placeofsupply,duedate,GSTIN,particulars,psyear,hsnsac,rate,cgst,sgst,igst,totalamount,balancedue,status,details,actiondate,bankname,branch,beneficiaryname,accountdetails,acno,ifsccode,invoiceNumber]]
-                         var queryResponse = await mysqlExecuteCall.executeWithParams(query,[ queryRequest])
-if (queryResponse.error == 'false') {
-                    resolve({status:200,message:"record insert success",result:[]})
-                } else {
-                    resolve(queryResponse)
-                }
-
-                    }
-                   
-                } else {
-                   
-                    resolve(queryResponse)
-                }
-    }
-               
-            } catch (err) {
-                err.error = "true"
-                err.message = "OOPS DAO Exception"
-                resolve(err)
+          if (queryResponse.error == "false") {
+            if (queryResponse.result.length > 0) {
+              resolve({
+                result: queryResponse.result,
+                error: "true",
+                status: 403,
+                message: "already exists",
+              });
+            } else {
+              var query =
+                "INSERT INTO income_table (CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,`Status`,Items,ActionDate,BankName,Branch,BeneficiaryName,AccountDetails,ACNO,IFSCCode,InvoiceNumber) VALUES ?";
+              var queryRequest = [
+                [
+                  companyname,
+                  streetaddress,
+                  city,
+                  state,
+                  pincode,
+                  placeofsupply,
+                  duedate,
+                  GSTIN,
+                  particulars,
+                  psyear,
+                  hsnsac,
+                  rate,
+                  cgst,
+                  sgst,
+                  igst,
+                  totalamount,
+                  balancedue,
+                  status,
+                  details,
+                  actiondate,
+                  bankname,
+                  branch,
+                  beneficiaryname,
+                  accountdetails,
+                  acno,
+                  ifsccode,
+                  data.InvoiceNumber,
+                ],
+              ];
+              var queryResponse = await mysqlExecuteCall.executeWithParams(
+                query,
+                [queryRequest]
+              );
+              if (queryResponse.error == "false") {
+                resolve({
+                  status: 200,
+                  message: "record insert success",
+                  result: [],
+                });
+              } else {
+                resolve(queryResponse);
+              }
             }
-        })
-    }
+          } else {
+            resolve(queryResponse);
+          }
+        } else {
+          var query = `SELECT InvoiceNumber FROM income_table where IsDeleted=0 ORDER BY InvoiceNumber DESC limit 1`;
+          var queryResponse = await mysqlExecuteCall.executeWithoutParams(
+            query
+          );
+          if (queryResponse.error == "false") {
+            if (queryResponse.result.length > 0) {
+              const match =
+                queryResponse.result[0].InvoiceNumber.match(/00(\d+)/);
+              let num = Number(match[1]) + 1;
+              let invoiceNumber = `PS/${psyear}/00${num}`;
+              var query =
+                "INSERT INTO income_table (CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,`Status`,Items,ActionDate,BankName,Branch,BeneficiaryName,AccountDetails,ACNO,IFSCCode,InvoiceNumber) VALUES ?";
+              var queryRequest = [
+                [
+                  companyname,
+                  streetaddress,
+                  city,
+                  state,
+                  pincode,
+                  placeofsupply,
+                  duedate,
+                  GSTIN,
+                  particulars,
+                  psyear,
+                  hsnsac,
+                  rate,
+                  cgst,
+                  sgst,
+                  igst,
+                  totalamount,
+                  balancedue,
+                  status,
+                  details,
+                  actiondate,
+                  bankname,
+                  branch,
+                  beneficiaryname,
+                  accountdetails,
+                  acno,
+                  ifsccode,
+                  invoiceNumber,
+                ],
+              ];
+              var queryResponse = await mysqlExecuteCall.executeWithParams(
+                query,
+                [queryRequest]
+              );
+              if (queryResponse.error == "false") {
+                resolve({
+                  status: 200,
+                  message: "record insert success",
+                  result: [],
+                });
+              } else {
+                resolve(queryResponse);
+              }
+            }
+          } else {
+            resolve(queryResponse);
+          }
+        }
+      } catch (err) {
+        err.error = "true";
+        err.message = "OOPS DAO Exception";
+        resolve(err);
+      }
+    });
+  };
 
-      this.updateIncomeData = (req) => {
-        var output = {}
-        return new Promise(async function(resolve) {
-            var output = {}
-              try {
-                var mysqlExecuteCall = new mysqlExecute()
-                const id=req.params.id;
-                const companyname=req.body.CompanyName;
-                const invoicenumber=req.body.InvoiceNumber;
-    const streetaddress=req.body.StreetAddress;
-    const city=req.body.City;
-    const state=req.body.State;
-    const pincode=req.body.Pincode;
-    const placeofsupply=req.body.PlaceofSupply;
-    const particulars=req.body.Particulars;
-    const psyear=req.body.PSYear;
-    const GSTIN=req.body.GSTIN;
-    const hsnsac=req.body.HSNSAC;
-    const duedate = req.body.DueDate;
-    const actiondate =req.body.ActionDate; 
-    const rate=req.body.Rate;
-    const cgst=req.body.CGST;
-    const sgst=req.body.SGST;
-    const igst=req.body.IGST;
-    const totalamount=req.body.TotalAmount;
-    const balancedue=req.body.BalanceDue;
-    const status=req.body.Status;
-    const details=req.body.Items;
-    const bankname=req.body.BankName;
-    const branch=req.body.Branch;
-    const beneficiaryname=req.body.BeneficiaryName;
-    const accountdetails=req.body.AccountDetails;
-    const acno=req.body.ACNO;
-    const ifsccode=req.body.IFSCCode;
-   
-        var query =`Select * from income_table where InvoiceNumber=? and id=? and IsDeleted=0`;
-         var queryRequest =[invoicenumber,id]
-                         var queryResponse = await mysqlExecuteCall.executeWithParams(query, queryRequest)
+  this.updateIncomeData = (req) => {
+    return new Promise(async function (resolve) {
+      try {
+        var mysqlExecuteCall = new mysqlExecute();
+        const id = req.params.id;
+        const data = req.body;
+        const companyname = data.CompanyName;
+        const invoicenumber = data.InvoiceNumber;
+        const streetaddress = data.StreetAddress;
+        const city = data.City;
+        const state = data.State;
+        const pincode = data.Pincode;
+        const placeofsupply = data.PlaceofSupply;
+        const particulars = data.Particulars;
+        const psyear = data.PSYear;
+        const GSTIN = data.GSTIN;
+        const hsnsac = data.HSNSAC;
+        const duedate = data.DueDate;
+        const actiondate = data.ActionDate;
+        const rate = data.Rate;
+        const cgst = data.CGST;
+        const sgst = data.SGST;
+        const igst = data.IGST;
+        const totalamount = data.TotalAmount;
+        const balancedue = data.BalanceDue;
+        const status = data.Status;
+        const details = data.Items;
+        const bankname = data.BankName;
+        const branch = data.Branch;
+        const beneficiaryname = data.BeneficiaryName;
+        const accountdetails = data.AccountDetails;
+        const acno = data.ACNO;
+        const ifsccode = data.IFSCCode;
 
-         if (queryResponse.error == 'false') {
-                    if(queryResponse.result.length>0)
-                    {
-        const query="UPDATE income_table SET CompanyName=?,StreetAddress=?,City=?,State=?,Pincode=?,PlaceofSupply=?,GSTIN=?,Particulars=?,PSYear=?,HSNSAC=?,Rate=?,DueDate=?,CGST=?,SGST=?,IGST=?,TotalAmount=?,BalanceDue=?,`Status`=?,Items=?,ActionDate=?,BankName=?,Branch=?,BeneficiaryName=?,AccountDetails=?,ACNO=?,IFSCCode=? where InvoiceNumber=?";
-         var queryRequest =[companyname,streetaddress,city,state,pincode,placeofsupply,GSTIN,particulars,psyear,hsnsac,rate,duedate,cgst,sgst,igst,totalamount,balancedue,status,details,actiondate,bankname,branch,beneficiaryname,accountdetails,acno,ifsccode,invoicenumber]
-                         var queryResponse = await mysqlExecuteCall.executeWithParams(query, queryRequest)
-                       if (queryResponse.error == 'false') {
-                    resolve({status:200, message: "Record updated successfully" ,result:[]})
+        var query = `Select * from income_table where InvoiceNumber=? and id=? and IsDeleted=0`;
+        var queryRequest = [invoicenumber, id];
+        var queryResponse = await mysqlExecuteCall.executeWithParams(
+          query,
+          queryRequest
+        );
+
+        if (queryResponse.error == "false") {
+          if (queryResponse.result.length > 0) {
+            const query =
+              "UPDATE income_table SET CompanyName=?,StreetAddress=?,City=?,State=?,Pincode=?,PlaceofSupply=?,GSTIN=?,Particulars=?,PSYear=?,HSNSAC=?,Rate=?,DueDate=?,CGST=?,SGST=?,IGST=?,TotalAmount=?,BalanceDue=?,`Status`=?,Items=?,ActionDate=?,BankName=?,Branch=?,BeneficiaryName=?,AccountDetails=?,ACNO=?,IFSCCode=? where InvoiceNumber=?";
+            var queryRequest = [
+              companyname,
+              streetaddress,
+              city,
+              state,
+              pincode,
+              placeofsupply,
+              GSTIN,
+              particulars,
+              psyear,
+              hsnsac,
+              rate,
+              duedate,
+              cgst,
+              sgst,
+              igst,
+              totalamount,
+              balancedue,
+              status,
+              details,
+              actiondate,
+              bankname,
+              branch,
+              beneficiaryname,
+              accountdetails,
+              acno,
+              ifsccode,
+              invoicenumber,
+            ];
+            var queryResponse = await mysqlExecuteCall.executeWithParams(
+              query,
+              queryRequest
+            );
+            if (queryResponse.error == "false") {
+              resolve({
+                status: 200,
+                message: "Record updated successfully",
+                result: [],
+              });
+            } else {
+              resolve(queryResponse);
+            }
+          } else {
+            var query = `Select * from income_table where InvoiceNumber=? and IsDeleted=0`;
+            var queryRequest = [invoicenumber];
+            var queryResponse = await mysqlExecuteCall.executeWithParams(
+              query,
+              queryRequest
+            );
+            if (queryResponse.error == "false") {
+              if (queryResponse.result.length > 0) {
+                resolve({
+                  result: queryResponse.result,
+                  error: "true",
+                  status: 403,
+                  message: "already exists",
+                });
+              } else {
+                const query =
+                  "UPDATE income_table SET CompanyName=?,StreetAddress=?,City=?,State=?,Pincode=?,PlaceofSupply=?,GSTIN=?,Particulars=?,PSYear=?,HSNSAC=?,Rate=?,DueDate=?,CGST=?,SGST=?,IGST=?,TotalAmount=?,BalanceDue=?,`Status`=?,Items=?,ActionDate=?,BankName=?,Branch=?,BeneficiaryName=?,AccountDetails=?,ACNO=?,IFSCCode=?,InvoiceNumber=? where id=?";
+                var queryRequest = [
+                  companyname,
+                  streetaddress,
+                  city,
+                  state,
+                  pincode,
+                  placeofsupply,
+                  GSTIN,
+                  particulars,
+                  psyear,
+                  hsnsac,
+                  rate,
+                  duedate,
+                  cgst,
+                  sgst,
+                  igst,
+                  totalamount,
+                  balancedue,
+                  status,
+                  details,
+                  actiondate,
+                  bankname,
+                  branch,
+                  beneficiaryname,
+                  accountdetails,
+                  acno,
+                  ifsccode,
+                  invoicenumber,
+                  id,
+                ];
+                var queryResponse = await mysqlExecuteCall.executeWithParams(
+                  query,
+                  queryRequest
+                );
+                if (queryResponse.error == "false") {
+                  resolve({
+                    status: 200,
+                    message: "Record updated successfully",
+                    result: [],
+                  });
                 } else {
-                    resolve(queryResponse)
+                  resolve(queryResponse);
                 }
-                    }
-                    else{
-                        var query=`Select * from income_table where InvoiceNumber=? and IsDeleted=0`;
-         var queryRequest =[invoicenumber]
-                         var queryResponse = await mysqlExecuteCall.executeWithParams(query, queryRequest)
-if (queryResponse.error == 'false') {
-     if(queryResponse.result.length>0)
-                    {
-                      resolve({result:queryResponse.result,error:"true",status:403,message:"already exists"})
-                    }
-                    else{
-            const query="UPDATE income_table SET CompanyName=?,StreetAddress=?,City=?,State=?,Pincode=?,PlaceofSupply=?,GSTIN=?,Particulars=?,PSYear=?,HSNSAC=?,Rate=?,DueDate=?,CGST=?,SGST=?,IGST=?,TotalAmount=?,BalanceDue=?,`Status`=?,Items=?,ActionDate=?,BankName=?,Branch=?,BeneficiaryName=?,AccountDetails=?,ACNO=?,IFSCCode=?,InvoiceNumber=? where id=?";
-         var queryRequest =[companyname,streetaddress,city,state,pincode,placeofsupply,GSTIN,particulars,psyear,hsnsac,rate,duedate,cgst,sgst,igst,totalamount,balancedue,status,details,actiondate,bankname,branch,beneficiaryname,accountdetails,acno,ifsccode,invoicenumber,id]
-                         var queryResponse = await mysqlExecuteCall.executeWithParams(query, queryRequest)
-                       if (queryResponse.error == 'false') {
-                    resolve({status:200, message: "Record updated successfully" ,result:[]})
-                } else {
-                    resolve(queryResponse)
-                }
-                    }
-                   
-                } else {
-                    resolve(queryResponse)
-                    console.log(queryResponse)
-                }
-
-                    }
-                } else {
-                    resolve(queryResponse)
-                    console.log(queryResponse)
-                }   
-            } catch (err) {
-                err.error = "true"
-                err.message = "OOPS DAO Exception"
-                resolve(err)
+              }
+            } else {
+              resolve(queryResponse);
+              console.log(queryResponse);
             }
-        })
-    }
+          }
+        } else {
+          resolve(queryResponse);
+          console.log(queryResponse);
+        }
+      } catch (err) {
+        err.error = "true";
+        err.message = "OOPS DAO Exception";
+        resolve(err);
+      }
+    });
+  };
 
-    this.deleteIncomeData = (req) => {
-        var output = {}
-        return new Promise(async function(resolve) {
-            var output = {}
-              try {
-                var mysqlExecuteCall = new mysqlExecute()
-                const id=req.params.id;
-    const query=`UPDATE income_table SET IsDeleted=1 where id=?`;
-       var queryRequest =[id]
-                         var queryResponse = await mysqlExecuteCall.executeWithParams(query, queryRequest)
-                         if (queryResponse.error == 'false') {
-                           if(queryResponse.result.affectedRows==0)
-                           {
-                            resolve({status:404,message:"Record not found",error:"true"})
-                           }
-                           resolve({status:300,message:"Record deleted successfully",error:"false"})
-                         }
-                         else{
-                             resolve({status:500,message:"Database Error",error:"true"})
-                         }
-            } catch (err) {
-                err.error = "true"
-                err.message = "OOPS DAO Exception"
-                resolve(err)
-            }
-        })
-    }
+  this.deleteIncomeData = (req) => {
+    return new Promise(async function (resolve) {
+      try {
+        var mysqlExecuteCall = new mysqlExecute();
+        const id = req.params.id;
+        const query = `UPDATE income_table SET IsDeleted=1 where id=?`;
+        var queryRequest = [id];
+        var queryResponse = await mysqlExecuteCall.executeWithParams(
+          query,
+          queryRequest
+        );
+        if (queryResponse.error == "false") {
+          if (queryResponse.result.affectedRows == 0) {
+            resolve({
+              status: 404,
+              message: "Record not found",
+              error: "true",
+            });
+          }
+          resolve({
+            status: 300,
+            message: "Record deleted successfully",
+            error: "false",
+          });
+        } else {
+          resolve({ status: 500, message: "Database Error", error: "true" });
+        }
+      } catch (err) {
+        err.error = "true";
+        err.message = "OOPS DAO Exception";
+        resolve(err);
+      }
+    });
+  };
 
+  this.getTotalIncomeData = (req) => {
+    var output = {};
+    return new Promise(async function (resolve) {
+      var output = {};
+      try {
+        var mysqlExecuteCall = new mysqlExecute();
+        var query =
+          "Select sum(TotalAmount) as Total from income_table where Status='Paid' and IsDeleted=0";
+        var queryResponse = await mysqlExecuteCall.executeWithoutParams(query);
+        if (queryResponse.error == "false") {
+          console.log(queryResponse);
+          resolve(queryResponse);
+        } else {
+          console.log(queryResponse);
+          resolve(queryResponse);
+        }
+      } catch (err) {
+        err.error = "true";
+        err.message = "OOPS DAO Exception";
+        resolve(err);
+      }
+    });
+  };
 
-    this.getTotalIncomeData = (req) => {
-        var output = {}
-        return new Promise( async function(resolve) {
-            var output = {}
-            try {
-                var mysqlExecuteCall = new mysqlExecute()
-                var query = "Select sum(TotalAmount) as Total from income_table where Status='Paid' and IsDeleted=0"
-                var queryResponse = await mysqlExecuteCall.executeWithoutParams(query)
-                if (queryResponse.error == 'false') {
-                    console.log(queryResponse)
-                    resolve(queryResponse)
-                } else {
-                    console.log(queryResponse)
-                    resolve(queryResponse)
-                }
-            } catch (err) {
-                err.error = "true"
-                err.message = "OOPS DAO Exception"
-                resolve(err)
-            }
-        })
-    }
+  this.getUnpaidTotalIncomeData = (req) => {
+    var output = {};
+    return new Promise(async function (resolve) {
+      var output = {};
+      try {
+        var mysqlExecuteCall = new mysqlExecute();
+        var query =
+          "Select sum(TotalAmount) as Total from income_table where Status='UnPaid' and IsDeleted=0";
+        var queryResponse = await mysqlExecuteCall.executeWithoutParams(query);
+        if (queryResponse.error == "false") {
+          console.log(queryResponse);
+          resolve(queryResponse);
+        } else {
+          console.log(queryResponse);
+          resolve(queryResponse);
+        }
+      } catch (err) {
+        err.error = "true";
+        err.message = "OOPS DAO Exception";
+        resolve(err);
+      }
+    });
+  };
+  this.getListIncomeData = (req) => {
+    return new Promise(async function (resolve) {
+      try {
+        var mysqlExecuteCall = new mysqlExecute();
+        var query =
+          "Select id,InvoiceNumber,CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,`Status`,Items,ActionDate,CreatedAt,BankName,Branch,BeneficiaryName,AccountDetails,ACNO,IFSCCode from income_table where IsDeleted=0";
+        var queryResponse = await mysqlExecuteCall.executeWithoutParams(query);
+        if (queryResponse.error == "false") {
+          console.log(queryResponse);
+          resolve(queryResponse);
+        } else {
+          console.log(queryResponse);
+          resolve(queryResponse);
+        }
+      } catch (err) {
+        err.error = "true";
+        err.message = "OOPS DAO Exception";
+        resolve(err);
+      }
+    });
+  };
 
-      this.getUnpaidTotalIncomeData = (req) => {
-        var output = {}
-        return new Promise( async function(resolve) {
-            var output = {}
-            try {
-                var mysqlExecuteCall = new mysqlExecute()
-                var query = "Select sum(TotalAmount) as Total from income_table where Status='UnPaid' and IsDeleted=0"
-                var queryResponse = await mysqlExecuteCall.executeWithoutParams(query)
-                if (queryResponse.error == 'false') {
-                    console.log(queryResponse)
-                    resolve(queryResponse)
-                } else {
-                    console.log(queryResponse)
-                    resolve(queryResponse)
-                }
-            } catch (err) {
-                err.error = "true"
-                err.message = "OOPS DAO Exception"
-                resolve(err)
-            }
-        })
-    }
-   this.getListIncomeData = (req) => {
-        var output = {}
-        return new Promise( async function(resolve) {
-            var output = {}
-            try {
-                var mysqlExecuteCall = new mysqlExecute()
-                var query = "Select id,InvoiceNumber,CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,`Status`,Items,ActionDate,CreatedAt,BankName,Branch,BeneficiaryName,AccountDetails,ACNO,IFSCCode from income_table where IsDeleted=0"
-                var queryResponse = await mysqlExecuteCall.executeWithoutParams(query)
-                if (queryResponse.error == 'false') {
-                    console.log(queryResponse)
-                    resolve(queryResponse)
-                } else {
-                    console.log(queryResponse)
-                    resolve(queryResponse)
-                }
-            } catch (err) {
-                err.error = "true"
-                err.message = "OOPS DAO Exception"
-                resolve(err)
-            }
-        })
-    }
+  this.generateInvoiceData = (req) => {
+    var output = {};
+    return new Promise(async function (resolve) {
+      var output = {};
+      try {
+        var mysqlExecuteCall = new mysqlExecute();
+        const id = req.params.id;
+        const query = `Select id,InvoiceNumber,CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,Status,Items,ActionDate,CreatedAt,BankName,Branch,BeneficiaryName,AccountDetails,ACNO,IFSCCode from income_table where id=?`;
+        var queryRequest = [id];
+        var queryResponse = await mysqlExecuteCall.executeWithParams(
+          query,
+          queryRequest
+        );
 
-        this.generateInvoiceData = (req) => {
-        var output = {}
-        return new Promise(async function(resolve) {
-            var output = {}
-              try {
-                var mysqlExecuteCall = new mysqlExecute()
-                const id=req.params.id;
-    const query=`Select id,InvoiceNumber,CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,Status,Items,ActionDate,CreatedAt,BankName,Branch,BeneficiaryName,AccountDetails,ACNO,IFSCCode from income_table where id=?`;
-       var queryRequest =[id]
-                         var queryResponse = await mysqlExecuteCall.executeWithParams(query, queryRequest)
-                          console.log(queryResponse)
-                           console.log(queryResponse.result[0])
-                         if (queryResponse.error == 'false') {
-                            console.log(queryResponse.error,'false')
-                            const randomFilename = generateShortRandomName() + '.pdf';
-                            
-                            const fileName=`Invoice(${queryResponse.result[0].id})(${(new Date(queryResponse.result[0].ActionDate)).toISOString().split("T")[0]})${randomFilename}`
-                            // const invoicePath = path.join(__dirname, `${fileName}`);
-    generateinvoicepdf.mypdf(queryResponse.result,fileName)
-                           const query=`UPDATE income_table SET InvoiceFile=? where id=?`
-                            var queryRequest =[fileName,id]
-                         var queryResponse = await mysqlExecuteCall.executeWithParams(query, queryRequest)
-                         if (queryResponse.error == 'false') {
-                            resolve({status:200,fileName:fileName,message:"Download Success"})
-                         }
-                         else{
-                             resolve({status:500,message:"Database Error",error:"true",message:"Dowload Failed"})
-                         }
+        if (queryResponse.error == "false") {
+          const randomFilename = generateShortRandomName() + ".pdf";
 
-                          
-                           
-                         }
-                         else{
-                         
-                             resolve({status:500,message:"Database Error",error:"true"})
-                         }
-            } catch (err) {
-                err.error = "true"
-                err.message = "OOPS DAO Exception"
-                console.log(err)
-                // resolve(err)
-            }
-        })
-    }
+          const fileName = `Invoice(${queryResponse.result[0].id})(${
+            new Date(queryResponse.result[0].ActionDate)
+              .toISOString()
+              .split("T")[0]
+          })${randomFilename}`;
 
-    this.generateReceiptData = (req) => {
-        var output = {}
-        return new Promise(async function(resolve) {
-            var output = {}
-              try {
-                var mysqlExecuteCall = new mysqlExecute()
-                const id=req.params.id;
-    const query=`Select id,InvoiceNumber,CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,Status,Items,ActionDate,CreatedAt from income_table where id=?`;
-       var queryRequest =[id]
-                         var queryResponse = await mysqlExecuteCall.executeWithParams(query, queryRequest)
-                         if (queryResponse.error == 'false') {
-                            
-                             const words=numberToWords(queryResponse.result[0].TotalAmount)+" "+"only";
-         const randomFilename = generateShortRandomName() + '.pdf';
-         const fileName=`PaymentReceipt(${id})(${(new Date(queryResponse.result[0].ActionDate)).toISOString().split("T")[0]})${randomFilename}`
-    generatereceiptpdf.myreceiptpdf(queryResponse.result,words,fileName)
-                           const query=`UPDATE income_table SET PaymentReceiptFile=? where id=?`
-                            var queryRequest =[fileName,id]
-                         var queryResponse = await mysqlExecuteCall.executeWithParams(query, queryRequest)
-                         if (queryResponse.error == 'false') {
-                            resolve({status:200,fileName:fileName,message:"Download Success"})
-                         }
-                         else{
-                             resolve({status:500,message:"Database Error",error:"true",message:"Dowload Failed"})
-                         }
+          generateinvoicepdf.mypdf(queryResponse.result, fileName);
+          const query = `UPDATE income_table SET InvoiceFile=? where id=?`;
+          var queryRequest = [fileName, id];
+          var queryResponse = await mysqlExecuteCall.executeWithParams(
+            query,
+            queryRequest
+          );
+          if (queryResponse.error == "false") {
+            resolve({
+              status: 200,
+              fileName: fileName,
+              message: "Download Success",
+            });
+          } else {
+            resolve({
+              status: 500,
+              message: "Database Error",
+              error: "true",
+              message: "Dowload Failed",
+            });
+          }
+        } else {
+          resolve({ status: 500, message: "Database Error", error: "true" });
+        }
+      } catch (err) {
+        err.error = "true";
+        err.message = "OOPS DAO Exception";
 
-                          
-                           
-                         }
-                         else{
-                         
-                             resolve({status:500,message:"Database Error",error:"true"})
-                         }
-            } catch (err) {
-                err.error = "true"
-                err.message = "OOPS DAO Exception"
-                console.log(err)
-                // resolve(err)
-            }
-        })
-    }
-    
-}
+        resolve(err);
+      }
+    });
+  };
+
+  this.generateReceiptData = (req) => {
+    return new Promise(async function (resolve) {
+      try {
+        var mysqlExecuteCall = new mysqlExecute();
+        const id = req.params.id;
+        const query = `Select id,InvoiceNumber,CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,Status,Items,ActionDate,CreatedAt from income_table where id=?`;
+        var queryRequest = [id];
+        var queryResponse = await mysqlExecuteCall.executeWithParams(
+          query,
+          queryRequest
+        );
+        if (queryResponse.error == "false") {
+          const words =
+            numberToWords(queryResponse.result[0].TotalAmount) + " " + "only";
+          const randomFilename = generateShortRandomName() + ".pdf";
+          const fileName = `PaymentReceipt(${id})(${
+            new Date(queryResponse.result[0].ActionDate)
+              .toISOString()
+              .split("T")[0]
+          })${randomFilename}`;
+          generatereceiptpdf.myreceiptpdf(
+            queryResponse.result,
+            words,
+            fileName
+          );
+          const query = `UPDATE income_table SET PaymentReceiptFile=? where id=?`;
+          var queryRequest = [fileName, id];
+          var queryResponse = await mysqlExecuteCall.executeWithParams(
+            query,
+            queryRequest
+          );
+          if (queryResponse.error == "false") {
+            resolve({
+              status: 200,
+              fileName: fileName,
+              message: "Download Success",
+            });
+          } else {
+            resolve({
+              status: 500,
+              message: "Database Error",
+              error: "true",
+              message: "Dowload Failed",
+            });
+          }
+        } else {
+          resolve({ status: 500, message: "Database Error", error: "true" });
+        }
+      } catch (err) {
+        err.error = "true";
+        err.message = "OOPS DAO Exception";
+
+        resolve(err);
+      }
+    });
+  };
+};

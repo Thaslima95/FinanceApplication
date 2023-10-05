@@ -1,16 +1,15 @@
 const express=require('express')
 
 const cors=require('cors')
-var jwt = require('jsonwebtoken');
+
 var bodyParser = require('body-parser');
 var path=require('path')
-const { v4: uuidv4 } = require('uuid');
 const userRoutes = require('./routes/userRoutes');
 const otpRoutes = require('./routes/otpRoutes');
 const IncomeRoutes=require('./routes/IncomeRoutes')
 const ExpenseRoutes=require('./routes/ExpenseRoutes')
 const LoginRoutes=require('./routes/LoginRoutes')
-// const pool=require('./db/db1')
+
 
 const app = express();
 

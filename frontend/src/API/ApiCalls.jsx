@@ -8,6 +8,7 @@ export default {
       console.log(response);
       return response;
     } catch (err) {
+      console.log(err);
       return err;
     }
   },
