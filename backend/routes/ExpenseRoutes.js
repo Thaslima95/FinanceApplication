@@ -9,9 +9,10 @@ router.post('/addexpense', [
       .isLength({ min: 1 })
       .withMessage('Invalid: Company Name must have at least 1 character')
   ],function(request, response) {
+    console.log("expense")
      
             // var userControllerObject = new userController()
-            IncomeController.addExpenseController(request, function({message,status}) {
+            ExpenseController.addExpenseController(request, function({message,status}) {
                 console.log(message)
                 console.log(status,'status')
                 return response.status(status).send(message)
@@ -25,7 +26,7 @@ router.post('/addexpense', [
   router.get('/getexpensedetails', function(request, response) {
      
             // var userControllerObject = new userController()
-            IncomeController.getListExpenseController(request, function({data}) {
+            ExpenseController.getListExpenseController(request, function({data}) {
                 
                 console.log(data)
                 return response.send(data)
@@ -41,7 +42,7 @@ router.post('/addexpense', [
   ],function(request, response) {
           console.log(request.params.id)
             // var userControllerObject = new userController()
-            IncomeController.updateExpenseController(request, function({message,status}) {
+            ExpenseController.updateExpenseController(request, function({message,status}) {
                 console.log(message)
                 console.log(status,'status')
                 return response.status(status).send(message)
@@ -57,7 +58,7 @@ router.post('/addexpense', [
   ],function(request, response) {
           console.log(request.params.id)
             // var userControllerObject = new userController()
-            IncomeController.deleteExpenseController(request, function({message,status}) {
+            ExpenseController.deleteExpenseController(request, function({message,status}) {
                 console.log(message)
                 console.log(status,'status')
                 return response.status(status).send(message)
@@ -72,7 +73,7 @@ router.post('/addexpense', [
   router.get('/getDirectTotalExpenseRate',function(request, response) {
      
             // var userControllerObject = new userController()
-            IncomeController.getTotalExpenseController(request, function({data}) {
+            ExpenseController.getTotalExpenseController(request, function({data}) {
                console.log(data)
                 return response.send(data)
             })
@@ -84,7 +85,7 @@ router.post('/addexpense', [
         console.log("unpaid")
      
             // var userControllerObject = new userController()
-            IncomeController.getIndirectTotalExpenseController(request, function({data}) {
+            ExpenseController.getIndirectTotalExpenseController(request, function({data}) {
                console.log(data)
                 return response.send(data)
             })

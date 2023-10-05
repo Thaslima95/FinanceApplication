@@ -63,43 +63,27 @@ if (queryResponse.error == 'false') {
               try {
                 var mysqlExecuteCall = new mysqlExecute()
                 const id=req.params.id;
-                const companyname=req.body.CompanyName;
-                const invoicenumber=req.body.InvoiceNumber;
-    const streetaddress=req.body.StreetAddress;
-    const city=req.body.City;
-    const state=req.body.State;
-    const pincode=req.body.Pincode;
-    const placeofsupply=req.body.PlaceofSupply;
+  const invoicenumber=req.body.InvoiceNumber;
     const particulars=req.body.Particulars;
-    const psyear=req.body.PSYear;
-    const GSTIN=req.body.GSTIN;
-    const hsnsac=req.body.HSNSAC;
     const duedate = req.body.DueDate;
     const actiondate =req.body.ActionDate; 
-    const rate=req.body.Rate;
+    const paymentType=req.body.PaymentType;
+    const accountType=req.body.AccountType;
+    const amount=req.body.Amount;
     const cgst=req.body.CGST;
     const sgst=req.body.SGST;
     const igst=req.body.IGST;
     const totalamount=req.body.TotalAmount;
-    const balancedue=req.body.BalanceDue;
-    const status=req.body.Status;
-    const details=req.body.Items;
-    const bankname=req.body.BankName;
-    const branch=req.body.Branch;
-    const beneficiaryname=req.body.BeneficiaryName;
-    const accountdetails=req.body.AccountDetails;
-    const acno=req.body.ACNO;
-    const ifsccode=req.body.IFSCCode;
    
-        var query =`Select * from income_table where InvoiceNumber=? and id=? and IsDeleted=0`;
+        var query =`Select * from expense_table where InvoiceNumber=? and id=? and IsDeleted=0`;
          var queryRequest =[invoicenumber,id]
                          var queryResponse = await mysqlExecuteCall.executeWithParams(query, queryRequest)
 
          if (queryResponse.error == 'false') {
                     if(queryResponse.result.length>0)
                     {
-        const query="UPDATE income_table SET CompanyName=?,StreetAddress=?,City=?,State=?,Pincode=?,PlaceofSupply=?,GSTIN=?,Particulars=?,PSYear=?,HSNSAC=?,Rate=?,DueDate=?,CGST=?,SGST=?,IGST=?,TotalAmount=?,BalanceDue=?,`Status`=?,Items=?,ActionDate=?,BankName=?,Branch=?,BeneficiaryName=?,AccountDetails=?,ACNO=?,IFSCCode=? where InvoiceNumber=?";
-         var queryRequest =[companyname,streetaddress,city,state,pincode,placeofsupply,GSTIN,particulars,psyear,hsnsac,rate,duedate,cgst,sgst,igst,totalamount,balancedue,status,details,actiondate,bankname,branch,beneficiaryname,accountdetails,acno,ifsccode,invoicenumber]
+        const query="UPDATE expense_table SET InvoiceNumber=?,Particulars=?,DueDate=?,PaymentType=?,AccountType=?,Amount=?,CGST=?,SGST=?,IGST=?,TotalAmount=?,ActionDate=? where id=?";
+         var queryRequest =[invoicenumber,particulars,duedate,paymentType,accountType,amount,cgst,sgst,igst,totalamount,actiondate,id]
                          var queryResponse = await mysqlExecuteCall.executeWithParams(query, queryRequest)
                        if (queryResponse.error == 'false') {
                     resolve({status:200, message: "Record updated successfully" ,result:[]})
@@ -108,7 +92,7 @@ if (queryResponse.error == 'false') {
                 }
                     }
                     else{
-                        var query=`Select * from income_table where InvoiceNumber=? and IsDeleted=0`;
+                        var query=`Select * from expense_table where InvoiceNumber=? and IsDeleted=0`;
          var queryRequest =[invoicenumber]
                          var queryResponse = await mysqlExecuteCall.executeWithParams(query, queryRequest)
 if (queryResponse.error == 'false') {
@@ -117,8 +101,8 @@ if (queryResponse.error == 'false') {
                       resolve({result:queryResponse.result,error:"true",status:403,message:"already exists"})
                     }
                     else{
-            const query="UPDATE income_table SET CompanyName=?,StreetAddress=?,City=?,State=?,Pincode=?,PlaceofSupply=?,GSTIN=?,Particulars=?,PSYear=?,HSNSAC=?,Rate=?,DueDate=?,CGST=?,SGST=?,IGST=?,TotalAmount=?,BalanceDue=?,`Status`=?,Items=?,ActionDate=?,BankName=?,Branch=?,BeneficiaryName=?,AccountDetails=?,ACNO=?,IFSCCode=?,InvoiceNumber=? where id=?";
-         var queryRequest =[companyname,streetaddress,city,state,pincode,placeofsupply,GSTIN,particulars,psyear,hsnsac,rate,duedate,cgst,sgst,igst,totalamount,balancedue,status,details,actiondate,bankname,branch,beneficiaryname,accountdetails,acno,ifsccode,invoicenumber,id]
+            const query="UPDATE expense_table SET InvoiceNumber=?,Particulars=?,DueDate=?,PaymentType=?,AccountType=?,Amount=?,CGST=?,SGST=?,IGST=?,TotalAmount=?,ActionDate=? where id=?";
+         var queryRequest =[invoicenumber,particulars,duedate,paymentType,accountType,amount,cgst,sgst,igst,totalamount,actiondate,id]
                          var queryResponse = await mysqlExecuteCall.executeWithParams(query, queryRequest)
                        if (queryResponse.error == 'false') {
                     resolve({status:200, message: "Record updated successfully" ,result:[]})
@@ -152,7 +136,7 @@ if (queryResponse.error == 'false') {
               try {
                 var mysqlExecuteCall = new mysqlExecute()
                 const id=req.params.id;
-    const query=`UPDATE income_table SET IsDeleted=1 where id=?`;
+    const query=`UPDATE expense_table SET IsDeleted=1 where id=?`;
        var queryRequest =[id]
                          var queryResponse = await mysqlExecuteCall.executeWithParams(query, queryRequest)
                          if (queryResponse.error == 'false') {
@@ -180,7 +164,7 @@ if (queryResponse.error == 'false') {
             var output = {}
             try {
                 var mysqlExecuteCall = new mysqlExecute()
-                var query = "Select sum(TotalAmount) as Total from income_table where Status='Paid' and IsDeleted=0"
+                var query = "Select sum(TotalAmount) as Total from expense_table where PaymentType='Direct' and IsDeleted=0"
                 var queryResponse = await mysqlExecuteCall.executeWithoutParams(query)
                 if (queryResponse.error == 'false') {
                     console.log(queryResponse)
@@ -203,7 +187,7 @@ if (queryResponse.error == 'false') {
             var output = {}
             try {
                 var mysqlExecuteCall = new mysqlExecute()
-                var query = "Select sum(TotalAmount) as Total from income_table where Status='UnPaid' and IsDeleted=0"
+                var query = "Select sum(TotalAmount) as Total from expense_table where PaymentType='Indirect' and IsDeleted=0"
                 var queryResponse = await mysqlExecuteCall.executeWithoutParams(query)
                 if (queryResponse.error == 'false') {
                     console.log(queryResponse)
@@ -225,7 +209,7 @@ if (queryResponse.error == 'false') {
             var output = {}
             try {
                 var mysqlExecuteCall = new mysqlExecute()
-                var query = "Select id,InvoiceNumber,CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,`Status`,Items,ActionDate,CreatedAt,BankName,Branch,BeneficiaryName,AccountDetails,ACNO,IFSCCode from income_table where IsDeleted=0"
+                var query = "SELECT id,InvoiceNumber,CGST,Particulars,PaymentType,AccountType,Amount,SGST,IGST,TotalAmount,DueDate,ActionDate from expense_table where  IsDeleted=0"
                 var queryResponse = await mysqlExecuteCall.executeWithoutParams(query)
                 if (queryResponse.error == 'false') {
                     console.log(queryResponse)

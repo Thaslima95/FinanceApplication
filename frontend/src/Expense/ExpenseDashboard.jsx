@@ -12,7 +12,7 @@ export default function ExpenseDashboard() {
   const totalExpenseDetails = () => {
     ApiCalls.getTotalExpense()
       .then((res) => {
-        setTotalExpense(res[0].Total);
+        setTotalExpense(res.data.Total);
       })
       .catch((err) => console.log(err));
   };
@@ -20,7 +20,7 @@ export default function ExpenseDashboard() {
   const totalIndirectExpenseDetails = () => {
     ApiCalls.getUnpaidTotalExpense()
       .then((res) => {
-        setUnpaidExpense(res[0].Total);
+        setUnpaidExpense(res.data.Total);
       })
       .catch((err) => console.log(err));
   };

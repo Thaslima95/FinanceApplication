@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {check,validationResult}=require('express-validator')
 const pool = require('../db/db');
-const Controller=new (require('../Controller/IncomeController'))()
+const IncomeController=new (require('../Controller/IncomeController'))()
 
 router.post('/addincome', [
     check('Company Name')

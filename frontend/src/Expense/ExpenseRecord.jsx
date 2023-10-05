@@ -110,7 +110,7 @@ export default function ExpenseRecord({
             IGST: Number(adddetails.IGST),
           })
             .then((res) => {
-              if (res.status == 200 || 201) {
+              if (res.response.status === 200 || res.status === 200) {
                 window.alert("Expense Updated Successfully");
                 totalExpenseDetails();
                 totalIndirectExpenseDetails();
@@ -132,6 +132,8 @@ export default function ExpenseRecord({
                   TotalAmount: 0,
                   BalanceDue: 0,
                 });
+              } else if (res.response.status == 403) {
+                window.alert("Invoice Number Already exists");
               }
             })
             .catch((err) => window.alert("Sorry!Try Again"));
@@ -183,7 +185,7 @@ export default function ExpenseRecord({
   }, []);
   const getExpenseRecord = () => {
     axios
-      .get(`/getexpensedetails`)
+      .get(`/expense/getexpensedetails`)
       .then((res) => setRows(res.data))
       .catch((err) => console.log(err));
   };

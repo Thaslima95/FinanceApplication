@@ -40,7 +40,7 @@ app.use('/otp', otpRoutes);
 
 app.use('/file', express.static(path.join(__dirname)));
 app.use('/income', IncomeRoutes);
-app.use('/expense', IncomeRoutes);
+app.use('/expense', ExpenseRoutes);
 function generateShortRandomName() {
   const uuid = uuidv4();
   const shortName = uuid.replace(/-/g, '').substr(0, 10);

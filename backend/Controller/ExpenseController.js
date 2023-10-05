@@ -1,10 +1,10 @@
 
 module.exports = function() {
-    var expenseService = require('../service/ExpenseService')
+    var expenseServices = require('../service/ExpenseService')
 
     this.addExpenseController = async (req, callback) => {
         var response = {}
-        var expenseServiceObject = new expenseService()
+        var expenseServiceObject = new expenseServices()
         var expenseService = await expenseServiceObject.addExpenseService(req)
         if (expenseService.error == "true") {
             
@@ -23,7 +23,7 @@ module.exports = function() {
 
         this.getTotalExpenseController = async (req, callback) => {
         var response = {}
-        var expenseServiceObject = new expenseService()
+      var expenseServiceObject = new expenseServices()
         var expenseService = await expenseServiceObject.getTotalExpenseService(req)
          
         if (expenseService.error == "true") {
@@ -41,7 +41,7 @@ module.exports = function() {
 
      this.updateExpenseController = async (req, callback) => {
         var response = {}
-        var expenseServiceObject = new expenseService()
+      var expenseServiceObject = new expenseServices()
         var expenseService = await expenseServiceObject.updateExpenseService(req)
         if (expenseService.error == "true") {
             
@@ -60,7 +60,7 @@ module.exports = function() {
 
       this.deleteExpenseController = async (req, callback) => {
         var response = {}
-        var expenseServiceObject = new expenseService()
+      var expenseServiceObject = new expenseServices()
         var expenseService = await expenseServiceObject.deleteExpenseService(req)
         if (expenseService.error == "true") {
             
@@ -79,7 +79,7 @@ module.exports = function() {
 
         this.getTotalExpenseController = async (req, callback) => {
         var response = {}
-        var expenseServiceObject = new expenseService()
+      var expenseServiceObject = new expenseServices()
         var expenseService = await expenseServiceObject.getTotalExpenseService(req)
          
         if (expenseService.error == "true") {
@@ -98,7 +98,7 @@ module.exports = function() {
     
         this.getIndirectTotalExpenseController = async (req, callback) => {
         var response = {}
-        var expenseServiceObject = new expenseService()
+        var expenseServiceObject = new expenseServices()
         var expenseService = await expenseServiceObject.getIndirectTotalExpenseService(req)
          
         if (expenseService.error == "true") {
@@ -117,7 +117,7 @@ module.exports = function() {
 
        this.getListExpenseController = async (req, callback) => {
         var response = {}
-        var expenseServiceObject = new expenseService()
+     var expenseServiceObject = new expenseServices()
         var expenseService = await expenseServiceObject.getListExpenseService(req)
          console.log(expenseService)
         if (expenseService.error == "true") {

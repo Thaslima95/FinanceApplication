@@ -58,47 +58,49 @@ export default {
   deleteSingleIncome: async function (id) {
     try {
       const response = await axios.put(`/income/deletesinglerecord/${id}`);
-      return response.data;
+      return response;
     } catch (err) {
       console.log(err);
     }
   },
   getTotalExpense: async function () {
     try {
-      const response = await axios.get(`/getDirectTotalExpenseRate`);
-      return response.data;
+      const response = await axios.get(`/expense/getDirectTotalExpenseRate`);
+      return response;
     } catch (err) {
       console.log(err);
     }
   },
   getUnpaidTotalExpense: async function () {
     try {
-      const response = await axios.get(`/getIndirectTotalExpenseRate`);
-      return response.data;
+      const response = await axios.get(`/expense/getIndirectTotalExpenseRate`);
+      return response;
     } catch (err) {
       console.log(err);
     }
   },
   addExpense: async function (newRow) {
     try {
-      const response = await axios.post(`/addexpense`, newRow);
+      const response = await axios.post(`/expense/addexpense`, newRow);
       return response;
     } catch (err) {
-      console.log(err);
+      return err;
     }
   },
   updateExpense: async function (id, newRow) {
     try {
-      const response = await axios.put(`/updateexpense/${id}`, newRow);
+      const response = await axios.put(`/expense/updateexpense/${id}`, newRow);
       return response;
     } catch (err) {
-      console.log(err);
+      return err;
     }
   },
   deleteSingleExpense: async function (id) {
     try {
-      const response = await axios.put(`/deletesingleexpenserecord/${id}`);
-      return response.data;
+      const response = await axios.put(
+        `/expense/deletesingleexpenserecord/${id}`
+      );
+      return response;
     } catch (err) {
       console.log(err);
     }
