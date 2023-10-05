@@ -70,4 +70,41 @@ module.exports = function () {
       }
     });
   };
+
+  this.updateAccoutService = (incomeData) => {
+    return new Promise(async function (resolve) {
+      var response = {};
+      var resp = {};
+      var AccountSummarydataObject = new AccountSummaryRepo();
+      try {
+        var accountsummaryresult =
+          await AccountSummarydataObject.updateSummaryData(incomeData);
+
+        if (accountsummaryresult.result.length > 0) {
+          if (accountsummaryresult.error == "true") {
+            response.error = "true";
+            response.message = "already exists";
+            response.status = accountsummaryresult.status;
+            resolve(response);
+          } else {
+            response.error = "false";
+            response.message = "record inserted";
+            response.status = accountsummaryresult.status;
+            response.result = resp;
+
+            resolve(response);
+          }
+        } else {
+          response.error = "false";
+          response.message = "record inserted";
+          response.status = accountsummaryresult.status;
+          resolve(response);
+        }
+      } catch (err) {
+        response.error = "true";
+        response.message = "OOPS Service Error";
+        resolve(response);
+      }
+    });
+  };
 };

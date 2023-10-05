@@ -141,7 +141,7 @@ const Dashboard = () => {
       [name.split("-")[0]]: value,
     };
     if (editMode[index]) {
-      Axios.put(`/api/account-summary/${updatedTableData[index].id}`, {
+      Axios.put(`/account/api/account-summary/${updatedTableData[index].id}`, {
         account: updatedTableData[index].account,
         limit_amount: updatedTableData[index].limit_amount,
         balance: updatedTableData[index].balance,

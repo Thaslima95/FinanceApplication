@@ -23,7 +23,6 @@ router.post(
 );
 
 router.get("/api/account-summary", function (request, response) {
-  // var userControllerObject = new userController()
   AccountController.getAccountSummaryController(request, function ({ data }) {
     console.log(data);
     return response.send(data);
@@ -31,9 +30,7 @@ router.get("/api/account-summary", function (request, response) {
 });
 
 router.put("/api/account-summary/:id", function (request, response) {
-  console.log(request.params.id);
-  // var userControllerObject = new userController()
-  AccountSummaryController.AccountSummaryController(
+  AccountController.updateSummaryController(
     request,
     function ({ message, status }) {
       console.log(message);
