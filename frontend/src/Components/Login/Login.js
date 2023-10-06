@@ -138,7 +138,11 @@ const Login = () => {
                 placeholder="Password"
                 onChange={handleChange}
               />
-              <span className="eye-icon" onClick={handleToggle}>
+              <span
+                className="eye-icon"
+                onClick={handleToggle}
+                style={{ position: "relative", top: "-45px", left: "260px" }}
+              >
                 <Icon className="absolute mr-10" icon={icon} size={25} />
               </span>
             </div>
