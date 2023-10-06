@@ -16,6 +16,7 @@ module.exports = function () {
       response.id = LoginService.id;
       response.message = LoginService.message;
       response.status = LoginService.status;
+      response.token = LoginService.token;
     }
 
     callback(response);

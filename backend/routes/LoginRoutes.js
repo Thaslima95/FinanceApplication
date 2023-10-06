@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
 const LoginController = new (require("../Controller/LoginController"))();
+const authorizeJWT = require("./authmiddleware");
 router.post(
   "/api/login",
   [
@@ -14,6 +15,7 @@ router.post(
       .isString()
       .withMessage("Invalid status. Status must be one of: Direct,Indirect"),
   ],
+  authorizeJWT,
   function (request, response) {
     const error = validationResult(request);
     if (error.array().length) {
@@ -21,10 +23,13 @@ router.post(
     } else {
       LoginController.LoginDetailsController(
         request,
-        function ({ message, status }) {
+        function ({ message, status, token }) {
           console.log(message);
           console.log(status, "status");
-          return response.status(status).send(message);
+          console.log(token);
+          return response
+            .status(status)
+            .send({ message: message, token: token });
         }
       );
     }

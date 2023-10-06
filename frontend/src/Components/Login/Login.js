@@ -40,12 +40,16 @@ const Login = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post(
-        "/login/api/login",
-        formData
-      );
-      if (response.status === 200) {
-        localStorage.setItem("userId", response.data.userId);
+      const response = await axios.post("/login/api/login", formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
+        },
+      });
+      if (response.status == 200) {
+        console.log(response.data.token);
+        // localStorage.setItem("userId", response.data.userId);
+        localStorage.setItem("tokenauth", response.data.token);
+        console.log(response.data.token);
         window.alert("Login successful");
 
         // Save "Remember me" choice to localStorage

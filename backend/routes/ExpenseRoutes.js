@@ -1,11 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
+const authorizeJWT = require("./authmiddleware");
 
 const ExpenseController = new (require("../Controller/ExpenseController"))();
 
 router.post(
   "/addexpense",
+
   [
     check("PaymentType")
       .notEmpty()
@@ -35,6 +37,7 @@ router.post(
       .isString()
       .withMessage("Provie Invoice Number"),
   ],
+  authorizeJWT,
   function (request, response) {
     const error = validationResult(request);
     if (error.array().length) {

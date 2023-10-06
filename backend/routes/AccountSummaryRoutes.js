@@ -1,11 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
-const pool = require("../db/db");
+const authorizeJWT = require("./authmiddleware");
+
 const AccountController =
   new (require("../Controller/AccountSummaryController"))();
 router.post(
   "/api/account-summary",
+
   [
     check("account")
       .notEmpty()
@@ -15,6 +17,7 @@ router.post(
     check("balance").optional().isNumeric(),
     check("date").notEmpty().isISO8601(),
   ],
+  authorizeJWT,
   function (request, response) {
     const error = validationResult(request);
     if (error.array().length) {

@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
-
+const authorizeJWT = require("./authmiddleware");
 const IncomeController = new (require("../Controller/IncomeController"))();
 
 router.post(
   "/addincome",
+  authorizeJWT,
   [
     check("CompanyName")
       .isLength({ min: 1 })

@@ -257,7 +257,11 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    Axios.get("/account/api/account-summary")
+    Axios.get("/account/api/account-summary", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
+      },
+    })
       .then((response) => {
         console.log(response);
         if (response.status == 200) {

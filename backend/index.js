@@ -30,13 +30,46 @@ app.use((req, res, next) => {
   //allow request to continue and be handled by routes
   next();
 });
+
+// async function auth(request, response, next) {
+//   console.log("auth");
+//   var error = {};
+//   try {
+//     var authorization = Buffer.from(
+//       request.headers.authorization,
+//       "base64"
+//     ).toString();
+//     var auth = await this.generateToken(authorization, process.env.JWT_SECRET);
+//     if (auth.error == "true") {
+//       error.error = "true";
+//       error.message = "UNAUTHORIZED";
+//       return response.status(401).send(error);
+//     } else {
+//       request.params.auth = auth.data;
+//       var authenticate = await this.apiLoginServicesAuthCtrl(request);
+//       if (authenticate.error == "true") {
+//         error.error = "true";
+//         error.message = "UNAUTHORIZED";
+//         return response.status(401).send(error);
+//       } else {
+//         next();
+//       }
+//     }
+//   } catch (err) {
+//     err.error = "true";
+//     err.message = "UNAUTHORIZED";
+//     return response.status(401).send(err);
+//   }
+// }
+
+// app.auth = auth;
 app.use("/user", userRoutes);
 app.use("/otp", otpRoutes);
 
 app.use("/file", express.static(path.join(__dirname)));
-app.use("/income", IncomeRoutes);
-app.use("/expense", ExpenseRoutes);
 app.use("/login", LoginRoutes);
+app.use("/expense", ExpenseRoutes);
+app.use("/income", IncomeRoutes);
 app.use("/account", AccountSummaryRoutes);
 
 // app.post('/addincome',(req,res)=>{
