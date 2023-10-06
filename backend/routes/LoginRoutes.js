@@ -15,7 +15,7 @@ router.post(
       .isString()
       .withMessage("Invalid status. Status must be one of: Direct,Indirect"),
   ],
-  authorizeJWT,
+
   function (request, response) {
     const error = validationResult(request);
     if (error.array().length) {
