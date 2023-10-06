@@ -20,29 +20,26 @@ function OTPValidationForm({ email }) {
     const value = e.target.value;
     setOTP(value);
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // if (otp.length === 6) {
-    axios
-      .post("http://localhost:8089/otp/verify_otp", {
-        otp,
-        email: localStorage.getItem("email"),
-      })
-      .then((response) => {
-        const isValid = response.data.isValid;
-        console.log(response);
-        if (response.data.message == "OTP verified successfully") {
-          setSignupSuccess(true); // Set signup success to true
-        } else {
-          alert("Invalid OTP. Please enter a valid OTP.");
-          setError(true);
+    try {
+      const response = await axios.post(
+        "http://localhost:8089/otp/verify_otp",
+        {
+          otp,
+          email: localStorage.getItem("email"),
         }
-      })
-      .catch((error) => {
-        alert("Error validating OTP: " + error.response.data);
-        setError(true);
-      });
+      );
+      if (response.status == 200) {
+        navigate("/login");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error validating OTP: " + error);
+      setError(true);
+    }
   };
+
   const handleResend = () => {
     setResendTimer(60);
   };
@@ -71,7 +68,7 @@ function OTPValidationForm({ email }) {
         <div>{navigate("/login")}</div>
       ) : (
         // Display the OTP validation form if signupSuccess is false
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={(e) => handleSubmit(e)}>
           <TextField
             label="Enter OTP"
             variant="outlined"

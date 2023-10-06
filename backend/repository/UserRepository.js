@@ -39,6 +39,7 @@ module.exports = function () {
                 text: `Your OTP is: ${otp}`,
               },
               (err, info) => {
+                console.log(info);
                 if (err) {
                   console.error(err);
                   return res.status(500).json({ message: "Server error" });
