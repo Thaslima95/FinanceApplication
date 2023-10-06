@@ -5,7 +5,9 @@ import { Box, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import ApiCalls from "../API/ApiCalls";
 import IncomeImg from "../../src/assets/Images/income.png";
+import { useNavigate } from "react-router-dom";
 export default function IncomeDashboard() {
+  const navigate = useNavigate();
   const [totalIncome, setTotalIncome] = useState(0);
   const [unpaidIncome, setUnpaidIncome] = useState(0);
 
@@ -16,16 +18,22 @@ export default function IncomeDashboard() {
     totalIncomecall();
   }, []);
 
-  const totalunpaidincomecall = () => {
-    ApiCalls.getUnpaidTotalIncome()
+  const totalunpaidincomecall = async () => {
+    await ApiCalls.getUnpaidTotalIncome()
       .then((res) => {
+        if (res.response.status == 401) {
+          navigate("/login");
+        }
         setUnpaidIncome(res.data.Total);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => alert(err));
   };
-  const totalIncomecall = () => {
-    ApiCalls.getTotalIncome()
+  const totalIncomecall = async () => {
+    await ApiCalls.getTotalIncome()
       .then((res) => {
+        if (res.response.status == 401) {
+          navigate("/login");
+        }
         setTotalIncome(res.data.Total);
       })
       .catch((err) => console.log(err));

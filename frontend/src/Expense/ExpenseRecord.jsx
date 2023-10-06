@@ -21,11 +21,14 @@ import axios from "axios";
 import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import ApiCalls from "../API/ApiCalls";
+import { useNavigate } from "react-router-dom";
 
 export default function ExpenseRecord({
   totalExpenseDetails,
   totalIndirectExpenseDetails,
 }) {
+  const navigate = useNavigate();
+
   const [open, setOpen] = React.useState(false);
   const [deleteopen, setdeleteOpen] = React.useState(false);
   const [deleteid, setDeleteId] = useState(0);
@@ -209,14 +212,17 @@ export default function ExpenseRecord({
     setdeleteOpen(true);
   };
 
-  const handleDelete = (id) => {
-    ApiCalls.deleteSingleExpense(id)
+  const handleDelete = async (id) => {
+    await ApiCalls.deleteSingleExpense(id)
       .then((res) => {
         window.alert("Expense deleted");
         totalExpenseDetails();
         totalIndirectExpenseDetails();
         setdeleteOpen(false);
         getExpenseRecord();
+        if (res.response.status == 401) {
+          navigate("/login");
+        }
       })
       .catch((err) => window.alert("Sorry!Try Again"));
   };
@@ -224,10 +230,15 @@ export default function ExpenseRecord({
   useEffect(() => {
     getExpenseRecord();
   }, []);
-  const getExpenseRecord = () => {
-    axios
+  const getExpenseRecord = async () => {
+    await axios
       .get(`/expense/getexpensedetails`)
-      .then((res) => setRows(res.data))
+      .then((res) => {
+        if (res.response.status == 401) {
+          navigate("/login");
+        }
+        setRows(res.data);
+      })
       .catch((err) => console.log(err));
   };
 

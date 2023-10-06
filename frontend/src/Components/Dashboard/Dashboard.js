@@ -37,6 +37,7 @@ import { Date } from "core-js";
 import IncomeImg from "../../assets/Images/income.png";
 import ExpenseImg from "../../assets/Images/expense.png";
 import PfImg from "../../assets/Images/profit and loss.png";
+
 const theme = createTheme({
   palette: {
     primary: {
@@ -48,6 +49,7 @@ const theme = createTheme({
 const Dashboard = () => {
   const [tableData, setTableData] = useState([]);
   const [isAddDialogOpen, setAddDialogOpen] = useState(false);
+
   const [newRowData, setNewRowData] = useState({
     account: "",
     limit_amount: "",
@@ -266,6 +268,8 @@ const Dashboard = () => {
         console.log(response);
         if (response.status == 200) {
           setTableData(response.data);
+        } else if (response.status == 401) {
+          alert(response.message);
         } else {
           console.error("Error fetching data from the API");
         }

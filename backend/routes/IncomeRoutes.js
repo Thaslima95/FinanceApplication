@@ -67,6 +67,7 @@ router.post(
       .isLength({ min: 1 })
       .withMessage("Invalid: AccountDetails must have at least 1 character"),
   ],
+
   function (request, response) {
     const error = validationResult(request);
     if (error.array().length) {
@@ -82,7 +83,7 @@ router.post(
   }
 );
 
-router.get("/getincomedetails", function (request, response) {
+router.get("/getincomedetails", authorizeJWT, function (request, response) {
   IncomeController.getListIncomeController(request, function ({ data }) {
     return response.send(data);
   });
@@ -90,6 +91,7 @@ router.get("/getincomedetails", function (request, response) {
 
 router.put(
   "/updateincome/:id",
+  authorizeJWT,
   [
     check("id").isLength({ min: 1 }).isNumeric().withMessage("Invalid id"),
     check("CompanyName")
@@ -168,6 +170,7 @@ router.put(
 
 router.put(
   "/deletesinglerecord/:id",
+  authorizeJWT,
   [check("id").isLength({ min: 1 }).isNumeric().withMessage("Invalid id")],
   function (request, response) {
     const error = validationResult(request);
@@ -184,17 +187,24 @@ router.put(
   }
 );
 
-router.get("/getTotalIncomeRate", function (request, response) {
+router.get("/getTotalIncomeRate", authorizeJWT, function (request, response) {
   IncomeController.getTotalIncomeController(request, function ({ data }) {
     return response.send(data);
   });
 });
 
-router.get("/getUnpaidTotalIncomeRate", function (request, response) {
-  IncomeController.getUnpaidTotalIncomeController(request, function ({ data }) {
-    return response.send(data);
-  });
-});
+router.get(
+  "/getUnpaidTotalIncomeRate",
+  authorizeJWT,
+  function (request, response) {
+    IncomeController.getUnpaidTotalIncomeController(
+      request,
+      function ({ data }) {
+        return response.send(data);
+      }
+    );
+  }
+);
 
 router.get(
   "/generateinvoice/:id",

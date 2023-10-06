@@ -7,7 +7,7 @@ const ExpenseController = new (require("../Controller/ExpenseController"))();
 
 router.post(
   "/addexpense",
-
+  authorizeJWT,
   [
     check("PaymentType")
       .notEmpty()
@@ -37,7 +37,6 @@ router.post(
       .isString()
       .withMessage("Provie Invoice Number"),
   ],
-  authorizeJWT,
   function (request, response) {
     const error = validationResult(request);
     if (error.array().length) {
@@ -54,7 +53,7 @@ router.post(
   }
 );
 
-router.get("/getexpensedetails", function (request, response) {
+router.get("/getexpensedetails", authorizeJWT, function (request, response) {
   ExpenseController.getListExpenseController(request, function ({ data }) {
     return response.send(data);
   });
@@ -62,6 +61,7 @@ router.get("/getexpensedetails", function (request, response) {
 
 router.put(
   "/updateexpense/:id",
+  authorizeJWT,
   [
     check("id").isLength({ min: 1 }).isNumeric().withMessage("Invalid id"),
     check("PaymentType")
@@ -109,6 +109,7 @@ router.put(
 
 router.put(
   "/deletesingleexpenserecord/:id",
+  authorizeJWT,
   [check("id").isLength({ min: 1 }).isNumeric().withMessage("Invalid id")],
   function (request, response) {
     const error = validationResult(request);
@@ -125,19 +126,27 @@ router.put(
   }
 );
 
-router.get("/getDirectTotalExpenseRate", function (request, response) {
-  ExpenseController.getTotalExpenseController(request, function ({ data }) {
-    return response.send(data);
-  });
-});
-
-router.get("/getIndirectTotalExpenseRate", function (request, response) {
-  ExpenseController.getIndirectTotalExpenseController(
-    request,
-    function ({ data }) {
+router.get(
+  "/getDirectTotalExpenseRate",
+  authorizeJWT,
+  function (request, response) {
+    ExpenseController.getTotalExpenseController(request, function ({ data }) {
       return response.send(data);
-    }
-  );
-});
+    });
+  }
+);
+
+router.get(
+  "/getIndirectTotalExpenseRate",
+  authorizeJWT,
+  function (request, response) {
+    ExpenseController.getIndirectTotalExpenseController(
+      request,
+      function ({ data }) {
+        return response.send(data);
+      }
+    );
+  }
+);
 
 module.exports = router;

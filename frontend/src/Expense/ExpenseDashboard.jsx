@@ -5,21 +5,30 @@ import { useState, useMemo } from "react";
 import ApiCalls from "../API/ApiCalls";
 import ExpenseRecord from "./ExpenseRecord";
 import ExpenseImg from "../../src/assets/Images/expense.png";
+import { useNavigate } from "react-router-dom";
 export default function ExpenseDashboard() {
+  const navigate = useNavigate();
+
   const [totalExpense, setTotalExpense] = useState(0);
   const [unpaidExpense, setUnpaidExpense] = useState(0);
 
-  const totalExpenseDetails = () => {
-    ApiCalls.getTotalExpense()
+  const totalExpenseDetails = async () => {
+    await ApiCalls.getTotalExpense()
       .then((res) => {
+        if (res.response.status == 401) {
+          navigate("/login");
+        }
         setTotalExpense(res.data.Total);
       })
       .catch((err) => console.log(err));
   };
 
-  const totalIndirectExpenseDetails = () => {
-    ApiCalls.getUnpaidTotalExpense()
+  const totalIndirectExpenseDetails = async () => {
+    await ApiCalls.getUnpaidTotalExpense()
       .then((res) => {
+        if (res.response.status == 401) {
+          navigate("/login");
+        }
         setUnpaidExpense(res.data.Total);
       })
       .catch((err) => console.log(err));

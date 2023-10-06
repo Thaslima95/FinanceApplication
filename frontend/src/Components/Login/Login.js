@@ -124,7 +124,7 @@ const Login = () => {
               autoFocus
               onChange={handleChange}
             />
-            <div>
+            <div style={{ border: "1px solid red" }}>
               <TextField
                 margin="normal"
                 required
@@ -138,8 +138,21 @@ const Login = () => {
                 placeholder="Password"
                 onChange={handleChange}
               />
-              <span className="eye-icon" onClick={handleToggle}>
-                <Icon className="absolute mr-10" icon={icon} size={25} />
+              <span
+                style={{ border: "1px solid red", marginTop: "-30px" }}
+                className="eye-icon"
+                onClick={handleToggle}
+              >
+                <Icon
+                  sx={{
+                    border: "1px solid red",
+                    position: "absolute",
+                    top: "-20px",
+                  }}
+                  className="absolute mr-10"
+                  icon={icon}
+                  size={25}
+                />
               </span>
             </div>
             <FormControlLabel

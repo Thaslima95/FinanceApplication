@@ -20,6 +20,7 @@ import axios from "axios";
 import { GridRowModes, DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import ApiCalls from "../API/ApiCalls";
+import { useNavigate } from "react-router-dom";
 const currentYear = new Date().getFullYear();
 const nextYear = currentYear + 1;
 const lastTwoDigitsCurrentYear = currentYear % 100;
@@ -33,6 +34,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
   const [rows, setRows] = useState([]);
 
   let updatedrow = [];
+  const navigate = useNavigate();
 
   const [rowModesModel, setRowModesModel] = useState({});
   const [actionTake, setActionTake] = useState(false);
@@ -188,8 +190,8 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
     setdeleteOpen(true);
   };
 
-  const handleDelete = (id) => {
-    ApiCalls.deleteSingleIncome(id)
+  const handleDelete = async (id) => {
+    await ApiCalls.deleteSingleIncome(id)
       .then((res) => {
         window.alert("Income deleted");
         getIncomeRecord();
@@ -199,8 +201,8 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
       })
       .catch((err) => window.alert("Sorry!Try Again"));
   };
-  const handleDownloadClick = (id) => {
-    ApiCalls.donwloadInvoice(id)
+  const handleDownloadClick = async (id) => {
+    await ApiCalls.donwloadInvoice(id)
       .then((res) => {
         if (res.status == 200 || 201) {
           // window.alert(`Download Success\nfilename:${res.data.fileName}`);
@@ -210,13 +212,15 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               "__blank"
             );
           }, 3000);
+        } else if (res.response.status == 401) {
+          navigate("/login");
         }
       })
       .catch((err) => window.alert("Download Failed!Try again!"));
   };
 
-  const generatereceipt = (id) => {
-    ApiCalls.generatereceipt(id)
+  const generatereceipt = async (id) => {
+    await ApiCalls.generatereceipt(id)
       .then((res) => {
         if (res.status == 200 || 201) {
           setTimeout(() => {
@@ -225,6 +229,8 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               "__blank"
             );
           }, 3000);
+        } else if (res.response.status == 401) {
+          navigate("/login");
         }
       })
       .catch((err) => window.alert("Download Failed!Try again!"));
@@ -234,11 +240,13 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
     getIncomeRecord();
   }, []);
 
-  const getIncomeRecord = () => {
-    axios
+  const getIncomeRecord = async () => {
+    await axios
       .get(`/income/getincomedetails`)
       .then((res) => {
-        console.log(res);
+        if (res.response.status == 401) {
+          navigate("/login");
+        }
         setRows(res.data);
       })
       .catch((err) => console.log(err));
