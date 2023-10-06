@@ -6,11 +6,7 @@ export default {
     try {
       const response = await axios.post(
         `/income/addincome`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
-          },
-        },
+
         newRow
       );
 
@@ -23,11 +19,7 @@ export default {
     try {
       const response = await axios.put(
         `/income/updateincome/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
-          },
-        },
+
         newRow
       );
 
@@ -45,7 +37,7 @@ export default {
       });
       return response;
     } catch (err) {
-      console.log(err);
+      return err;
     }
   },
   getUnpaidTotalIncome: async function () {
@@ -69,10 +61,10 @@ export default {
           Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
         },
       });
-      console.log(response);
+
       return response;
     } catch (err) {
-      console.log(err);
+      return err;
     }
   },
 
@@ -85,7 +77,7 @@ export default {
       });
       return response;
     } catch (err) {
-      console.log(err);
+      return err;
     }
   },
 
@@ -98,7 +90,7 @@ export default {
       });
       return response;
     } catch (err) {
-      console.log(err);
+      return err;
     }
   },
   getTotalExpense: async function () {
@@ -110,7 +102,7 @@ export default {
       });
       return response;
     } catch (err) {
-      console.log(err);
+      return err;
     }
   },
   getUnpaidTotalExpense: async function () {
@@ -122,44 +114,24 @@ export default {
       });
       return response;
     } catch (err) {
-      console.log(err);
+      return err;
     }
   },
   addExpense: async function (newRow) {
     try {
-      const response = await axios.post(
-        `/expense/addexpense`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
-          },
-        },
-        newRow
-      );
-      console.log(response);
+      const response = await axios.post(`/expense/addexpense`, newRow);
+
       return response;
     } catch (err) {
-      console.log(err);
       return err;
     }
   },
   updateExpense: async function (id, newRow) {
     try {
-      const response = await axios.put(
-        `/expense/updateexpense/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
-          },
-        },
-        newRow
-      );
-      console.log(response);
+      const response = await axios.put(`/expense/updateexpense/${id}`, newRow);
 
       return response;
     } catch (err) {
-      console.log(err);
-
       return err;
     }
   },
@@ -175,7 +147,7 @@ export default {
       );
       return response;
     } catch (err) {
-      console.log(err);
+      return err;
     }
   },
 };

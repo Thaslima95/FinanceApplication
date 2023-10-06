@@ -220,9 +220,6 @@ export default function ExpenseRecord({
         totalIndirectExpenseDetails();
         setdeleteOpen(false);
         getExpenseRecord();
-        if (res.response.status == 401) {
-          navigate("/login");
-        }
       })
       .catch((err) => window.alert("Sorry!Try Again"));
   };
@@ -232,9 +229,13 @@ export default function ExpenseRecord({
   }, []);
   const getExpenseRecord = async () => {
     await axios
-      .get(`/expense/getexpensedetails`)
+      .get(`/expense/getexpensedetails`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
+        },
+      })
       .then((res) => {
-        if (res.response.status == 401) {
+        if (res && res.response && res.response.status == 401) {
           navigate("/login");
         }
         setRows(res.data);

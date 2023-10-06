@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
+import axios from "axios";
 import {
   Toolbar,
   Typography,
@@ -26,17 +26,20 @@ const Layout = () => {
 
   const handleLogout = async () => {
     try {
-      const token = localStorage.getItem("userToken");
-
-      await axios.post("/api/logout", null, {
-        headers: {
-          Authorization: token,
-        },
-      });
-
-      localStorage.removeItem("userToken");
-
+      localStorage.removeItem("tokenauth");
       navigate("/login");
+      // const token = localStorage.getItem("tokenauth");
+
+      // await axios.post("/api/logout", null, {
+      //   headers: {
+      //     Authorization: token,
+      //   },
+      // });
+
+      // localStorage.removeItem("userToken");
+      // localStorage.removeItem("tokenauth");
+
+      // navigate("/login");
     } catch (error) {
       console.error("Logout error:", error);
     }

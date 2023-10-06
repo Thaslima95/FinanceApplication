@@ -7,7 +7,7 @@ const ExpenseController = new (require("../Controller/ExpenseController"))();
 
 router.post(
   "/addexpense",
-  authorizeJWT,
+
   [
     check("PaymentType")
       .notEmpty()
@@ -61,13 +61,13 @@ router.get("/getexpensedetails", authorizeJWT, function (request, response) {
 
 router.put(
   "/updateexpense/:id",
-  authorizeJWT,
+
   [
     check("id").isLength({ min: 1 }).isNumeric().withMessage("Invalid id"),
     check("PaymentType")
       .notEmpty()
       .isString()
-      .isIn(["Direct", "InDirect"])
+      .isIn(["Direct", "Indirect"])
       .withMessage("Invalid status. Status must be one of: Direct,Indirect"),
     check("AccountType")
       .notEmpty()

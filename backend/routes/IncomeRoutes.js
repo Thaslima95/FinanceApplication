@@ -6,11 +6,11 @@ const IncomeController = new (require("../Controller/IncomeController"))();
 
 router.post(
   "/addincome",
-  authorizeJWT,
+
   [
-    check("CompanyName")
-      .isLength({ min: 1 })
-      .withMessage("Invalid: Company Name must have at least 1 character"),
+    // check("CompanyName")
+    //   .isLength({ min: 1 })
+    //   .withMessage("Invalid: Company Name must have at least 1 character"),
     check("StreetAddress")
       .isLength({ min: 1 })
       .withMessage("Invalid: StreetAddress must have at least 1 character"),
@@ -69,6 +69,7 @@ router.post(
   ],
 
   function (request, response) {
+    console.log(request);
     const error = validationResult(request);
     if (error.array().length) {
       return response.status(500).send(error.errors[0].msg);
@@ -91,7 +92,7 @@ router.get("/getincomedetails", authorizeJWT, function (request, response) {
 
 router.put(
   "/updateincome/:id",
-  authorizeJWT,
+
   [
     check("id").isLength({ min: 1 }).isNumeric().withMessage("Invalid id"),
     check("CompanyName")

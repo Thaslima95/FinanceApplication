@@ -37,7 +37,7 @@ import { Date } from "core-js";
 import IncomeImg from "../../assets/Images/income.png";
 import ExpenseImg from "../../assets/Images/expense.png";
 import PfImg from "../../assets/Images/profit and loss.png";
-
+import { useNavigate } from "react-router-dom";
 const theme = createTheme({
   palette: {
     primary: {
@@ -47,6 +47,8 @@ const theme = createTheme({
 });
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+
   const [tableData, setTableData] = useState([]);
   const [isAddDialogOpen, setAddDialogOpen] = useState(false);
 
@@ -97,7 +99,7 @@ const Dashboard = () => {
     }
   };
 
-  const handleAddButtonClick = () => {
+  const handleAddButtonClick = async () => {
     const newData = {
       account: newRowData.account,
       limit_amount: newRowData.limit_amount,
@@ -111,18 +113,28 @@ const Dashboard = () => {
       newData.balance &&
       newData.date
     ) {
-      Axios.post("/account/api/account-summary", newData)
-        .then((response) => {
-          if (response.status === 200) {
-            setTableData((prevTableData) => [...prevTableData, newData]);
-            setAddDialogOpen(false);
-          } else {
-            console.error("Error adding data to the API");
-          }
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+      try {
+        const response = await Axios.post(
+          "/account/api/account-summary",
+
+          newData
+        );
+
+        if (response.status === 200) {
+          setTableData((prevTableData) => [...prevTableData, newData]);
+          setAddDialogOpen(false);
+        } else if (
+          response &&
+          response.response &&
+          response.response.status == 401
+        ) {
+          navigate("/login");
+        } else {
+          console.error("Error adding data to the API");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
     } else {
       console.error("All fields are required!");
     }
@@ -135,31 +147,47 @@ const Dashboard = () => {
     }));
   };
 
-  const handleRowInputChange = (event, index) => {
+  const handleRowInputChange = async (event, index) => {
     const { name, value } = event.target;
     const updatedTableData = [...tableData];
     updatedTableData[index] = {
       ...updatedTableData[index],
       [name.split("-")[0]]: value,
     };
+
     if (editMode[index]) {
-      Axios.put(`/account/api/account-summary/${updatedTableData[index].id}`, {
-        account: updatedTableData[index].account,
-        limit_amount: updatedTableData[index].limit_amount,
-        balance: updatedTableData[index].balance,
-        date: updatedTableData[index].date,
-      })
-        .then((response) => {
-          console.log(response);
-          if (response.status === 200) {
-            console.log("Record updated successfully");
-          } else {
-            console.error("Error updating record");
+      try {
+        const response = await Axios.put(
+          `/account/api/account-summary/${updatedTableData[index].id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
+            },
+          },
+          {
+            account: updatedTableData[index].account,
+            limit_amount: updatedTableData[index].limit_amount,
+            balance: updatedTableData[index].balance,
+            date: updatedTableData[index].date,
           }
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+        );
+
+        console.log(response);
+
+        if (response.status === 200) {
+          console.log("Record updated successfully");
+        } else if (
+          response &&
+          response.response &&
+          response.response.status == 401
+        ) {
+          navigate("/login");
+        } else {
+          console.error("Error updating record");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
     }
 
     setTableData(updatedTableData);
@@ -225,29 +253,57 @@ const Dashboard = () => {
     doc.save("Account_summary.pdf");
   };
 
-  const handleDeleteRow = (index, accountId) => {
-    if (!accountId) {
-      const updatedTableData = [...tableData];
-      updatedTableData.splice(index, 1);
-      setTableData(updatedTableData);
-    } else {
-      Axios.delete(`/account/api/account-summary/${accountId}`)
-        .then((response) => {
-          console.log(response);
-          if (response.status == 300) {
-            const updatedTableData = [...tableData];
-            updatedTableData.splice(index, 1);
-            setTableData(updatedTableData);
-          } else {
-            console.error("Error deleting data from the API");
-          }
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-    }
+  const fetchData = () => {
+    Axios.get("/account/api/account-summary", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
+      },
+    })
+      .then((response) => {
+        console.log(response);
+        if (response.status === 200) {
+          setTableData(response.data);
+        } else if (response.status === 401) {
+          alert(response.message);
+        } else {
+          console.error("Error fetching data from the API");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
 
+  const handleDeleteRow = async (index, accountId) => {
+    try {
+      if (!accountId) {
+        // Optimistically update the state before the actual deletion
+        const updatedTableData = [...tableData];
+        updatedTableData.splice(index, 1);
+        setTableData(updatedTableData);
+      } else {
+        const response = await Axios.delete(
+          `/account/api/account-summary/${accountId}`
+        );
+
+        console.log(response);
+        if (response.status === 200) {
+          // Fetch data again after successful deletion
+          fetchData();
+        } else if (
+          response &&
+          response.response &&
+          response.response.status == 401
+        ) {
+          navigate("/login");
+        } else {
+          console.error("Error deleting data from the API");
+        }
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
   const calculateTotal = () => {
     let totalLimit = 0;
     let totalBalance = 0;
@@ -259,41 +315,35 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    Axios.get("/account/api/account-summary", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
-      },
-    })
-      .then((response) => {
-        console.log(response);
-        if (response.status == 200) {
-          setTableData(response.data);
-        } else if (response.status == 401) {
-          alert(response.message);
-        } else {
-          console.error("Error fetching data from the API");
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+    fetchData();
   }, []);
-
-  useMemo(() => {
-    ApiCalls.getTotalIncome()
+  const gettotalIncome = async () => {
+    await ApiCalls.getTotalIncome()
       .then((res) => {
-        console.log(res);
+        if (res && res.response && res.response.status == 401) {
+          navigate("/login");
+        }
         setTotalIncome(res.data.Total);
       })
       .catch((err) => console.log(err));
-  }, []);
+  };
 
-  useMemo(() => {
-    ApiCalls.getTotalExpense()
+  const gettotalExpense = async () => {
+    await ApiCalls.getTotalExpense()
       .then((res) => {
+        if (res && res.response && res.response.status == 401) {
+          navigate("/login");
+        }
         setTotalExpense(res.data.Total);
       })
       .catch((err) => console.log(err));
+  };
+  useMemo(() => {
+    gettotalIncome();
+  }, []);
+
+  useMemo(() => {
+    gettotalExpense();
   }, []);
 
   return (

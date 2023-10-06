@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
 const LoginController = new (require("../Controller/LoginController"))();
-const authorizeJWT = require("./authmiddleware");
+
 router.post(
   "/api/login",
   [

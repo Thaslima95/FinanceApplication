@@ -212,7 +212,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               "__blank"
             );
           }, 3000);
-        } else if (res.response.status == 401) {
+        } else if (res && res.response && res.response.status == 401) {
           navigate("/login");
         }
       })
@@ -229,7 +229,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               "__blank"
             );
           }, 3000);
-        } else if (res.response.status == 401) {
+        } else if (res && res.response && res.response.status == 401) {
           navigate("/login");
         }
       })
@@ -242,9 +242,13 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
 
   const getIncomeRecord = async () => {
     await axios
-      .get(`/income/getincomedetails`)
+      .get(`/income/getincomedetails`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
+        },
+      })
       .then((res) => {
-        if (res.response.status == 401) {
+        if (res && res.response && res.response.status == 401) {
           navigate("/login");
         }
         setRows(res.data);

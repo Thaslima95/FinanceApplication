@@ -17,7 +17,7 @@ router.post(
     check("balance").optional().isNumeric(),
     check("date").notEmpty().isISO8601(),
   ],
-  authorizeJWT,
+
   function (request, response) {
     const error = validationResult(request);
     if (error.array().length) {
@@ -34,24 +34,17 @@ router.post(
     }
   }
 );
-router.get(
-  "/api/account-summary",
-
-  function (request, response) {
-    const error = validationResult(request);
-    if (error.array().length) {
-      return response.status(500).send(error.errors[0].msg);
-    } else {
-      AccountController.getAccountSummaryController(
-        request,
-        function ({ data }) {
-          console.log(data);
-          return response.send(data);
-        }
-      );
-    }
+router.get("/api/account-summary", authorizeJWT, function (request, response) {
+  const error = validationResult(request);
+  if (error.array().length) {
+    return response.status(500).send(error.errors[0].msg);
+  } else {
+    AccountController.getAccountSummaryController(request, function ({ data }) {
+      console.log(data);
+      return response.send(data);
+    });
   }
-);
+});
 router.put(
   "/api/account-summary/:id",
   [
@@ -81,7 +74,7 @@ router.put(
   }
 );
 router.delete("/api/account-summary/:id", function (request, response) {
-  AccountController.updateSummaryController(
+  AccountController.deleteSummaryController(
     request,
     function ({ message, status }) {
       console.log(status, message);
