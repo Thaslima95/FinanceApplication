@@ -2,18 +2,39 @@ import React from "react";
 import axios from "axios";
 
 export default {
+  // addIncome: async function (newRow) {
+  //   try {
+  //     const response = await axios.post(
+  //       `http://localhost:8089/income/addincome`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
+  //         },
+  //         data: newRow,
+  //       }
+  //     );
+
+  //     return response;
+  //   } catch (err) {
+  //     return err;
+  //   }
+  // },
+
   addIncome: async function (newRow) {
-    try {
-      const response = await axios.post(
-        `http://localhost:8089/income/addincome`,
-
-        newRow
-      );
-
-      return response;
-    } catch (err) {
-      return err;
-    }
+    await axios({
+      url: "http://localhost:8089/income/addincome",
+      method: "post",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
+      },
+      data: newRow,
+    })
+      .then((response) => {
+        return response;
+      })
+      .catch((err) => {
+        return err;
+      });
   },
   updateIncome: async function (id, newRow) {
     try {

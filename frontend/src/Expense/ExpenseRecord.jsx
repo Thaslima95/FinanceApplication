@@ -239,7 +239,7 @@ export default function ExpenseRecord({
         }
         setRows(res.data);
       })
-      .catch((err) => window.alert("Something went wrong"));
+      .catch((err) => console.log(err));
   };
 
   const columns = [
@@ -532,7 +532,7 @@ export default function ExpenseRecord({
       >
         <DialogContent fullWidth>
           <DialogContentText sx={{ fontWeight: 800 }}>
-            Add Expense Details
+            {actionTake ? "Update Expense Details" : "Add Expense Details"}
           </DialogContentText>
           <Grid container lg={12} sx={{ display: "flex" }}>
             <Grid item lg={4}>

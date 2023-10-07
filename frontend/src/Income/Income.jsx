@@ -252,7 +252,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
         }
         setRows(res.data);
       })
-      .catch((err) => window.alert(`Something went wrong`));
+      .catch((err) => console.log(err));
   };
 
   const columns = [
@@ -580,7 +580,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
       >
         <DialogContent fullWidth>
           <DialogContentText sx={{ fontWeight: 800 }}>
-            Add Income Details
+            {actionTake ? "Update Income Details" : "Add Income Details"}
           </DialogContentText>
           <Grid item lg={4} md={6} xs={8}>
             {" "}
