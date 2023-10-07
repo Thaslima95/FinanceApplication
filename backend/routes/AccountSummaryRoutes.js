@@ -9,15 +9,12 @@ router.post(
   "/api/account-summary",
 
   [
-    check("account")
-      .notEmpty()
-      .isString()
-      .withMessage("Invalid status. Status must be one of: Direct,Indirect"),
+    check("account").notEmpty().isString().withMessage("Invalid account"),
     check("limit_amount").optional().isNumeric(),
     check("balance").optional().isNumeric(),
     check("date").notEmpty().isISO8601(),
   ],
-
+  authorizeJWT,
   function (request, response) {
     const error = validationResult(request);
     if (error.array().length) {
@@ -54,6 +51,7 @@ router.put(
     check("balance").optional().isNumeric(),
     check("date").notEmpty().isISO8601(),
   ],
+  authorizeJWT,
   function (request, response) {
     const error = validationResult(request);
     if (error.array().length) {
@@ -68,12 +66,16 @@ router.put(
     }
   }
 );
-router.delete("/api/account-summary/:id", function (request, response) {
-  AccountController.deleteSummaryController(
-    request,
-    function ({ message, status }) {
-      return response.status(status).send(message);
-    }
-  );
-});
+router.delete(
+  "/api/account-summary/:id",
+  authorizeJWT,
+  function (request, response) {
+    AccountController.deleteSummaryController(
+      request,
+      function ({ message, status }) {
+        return response.status(status).send(message);
+      }
+    );
+  }
+);
 module.exports = router;

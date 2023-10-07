@@ -21,7 +21,10 @@ export default function IncomeDashboard() {
   const totalunpaidincomecall = async () => {
     await ApiCalls.getUnpaidTotalIncome()
       .then((res) => {
-        if (res && res.response && res.response.status == 401) {
+        if (
+          (res && res.status == 401) ||
+          (res.response && res.response.status == 401)
+        ) {
           navigate("/login");
         }
 
@@ -32,7 +35,10 @@ export default function IncomeDashboard() {
   const totalIncomecall = async () => {
     await ApiCalls.getTotalIncome()
       .then((res) => {
-        if (res && res.response && res.response.status == 401) {
+        if (
+          (res && res.status == 401) ||
+          (res.response && res.response.status == 401)
+        ) {
           navigate("/login");
         }
 

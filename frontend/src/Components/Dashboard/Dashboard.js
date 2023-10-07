@@ -114,26 +114,25 @@ const Dashboard = () => {
       newData.date
     ) {
       try {
-        const response = await Axios.post(
-          "/account/api/account-summary",
-
-          newData
-        );
-
-        if (response.status === 200) {
-          setTableData((prevTableData) => [...prevTableData, newData]);
-          setAddDialogOpen(false);
-        } else if (
-          response &&
-          response.response &&
-          response.response.status == 401
-        ) {
-          navigate("/login");
-        } else {
-          console.error("Error adding data to the API");
-        }
+        await Axios({
+          url: "http://localhost:8089/account/api/account-summary",
+          method: "post",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
+          },
+          data: newData,
+        }).then((response) => {
+          if (response.status == 200) {
+            setTableData((prevTableData) => [...prevTableData, newData]);
+            setAddDialogOpen(false);
+          } else {
+            console.error("Error adding data to the API");
+          }
+        });
       } catch (error) {
-        console.error("Error:", error);
+        if (error && error.response.status == 401) {
+          navigate("/login");
+        }
       }
     } else {
       console.error("All fields are required!");

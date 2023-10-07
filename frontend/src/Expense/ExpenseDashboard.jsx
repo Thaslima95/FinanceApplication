@@ -15,7 +15,10 @@ export default function ExpenseDashboard() {
   const totalExpenseDetails = async () => {
     await ApiCalls.getTotalExpense()
       .then((res) => {
-        if (res && res.response && res.response.status == 401) {
+        if (
+          (res && res.status == 401) ||
+          (res.response && res.response.status == 401)
+        ) {
           navigate("/login");
         }
         setTotalExpense(res.data.Total);
@@ -26,7 +29,10 @@ export default function ExpenseDashboard() {
   const totalIndirectExpenseDetails = async () => {
     await ApiCalls.getUnpaidTotalExpense()
       .then((res) => {
-        if (res && res.response && res.response.status == 401) {
+        if (
+          (res && res.status == 401) ||
+          (res.response && res.response.status == 401)
+        ) {
           navigate("/login");
         }
         setUnpaidExpense(res.data.Total);
