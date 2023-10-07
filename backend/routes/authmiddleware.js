@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = "mysecret";
-
+const AuthController = new (require("../Controller/AuthourizeController"))();
 function authorizeJWT(req, res, next) {
   const authHeader = req.header("Authorization");
   if (!authHeader) {
@@ -16,7 +16,11 @@ function authorizeJWT(req, res, next) {
 
     req.user = decoded;
 
-    next();
+    AuthController.AuthorizeController(req.user, function ({ status }) {
+      if (status == 200) {
+        next();
+      }
+    });
   });
 }
 

@@ -244,7 +244,6 @@ export default function ExpenseRecord({
       },
     })
       .then((response) => {
-        console.log(response);
         if (response) {
           window.alert("Expense deleted");
           totalExpenseDetails();
@@ -254,7 +253,6 @@ export default function ExpenseRecord({
         }
       })
       .catch((err) => {
-        console.log(err);
         window.alert("Failed to Delete");
       });
   };

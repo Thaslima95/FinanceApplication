@@ -224,7 +224,6 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
       },
     })
       .then((response) => {
-        console.log(response);
         if (response) {
           window.alert("Income deleted");
           getIncomeRecord();
@@ -234,7 +233,6 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
         }
       })
       .catch((err) => {
-        console.log(err);
         window.alert("Failed to Delete");
       });
   };
