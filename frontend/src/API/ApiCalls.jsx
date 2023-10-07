@@ -20,7 +20,7 @@ export default {
   //   }
   // },
 
-  addIncome: async function (newRow) {
+  async addIncome(newRow) {
     await axios({
       url: "http://localhost:8089/income/addincome",
       method: "post",
@@ -30,9 +30,12 @@ export default {
       data: newRow,
     })
       .then((response) => {
+        console.log(response);
+
         return response;
       })
       .catch((err) => {
+        console.log(err);
         return err;
       });
   },

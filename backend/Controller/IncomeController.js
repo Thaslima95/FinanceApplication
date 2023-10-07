@@ -15,7 +15,7 @@ module.exports = function () {
       response.data = addIncomeService.result;
       response.status = addIncomeService.status;
     }
-
+    console.log(response);
     callback(response);
   };
 

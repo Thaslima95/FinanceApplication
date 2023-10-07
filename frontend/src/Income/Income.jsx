@@ -70,7 +70,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
   const [adddetails, setAddDetails] = useState(initialvalue);
   const today = new Date().toISOString().split("T")[0];
 
-  const handleaddIncome = () => {
+  const handleaddIncome = async () => {
     if (
       adddetails.InvoiceNumber == "" ||
       adddetails.CompanyName == "" ||
@@ -102,60 +102,85 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
           BalanceDue: total,
         });
         if (actionTake) {
-          ApiCalls.updateIncome(adddetails.id, {
+          updateApiIncomeData(adddetails.id, {
             ...adddetails,
             TotalAmount: total,
             BalanceDue: total,
             CGST: Number(adddetails.CGST),
             SGST: Number(adddetails.SGST),
             IGST: Number(adddetails.IGST),
-          })
-            .then((res) => {
-              console.log(res);
-              if (res.status === 200 || res.response.status == 200) {
-                window.alert("Income Updated Successfully");
-                totalIncomecall();
-                totalunpaidincomecall();
-                setActionTake(false);
-                setOpen(false);
-                getIncomeRecord();
-                setAddDetails({ ...initialvalue, id: "" });
-              } else if (res.response.status == 403) {
-                window.alert("Invoice Number Already exists");
-              } else if (res.response.status == 500) {
-                window.alert(res.response.data);
-              }
-            })
-            .catch((err) => window.alert("Sorry!Try Again"));
+          });
         } else {
-          ApiCalls.addIncome({
+          addApiIncomeData({
             ...adddetails,
             TotalAmount: total,
             BalanceDue: total,
             CGST: Number(adddetails.CGST),
             SGST: Number(adddetails.SGST),
             IGST: Number(adddetails.IGST),
-          })
-            .then((res) => {
-              if (res.status == 200 || res.response.status == 200) {
-                window.alert("Income Created Successfully");
-                totalIncomecall();
-                totalunpaidincomecall();
-                setOpen(false);
-                getIncomeRecord();
-                setAddDetails({ ...initialvalue, id: "" });
-              } else if (res.response.status == 403) {
-                window.alert("Invoice Number Already exists");
-              } else if (res.response.status == 500) {
-                window.alert(res.response.data);
-              }
-            })
-            .catch((err) => console.log(err));
+          });
         }
       } else {
         window.alert("Invoice date should be less than or equal to due date");
       }
     }
+  };
+  const addApiIncomeData = async (newData) => {
+    await axios({
+      url: "http://localhost:8089/income/addincome",
+      method: "post",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
+      },
+      data: newData,
+    })
+      .then((response) => {
+        if (response.status == 200) {
+          window.alert("Record Inserted");
+          totalIncomecall();
+          totalunpaidincomecall();
+          setActionTake(false);
+          setOpen(false);
+          getIncomeRecord();
+          setAddDetails({ ...initialvalue, id: "" });
+        }
+      })
+      .catch((err) => {
+        if (err.response.status == 403) {
+          window.alert("Record Already Exists");
+        } else {
+          window.alert("Failed to Insert");
+        }
+      });
+  };
+
+  const updateApiIncomeData = async (id, newData) => {
+    await axios({
+      url: `http://localhost:8089/income/updateincome/${id}`,
+      method: "put",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
+      },
+      data: newData,
+    })
+      .then((response) => {
+        if (response.status == 200) {
+          window.alert("Record Updated");
+          totalIncomecall();
+          totalunpaidincomecall();
+          setActionTake(false);
+          setOpen(false);
+          getIncomeRecord();
+          setAddDetails({ ...initialvalue, id: "" });
+        }
+      })
+      .catch((err) => {
+        if (err.response.status == 403) {
+          window.alert("Record Already Exists");
+        } else {
+          window.alert("Failed to Update");
+        }
+      });
   };
 
   const handleClose = () => {
@@ -191,18 +216,36 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
   };
 
   const handleDelete = async (id) => {
-    await ApiCalls.deleteSingleIncome(id)
-      .then((res) => {
-        window.alert("Income deleted");
-        getIncomeRecord();
-        totalIncomecall();
-        totalunpaidincomecall();
-        setdeleteOpen(false);
+    await axios({
+      url: `http://localhost:8089/income/deletesinglerecord/${id}`,
+      method: "put",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
+      },
+    })
+      .then((response) => {
+        console.log(response);
+        if (response) {
+          window.alert("Income deleted");
+          getIncomeRecord();
+          totalIncomecall();
+          totalunpaidincomecall();
+          setdeleteOpen(false);
+        }
       })
-      .catch((err) => window.alert("Sorry!Try Again"));
+      .catch((err) => {
+        console.log(err);
+        window.alert("Failed to Delete");
+      });
   };
   const handleDownloadClick = async (id) => {
-    await ApiCalls.donwloadInvoice(id)
+    await axios({
+      url: `http://localhost:8089/income/generateinvoice/${id}`,
+      method: "get",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
+      },
+    })
       .then((res) => {
         if (res.status == 200 || 201) {
           setTimeout(() => {
@@ -211,7 +254,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               "__blank"
             );
           }, 3000);
-        } else if (res && res.response && res.response.status == 401) {
+        } else {
           navigate("/login");
         }
       })
@@ -219,7 +262,13 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
   };
 
   const generatereceipt = async (id) => {
-    await ApiCalls.generatereceipt(id)
+    await axios({
+      url: `http://localhost:8089/income/generatereceipt/${id}`,
+      method: "get",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
+      },
+    })
       .then((res) => {
         if (res.status == 200 || 201) {
           setTimeout(() => {
@@ -228,7 +277,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               "__blank"
             );
           }, 3000);
-        } else if (res && res.response && res.response.status == 401) {
+        } else {
           navigate("/login");
         }
       })

@@ -81,7 +81,9 @@ router.post(
         request.body,
         function ({ message, status }) {
           console.log(status, "status");
-          return response.status(status).send(message);
+          return response
+            .status(status)
+            .send({ message: message, status: status });
         }
       );
     }
@@ -158,6 +160,7 @@ router.put(
       .isLength({ min: 1 })
       .withMessage("Invalid: AccountDetails must have at least 1 character"),
   ],
+  authorizeJWT,
   function (request, response) {
     const error = validationResult(request);
     if (error.array().length) {
@@ -177,9 +180,8 @@ router.put(
   "/deletesinglerecord/:id",
 
   [check("id").isLength({ min: 1 }).isNumeric().withMessage("Invalid id")],
-
+  authorizeJWT,
   function (request, response) {
-    console.log("delete");
     const error = validationResult(request);
     if (error.array().length) {
       return response.status(500).send(error.errors[0].msg);
@@ -217,6 +219,7 @@ router.get(
   "/generateinvoice/:id",
 
   [check("id").isLength({ min: 1 }).isNumeric().withMessage("Invalid id")],
+  authorizeJWT,
   function (request, response) {
     const error = validationResult(request);
     if (error.array().length) {
@@ -237,6 +240,7 @@ router.get(
 router.get(
   "/generatereceipt/:id",
   [check("id").isLength({ min: 1 }).isNumeric().withMessage("Invalid id")],
+  authorizeJWT,
   function (request, response) {
     const error = validationResult(request);
     if (error.array().length) {

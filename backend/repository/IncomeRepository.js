@@ -390,7 +390,7 @@ module.exports = function () {
             });
           }
           resolve({
-            status: 300,
+            status: 200,
             message: "Record deleted successfully",
             error: "false",
           });
