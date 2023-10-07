@@ -6,7 +6,7 @@ module.exports = function () {
     var AccountSummaryServiceObject = new AccountSummaryServices();
     var AccountSummaryService =
       await AccountSummaryServiceObject.addaccountSummaryService(req);
-    console.log(AccountSummaryService);
+
     if (AccountSummaryService.error == "true") {
       response.error = "true";
       response.message = AccountSummaryService.message;
@@ -26,7 +26,7 @@ module.exports = function () {
     var AccountSummaryServiceObject = new AccountSummaryServices();
     var AccountSummaryService =
       await AccountSummaryServiceObject.getListAccountSummaryService(req);
-    console.log(AccountSummaryService);
+
     if (AccountSummaryService.error == "true") {
       response.error = "true";
       response.message = AccountSummaryService.message;

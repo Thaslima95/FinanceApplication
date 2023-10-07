@@ -161,6 +161,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
   const handleClose = () => {
     setOpen(false);
     setAddDetails({ ...initialvalue, id: "" });
+    setActionTake(false);
   };
   const handleDeleteClose = () => {
     setdeleteOpen(false);

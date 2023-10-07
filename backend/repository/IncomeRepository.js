@@ -2,6 +2,7 @@ module.exports = function () {
   var mysqlExecute = require("../db/db");
   const generateShortRandomName = require("../utils/generateShortRandomName");
   const numberToWords = require("../utils/numberToWords");
+  const moment = require("moment");
   const generateinvoicepdf = new (require("../sample"))();
   const generatereceiptpdf = new (require("../sample2"))();
 
@@ -98,11 +99,19 @@ module.exports = function () {
                   result: [],
                 });
               } else {
-                resolve(queryResponse);
+                resolve({
+                  status: 500,
+                  message: "failed to insert",
+                  result: [],
+                });
               }
             }
           } else {
-            resolve(queryResponse);
+            resolve({
+              status: 500,
+              message: "failed to insert",
+              result: [],
+            });
           }
         } else {
           var query = `SELECT InvoiceNumber FROM income_table where IsDeleted=0 ORDER BY InvoiceNumber DESC limit 1`;
@@ -177,6 +186,7 @@ module.exports = function () {
       } catch (err) {
         err.error = "true";
         err.message = "OOPS DAO Exception";
+        err.status = 500;
         resolve(err);
       }
     });
@@ -328,19 +338,32 @@ module.exports = function () {
                     result: [],
                   });
                 } else {
-                  resolve(queryResponse);
+                  resolve({
+                    status: 500,
+                    message: "Failed to Update",
+                    result: [],
+                  });
                 }
               }
             } else {
-              resolve(queryResponse);
+              resolve({
+                status: 500,
+                message: "Failed to Update",
+                result: [],
+              });
             }
           }
         } else {
-          resolve(queryResponse);
+          resolve({
+            status: 500,
+            message: "Failed to update",
+            result: [],
+          });
         }
       } catch (err) {
         err.error = "true";
         err.message = "OOPS DAO Exception";
+        err.status = 500;
         resolve(err);
       }
     });
@@ -357,6 +380,7 @@ module.exports = function () {
           query,
           queryRequest
         );
+
         if (queryResponse.error == "false") {
           if (queryResponse.result.affectedRows == 0) {
             resolve({
@@ -454,33 +478,35 @@ module.exports = function () {
 
         if (queryResponse.error == "false") {
           const randomFilename = generateShortRandomName() + ".pdf";
-
-          const fileName = `Invoice(${queryResponse.result[0].id})(${
-            new Date(queryResponse.result[0].ActionDate)
-              .toISOString()
-              .split("T")[0]
-          })${randomFilename}`;
-
-          generateinvoicepdf.mypdf(queryResponse.result, fileName);
-          const query = `UPDATE income_table SET InvoiceFile=? where id=?`;
-          var queryRequest = [fileName, id];
-          var queryResponse = await mysqlExecuteCall.executeWithParams(
-            query,
-            queryRequest
+          const InvoiceDate = moment(queryResponse.result[0].ActionDate).format(
+            "DD-MM-YYYY"
           );
-          if (queryResponse.error == "false") {
-            resolve({
-              status: 200,
-              fileName: fileName,
-              message: "Download Success",
-            });
-          } else {
-            resolve({
-              status: 500,
-              message: "Database Error",
-              error: "true",
-              message: "Dowload Failed",
-            });
+
+          const fileName = `Invoice(${queryResponse.result[0].id})(${InvoiceDate})${randomFilename}`;
+
+          if (fileName) {
+            generateinvoicepdf.mypdf(queryResponse.result, fileName);
+            const query = `UPDATE income_table SET InvoiceFile=? where id=?`;
+            var queryRequest = [fileName, id];
+            var queryResponse = await mysqlExecuteCall.executeWithParams(
+              query,
+              queryRequest
+            );
+
+            if (queryResponse.error == "false") {
+              resolve({
+                status: 200,
+                fileName: fileName,
+                message: "Download Success",
+              });
+            } else {
+              resolve({
+                status: 500,
+                message: "Database Error",
+                error: "true",
+                message: "Dowload Failed",
+              });
+            }
           }
         } else {
           resolve({ status: 500, message: "Database Error", error: "true" });
@@ -510,11 +536,9 @@ module.exports = function () {
           const words = numberToWords(amountword) + " only";
 
           const randomFilename = generateShortRandomName() + ".pdf";
-          const fileName = `PaymentReceipt(${id})(${
-            new Date(queryResponse.result[0].ActionDate)
-              .toISOString()
-              .split("T")[0]
-          })${randomFilename}`;
+          const fileName = `PaymentReceipt(${id})(${moment(
+            queryResponse.result[0].ActionDate
+          ).format("DD-MM-YYYY")})${randomFilename}`;
           if (fileName) {
             generatereceiptpdf.myreceiptpdf(
               queryResponse.result,
@@ -549,6 +573,7 @@ module.exports = function () {
       } catch (err) {
         err.error = "true";
         err.message = "OOPS DAO Exception";
+        err.status = 500;
 
         resolve(err);
       }

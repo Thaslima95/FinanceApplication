@@ -109,8 +109,9 @@ router.put(
 
 router.put(
   "/deletesingleexpenserecord/:id",
-  authorizeJWT,
+
   [check("id").isLength({ min: 1 }).isNumeric().withMessage("Invalid id")],
+
   function (request, response) {
     const error = validationResult(request);
     if (error.array().length) {

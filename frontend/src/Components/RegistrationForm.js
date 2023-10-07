@@ -145,7 +145,7 @@ const RegistrationForm = () => {
                 />
                 <Grid container style={{ marginBottom: "1rem" }}>
                   <Grid item xs={12}>
-                    <Link href="/register" variant="h2">
+                    <Link to="/login" variant="h2">
                       {"Already have an account? Login"}
                     </Link>
                   </Grid>

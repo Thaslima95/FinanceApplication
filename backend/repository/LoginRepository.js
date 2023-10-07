@@ -44,7 +44,6 @@ module.exports = function () {
           }
         } else {
           resolve({ status: 500, message: "Database Error", error: "true" });
-          console.log(queryResponse);
         }
       } catch (err) {
         err.error = "true";

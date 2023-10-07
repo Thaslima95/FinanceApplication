@@ -16,7 +16,6 @@ module.exports = function () {
       response.message = otpServiceresult.message;
       response.status = otpServiceresult.status;
     }
-    console.log(response);
 
     callback(response);
   };

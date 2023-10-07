@@ -10,7 +10,6 @@ module.exports = function () {
 
         var queryResponse = await mysqlExecuteCall.executeWithoutParams(query);
         if (queryResponse.error == "false") {
-          console.log(queryResponse);
           resolve(queryResponse);
         } else {
           resolve(queryResponse);
@@ -73,7 +72,7 @@ module.exports = function () {
           query,
           queryRequest
         );
-        console.log(queryResponse);
+
         if (queryResponse.error == "false") {
           resolve({
             status: 200,

@@ -18,7 +18,7 @@ export default {
   updateIncome: async function (id, newRow) {
     try {
       const response = await axios.put(
-        `/income/updateincome/${id}`,
+        `http://localhost:8089/income/updateincome/${id}`,
 
         newRow
       );
@@ -30,11 +30,14 @@ export default {
   },
   getTotalIncome: async function () {
     try {
-      const response = await axios.get(`/income/getTotalIncomeRate`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
-        },
-      });
+      const response = await axios.get(
+        `http://localhost:8089/income/getTotalIncomeRate`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
+          },
+        }
+      );
       return response;
     } catch (err) {
       return err;
@@ -42,11 +45,14 @@ export default {
   },
   getUnpaidTotalIncome: async function () {
     try {
-      const response = await axios.get(`/income/getUnpaidTotalIncomeRate`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
-        },
-      });
+      const response = await axios.get(
+        `http://localhost:8089/income/getUnpaidTotalIncomeRate`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
+          },
+        }
+      );
 
       return response;
     } catch (err) {
@@ -54,13 +60,15 @@ export default {
     }
   },
   donwloadInvoice: async function (id) {
-    console.log("api download");
     try {
-      const response = await axios.get(`/income/generateinvoice/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
-        },
-      });
+      const response = await axios.get(
+        `http://localhost:8089/income/generateinvoice/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
+          },
+        }
+      );
 
       return response;
     } catch (err) {
@@ -70,11 +78,14 @@ export default {
 
   generatereceipt: async function (id) {
     try {
-      const response = await axios.get(`/income/generatereceipt/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
-        },
-      });
+      const response = await axios.get(
+        `http://localhost:8089/income/generatereceipt/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
+          },
+        }
+      );
       return response;
     } catch (err) {
       return err;
@@ -83,11 +94,14 @@ export default {
 
   deleteSingleIncome: async function (id) {
     try {
-      const response = await axios.put(`/income/deletesinglerecord/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
-        },
-      });
+      const response = await axios.put(
+        `http://localhost:8089/income/deletesinglerecord/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
+          },
+        }
+      );
       return response;
     } catch (err) {
       return err;
@@ -122,7 +136,10 @@ export default {
   },
   addExpense: async function (newRow) {
     try {
-      const response = await axios.post(`/expense/addexpense`, newRow);
+      const response = await axios.post(
+        `http://localhost:8089/expense/addexpense`,
+        newRow
+      );
 
       return response;
     } catch (err) {
@@ -141,7 +158,7 @@ export default {
   deleteSingleExpense: async function (id) {
     try {
       const response = await axios.put(
-        `/expense/deletesingleexpenserecord/${id}`,
+        `http://localhost:8089/expense/deletesingleexpenserecord/${id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,

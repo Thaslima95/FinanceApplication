@@ -111,7 +111,7 @@ module.exports = function () {
     var response = {};
     var expenseServiceObject = new expenseServices();
     var expenseService = await expenseServiceObject.getListExpenseService(req);
-    console.log(expenseService);
+
     if (expenseService.error == "true") {
       response.error = "true";
       response.message = expenseService.message;

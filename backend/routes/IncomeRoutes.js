@@ -44,7 +44,11 @@ router.post(
     check("IGST").optional().isNumeric(),
     check("TotalAmount").notEmpty().isNumeric(),
     check("BalanceDue").notEmpty().isNumeric(),
-    check("Rate").notEmpty().isNumeric(),
+    check("Rate")
+      .isLength({ min: 1, max: 8 })
+      .notEmpty()
+      .isNumeric()
+      .withMessage("Rate out of range.Please enter again"),
     check("DueDate").notEmpty().isISO8601(),
     check("ActionDate").notEmpty().isISO8601(),
     check("PSYear").notEmpty().isString(),
@@ -71,12 +75,12 @@ router.post(
   function (request, response) {
     const error = validationResult(request);
     if (error.array().length) {
+      console.log(error.errors);
       return response.status(500).send(error.errors[0].msg);
     } else {
       IncomeController.addIncomeController(
         request.body,
         function ({ message, status }) {
-          console.log(status, "sattus");
           return response.status(status).send(message);
         }
       );
@@ -171,9 +175,11 @@ router.put(
 
 router.put(
   "/deletesinglerecord/:id",
-  authorizeJWT,
+
   [check("id").isLength({ min: 1 }).isNumeric().withMessage("Invalid id")],
+
   function (request, response) {
+    console.log("delete");
     const error = validationResult(request);
     if (error.array().length) {
       return response.status(500).send(error.errors[0].msg);
@@ -209,6 +215,7 @@ router.get(
 
 router.get(
   "/generateinvoice/:id",
+
   [check("id").isLength({ min: 1 }).isNumeric().withMessage("Invalid id")],
   function (request, response) {
     const error = validationResult(request);

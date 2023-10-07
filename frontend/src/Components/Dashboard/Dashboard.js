@@ -172,10 +172,7 @@ const Dashboard = () => {
           }
         );
 
-        console.log(response);
-
         if (response.status === 200) {
-          console.log("Record updated successfully");
         } else if (
           response &&
           response.response &&
@@ -277,7 +274,6 @@ const Dashboard = () => {
   const handleDeleteRow = async (index, accountId) => {
     try {
       if (!accountId) {
-        // Optimistically update the state before the actual deletion
         const updatedTableData = [...tableData];
         updatedTableData.splice(index, 1);
         setTableData(updatedTableData);
@@ -637,12 +633,30 @@ const Dashboard = () => {
                       </TableCell>
                       <TableCell>
                         {editMode[index] ? (
-                          <TextField
-                            name={`date-${index}`}
-                            type="date"
-                            value={row.date}
-                            onChange={(e) => handleRowInputChange(e, index)}
-                          />
+                          // <TextField
+                          //   name={`date-${index}`}
+                          //   type="date"
+                          //   value={row.date}
+                          //   onChange={(e) => handleRowInputChange(e, index)}
+                          // />
+                          <div>
+                            <label htmlFor="">
+                              {" "}
+                              Date <span style={{ color: "red" }}>*</span>
+                            </label>
+                            <br />
+                            <input
+                              name={`date-${index}`}
+                              type="date"
+                              label="DueDate"
+                              style={{
+                                width: "200px",
+                                height: "55px",
+                                marginBottom: "14px",
+                              }}
+                              value={row.date}
+                            ></input>
+                          </div>
                         ) : (
                           new Date(row.date).toLocaleDateString()
                         )}
