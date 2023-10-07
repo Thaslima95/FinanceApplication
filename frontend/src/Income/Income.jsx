@@ -148,6 +148,8 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
       .catch((err) => {
         if (err.response.status == 403) {
           window.alert("Record Already Exists");
+        } else if (err && err.response.status == 401) {
+          navigate("/login");
         } else {
           window.alert("Failed to Insert");
         }
@@ -177,6 +179,8 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
       .catch((err) => {
         if (err.response.status == 403) {
           window.alert("Record Already Exists");
+        } else if (err && err.response.status == 401) {
+          navigate("/login");
         } else {
           window.alert("Failed to Update");
         }
@@ -233,6 +237,9 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
         }
       })
       .catch((err) => {
+        if (err && err.response.status == 401) {
+          navigate("/login");
+        }
         window.alert("Failed to Delete");
       });
   };

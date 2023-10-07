@@ -256,10 +256,9 @@ const Dashboard = () => {
       },
     })
       .then((response) => {
-        console.log(response);
-        if (response.status === 200) {
+        if (response.status == 200) {
           setTableData(response.data);
-        } else if (response.status === 401) {
+        } else if (response.status == 401) {
           alert(response.message);
         } else {
           console.error("Error fetching data from the API");
