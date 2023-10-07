@@ -103,89 +103,113 @@ export default function ExpenseRecord({
           BalanceDue: total,
         });
         if (actionTake) {
-          ApiCalls.updateExpense(adddetails.id, {
+          updateAPIExpense(adddetails.id, {
             ...adddetails,
             TotalAmount: total,
             BalanceDue: total,
             CGST: Number(adddetails.CGST),
             SGST: Number(adddetails.SGST),
             IGST: Number(adddetails.IGST),
-          })
-            .then((res) => {
-              console.log(res.status);
-              if (res.status === 200 || res.response.status === 200) {
-                window.alert("Expense Updated Successfully");
-                totalExpenseDetails();
-                totalIndirectExpenseDetails();
-                getExpenseRecord();
-                setActionTake(false);
-                setOpen(false);
-                setAddDetails({
-                  id: "",
-                  InvoiceNumber: "",
-                  Particulars: "",
-                  Amount: "",
-                  CGST: "",
-                  SGST: "",
-                  IGST: "",
-                  PaymentType: "",
-                  AccountType: "",
-                  DueDate: "",
-                  ActionDate: "",
-                  TotalAmount: 0,
-                  BalanceDue: 0,
-                });
-              } else if (res.response.status == 403) {
-                window.alert("Invoice Number Already exists");
-              } else if (res.response.status == 500) {
-                window.alert(res.response.data);
-              }
-            })
-            .catch((err) => window.alert("Sorry!Try Again"));
+          });
         } else {
-          ApiCalls.addExpense({
+          addAPIExpense({
             ...adddetails,
             TotalAmount: total,
             BalanceDue: total,
             CGST: Number(adddetails.CGST),
             SGST: Number(adddetails.SGST),
             IGST: Number(adddetails.IGST),
-          })
-            .then((res) => {
-              console.log(res);
-              if (res.status == 200 || res.response.status == 200) {
-                window.alert("Expense Created Successfully");
-                getExpenseRecord();
-                totalExpenseDetails();
-                totalIndirectExpenseDetails();
-                setOpen(false);
-                setAddDetails({
-                  id: "",
-                  InvoiceNumber: "",
-                  Particulars: "",
-                  Amount: "",
-                  CGST: "",
-                  SGST: "",
-                  IGST: "",
-                  PaymentType: "",
-                  AccountType: "",
-                  DueDate: "",
-                  ActionDate: "",
-                  TotalAmount: 0,
-                  BalanceDue: 0,
-                });
-              } else if (res.response.status == 403) {
-                window.alert("Invoice Number Already exists");
-              } else if (res.response.status == 500) {
-                window.alert(res.response.data);
-              }
-            })
-            .catch((err) => window.alert("Sorry!Try Again", err));
+          });
         }
       } else {
         window.alert("Invoice date should be less than or equal to due date");
       }
     }
+  };
+
+  const updateAPIExpense = async (id, newData) => {
+    await axios({
+      url: `http://localhost:8089/expense/updateexpense/${id}`,
+      method: "put",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
+      },
+      data: newData,
+    })
+      .then((response) => {
+        if (response.status == 200) {
+          window.alert("Expense Updated Successfully");
+          totalExpenseDetails();
+          totalIndirectExpenseDetails();
+          getExpenseRecord();
+          setActionTake(false);
+          setOpen(false);
+          setAddDetails({
+            id: "",
+            InvoiceNumber: "",
+            Particulars: "",
+            Amount: "",
+            CGST: "",
+            SGST: "",
+            IGST: "",
+            PaymentType: "",
+            AccountType: "",
+            DueDate: "",
+            ActionDate: "",
+            TotalAmount: 0,
+            BalanceDue: 0,
+          });
+        }
+      })
+      .catch((err) => {
+        if (err.response.status == 403) {
+          window.alert("Record Already Exists");
+        } else {
+          window.alert("Failed to Update");
+        }
+      });
+  };
+
+  const addAPIExpense = async (newData) => {
+    await axios({
+      url: `http://localhost:8089/expense/addexpense`,
+      method: "post",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
+      },
+      data: newData,
+    })
+      .then((response) => {
+        if (response.status == 200) {
+          window.alert("Expense Created Successfully");
+          totalExpenseDetails();
+          totalIndirectExpenseDetails();
+          getExpenseRecord();
+          setOpen(false);
+          setAddDetails({
+            id: "",
+            InvoiceNumber: "",
+            Particulars: "",
+            Amount: "",
+            CGST: "",
+            SGST: "",
+            IGST: "",
+            PaymentType: "",
+            AccountType: "",
+            DueDate: "",
+            ActionDate: "",
+            TotalAmount: 0,
+            BalanceDue: 0,
+          });
+        }
+      })
+      .catch((err) => {
+        if (err.response.status == 403) {
+          window.alert("Record Already Exists");
+        } else {
+          window.alert("Failed to Update");
+        }
+      });
   };
 
   const handleDeleteClose = () => {
@@ -212,15 +236,27 @@ export default function ExpenseRecord({
   };
 
   const handleDelete = async (id) => {
-    await ApiCalls.deleteSingleExpense(id)
-      .then((res) => {
-        window.alert("Expense deleted");
-        totalExpenseDetails();
-        totalIndirectExpenseDetails();
-        setdeleteOpen(false);
-        getExpenseRecord();
+    await axios({
+      url: `http://localhost:8089/expense/deletesingleexpenserecord/${id}`,
+      method: "put",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
+      },
+    })
+      .then((response) => {
+        console.log(response);
+        if (response) {
+          window.alert("Expense deleted");
+          totalExpenseDetails();
+          totalIndirectExpenseDetails();
+          setdeleteOpen(false);
+          getExpenseRecord();
+        }
       })
-      .catch((err) => window.alert("Sorry!Try Again"));
+      .catch((err) => {
+        console.log(err);
+        window.alert("Failed to Delete");
+      });
   };
 
   useEffect(() => {
@@ -234,12 +270,16 @@ export default function ExpenseRecord({
         },
       })
       .then((res) => {
-        if (res && res.response && res.response.status == 401) {
+        if (res && res.status == 401) {
           navigate("/login");
         }
         setRows(res.data);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        if (err && err.response.status == 401) {
+          navigate("/login");
+        }
+      });
   };
 
   const columns = [

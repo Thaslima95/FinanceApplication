@@ -37,6 +37,7 @@ router.post(
       .isString()
       .withMessage("Provie Invoice Number"),
   ],
+  authorizeJWT,
   function (request, response) {
     const error = validationResult(request);
     if (error.array().length) {
@@ -92,6 +93,7 @@ router.put(
       .isString()
       .withMessage("Provie Invoice Number"),
   ],
+  authorizeJWT,
   function (request, response) {
     const error = validationResult(request);
     if (error.array().length) {
@@ -111,7 +113,7 @@ router.put(
   "/deletesingleexpenserecord/:id",
 
   [check("id").isLength({ min: 1 }).isNumeric().withMessage("Invalid id")],
-
+  authorizeJWT,
   function (request, response) {
     const error = validationResult(request);
     if (error.array().length) {
