@@ -5,7 +5,7 @@ export default {
   addIncome: async function (newRow) {
     try {
       const response = await axios.post(
-        `/income/addincome`,
+        `http://localhost:8089/income/addincome`,
 
         newRow
       );
@@ -107,11 +107,14 @@ export default {
   },
   getUnpaidTotalExpense: async function () {
     try {
-      const response = await axios.get(`/expense/getIndirectTotalExpenseRate`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
-        },
-      });
+      const response = await axios.get(
+        `http://localhost:8089/expense/getIndirectTotalExpenseRate`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
+          },
+        }
+      );
       return response;
     } catch (err) {
       return err;

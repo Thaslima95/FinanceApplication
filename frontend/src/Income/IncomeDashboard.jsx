@@ -24,7 +24,7 @@ export default function IncomeDashboard() {
         if (res && res.response && res.response.status == 401) {
           navigate("/login");
         }
-        console.log(res);
+
         setUnpaidIncome(res.data.Total);
       })
       .catch((err) => console.log(err));
@@ -35,7 +35,7 @@ export default function IncomeDashboard() {
         if (res && res.response && res.response.status == 401) {
           navigate("/login");
         }
-        console.log(res);
+
         setTotalIncome(res.data.Total);
       })
       .catch((err) => console.log(err));

@@ -4,16 +4,12 @@ module.exports = function () {
   this.getListLoginService = (incomeData) => {
     return new Promise(async function (resolve) {
       var response = {};
-      var resp = {};
+
       var logindataObject = new loginRepo();
       try {
         var loginresult = await logindataObject.getListLoginData(incomeData);
-        console.log("here1");
-        console.log(loginresult);
 
         if (loginresult.error == "false") {
-          console.log("response");
-          console.log(loginresult);
           response.error = "false";
           response.userid = loginresult.id;
           response.message = loginresult.message;

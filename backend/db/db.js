@@ -24,7 +24,6 @@ module.exports = function () {
               if (error) {
                 output.error = "true";
                 output.message = error;
-                console.log(output);
                 resolve(output);
                 connection.destroy();
               } else {

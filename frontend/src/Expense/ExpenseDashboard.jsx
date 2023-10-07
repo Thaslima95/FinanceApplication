@@ -20,7 +20,7 @@ export default function ExpenseDashboard() {
         }
         setTotalExpense(res.data.Total);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => window.alert("Something went wrong"));
   };
 
   const totalIndirectExpenseDetails = async () => {
@@ -31,7 +31,7 @@ export default function ExpenseDashboard() {
         }
         setUnpaidExpense(res.data.Total);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => window.alert("Something went wrong"));
   };
   useMemo(() => {
     totalExpenseDetails();
@@ -39,6 +39,7 @@ export default function ExpenseDashboard() {
   useMemo(() => {
     totalIndirectExpenseDetails();
   }, []);
+
   return (
     <Grid container sx={{ flexGrow: 1 }}>
       <Grid container xs={12}>

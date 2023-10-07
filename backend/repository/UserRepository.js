@@ -17,7 +17,6 @@ module.exports = function () {
         );
         if (queryResponse.error == "false") {
           if (queryResponse.result.length > 0) {
-            console.log(queryResponse.result);
             resolve({
               status: 301,
               message: "Email Already Exists",
@@ -39,9 +38,7 @@ module.exports = function () {
                 text: `Your OTP is: ${otp}`,
               },
               (err, info) => {
-                console.log(info);
                 if (err) {
-                  console.error(err);
                   return res.status(500).json({ message: "Server error" });
                 }
               }
@@ -60,7 +57,6 @@ module.exports = function () {
           }
         } else {
           resolve({ status: 500, message: "Database Error", error: "true" });
-          console.log(queryResponse);
         }
       } catch (err) {
         err.error = "true";

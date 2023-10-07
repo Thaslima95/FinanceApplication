@@ -6,10 +6,12 @@ module.exports = function () {
     var addIncomeServiceObject = new incomeService();
     var addIncomeService = await addIncomeServiceObject.addIncomeService(req);
     if (addIncomeService.error == "true") {
+      console.log(addIncomeService);
       response.error = "true";
       response.message = addIncomeService.message;
       response.status = addIncomeService.status;
     } else {
+      console.log(addIncomeService);
       response.error = "false";
       response.message = addIncomeService.message;
       response.data = addIncomeService.result;

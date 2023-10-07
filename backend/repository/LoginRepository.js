@@ -20,7 +20,7 @@ module.exports = function () {
                 { email: req.body.email, id: queryResponse.result[0].id },
                 "mysecret"
               );
-              console.log(token);
+
               resolve({
                 status: 200,
                 id: queryResponse.result[0].id,

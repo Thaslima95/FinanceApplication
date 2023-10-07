@@ -40,7 +40,6 @@ router.get("/api/account-summary", authorizeJWT, function (request, response) {
     return response.status(500).send(error.errors[0].msg);
   } else {
     AccountController.getAccountSummaryController(request, function ({ data }) {
-      console.log(data);
       return response.send(data);
     });
   }
@@ -65,8 +64,6 @@ router.put(
       AccountController.updateSummaryController(
         request,
         function ({ message, status }) {
-          console.log(message);
-          console.log(status, "status");
           return response.status(status).send(message);
         }
       );
@@ -77,7 +74,6 @@ router.delete("/api/account-summary/:id", function (request, response) {
   AccountController.deleteSummaryController(
     request,
     function ({ message, status }) {
-      console.log(status, message);
       return response.status(status).send(message);
     }
   );

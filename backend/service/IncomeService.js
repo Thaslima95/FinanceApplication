@@ -78,7 +78,7 @@ module.exports = function () {
   this.deleteIncomeService = (incomeData) => {
     return new Promise(async function (resolve) {
       var response = {};
-      var resp = {};
+
       var incomedataObject = new addIncomeRepo();
       try {
         var addIncomeresult = await incomedataObject.deleteIncomeData(
@@ -108,7 +108,7 @@ module.exports = function () {
   this.getTotalIncomeService = (incomeData) => {
     return new Promise(async function (resolve) {
       var response = {};
-      var resp = {};
+
       var incomedataObject = new addIncomeRepo();
       try {
         var getTotalIncomeresult = await incomedataObject.getTotalIncomeData(
@@ -142,7 +142,7 @@ module.exports = function () {
   this.getUnpaidTotalIncomeService = (incomeData) => {
     return new Promise(async function (resolve) {
       var response = {};
-      var resp = {};
+
       var incomedataObject = new addIncomeRepo();
       try {
         var getTotalIncomeresult =
@@ -175,7 +175,7 @@ module.exports = function () {
   this.getListIncomeService = (incomeData) => {
     return new Promise(async function (resolve) {
       var response = {};
-      var resp = {};
+
       var incomedataObject = new addIncomeRepo();
       try {
         var getTotalIncomeresult = await incomedataObject.getListIncomeData(
@@ -209,14 +209,12 @@ module.exports = function () {
   this.generateInvoiceService = (incomeData) => {
     return new Promise(async function (resolve) {
       var response = {};
-      var resp = {};
+
       var incomedataObject = new addIncomeRepo();
       try {
         var addIncomeresult = await incomedataObject.generateInvoiceData(
           incomeData
         );
-
-        console.log(addIncomeresult);
 
         if (addIncomeresult.error == "true") {
           response.error = "true";
@@ -242,14 +240,12 @@ module.exports = function () {
   this.generateReceiptService = (incomeData) => {
     return new Promise(async function (resolve) {
       var response = {};
-      var resp = {};
+
       var incomedataObject = new addIncomeRepo();
       try {
         var addIncomeresult = await incomedataObject.generateReceiptData(
           incomeData
         );
-
-        console.log(addIncomeresult);
 
         if (addIncomeresult.error == "true") {
           response.error = "true";

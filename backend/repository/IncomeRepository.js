@@ -35,6 +35,7 @@ module.exports = function () {
         const accountdetails = data.AccountDetails;
         const acno = data.ACNO;
         const ifsccode = data.IFSCCode;
+        console.log(data.InvoiceNumber);
         if (data.InvoiceNumber != "") {
           var query = `SELECT InvoiceNumber from income_table where InvoiceNumber=? and IsDeleted=0`;
           var queryRequest = [data.InvoiceNumber];
@@ -42,7 +43,7 @@ module.exports = function () {
             query,
             queryRequest
           );
-
+          console.log(queryResponse);
           if (queryResponse.error == "false") {
             if (queryResponse.result.length > 0) {
               resolve({
@@ -89,6 +90,7 @@ module.exports = function () {
                 query,
                 [queryRequest]
               );
+              console.log(queryResponse);
               if (queryResponse.error == "false") {
                 resolve({
                   status: 200,
@@ -157,11 +159,19 @@ module.exports = function () {
                   result: [],
                 });
               } else {
-                resolve(queryResponse);
+                resolve({
+                  status: 500,
+                  message: "failed to insert",
+                  result: [],
+                });
               }
             }
           } else {
-            resolve(queryResponse);
+            resolve({
+              status: 500,
+              message: "failed to insert",
+              result: [],
+            });
           }
         }
       } catch (err) {
@@ -323,12 +333,10 @@ module.exports = function () {
               }
             } else {
               resolve(queryResponse);
-              console.log(queryResponse);
             }
           }
         } else {
           resolve(queryResponse);
-          console.log(queryResponse);
         }
       } catch (err) {
         err.error = "true";
@@ -374,19 +382,15 @@ module.exports = function () {
   };
 
   this.getTotalIncomeData = (req) => {
-    var output = {};
     return new Promise(async function (resolve) {
-      var output = {};
       try {
         var mysqlExecuteCall = new mysqlExecute();
         var query =
           "Select sum(TotalAmount) as Total from income_table where Status='Paid' and IsDeleted=0";
         var queryResponse = await mysqlExecuteCall.executeWithoutParams(query);
         if (queryResponse.error == "false") {
-          console.log(queryResponse);
           resolve(queryResponse);
         } else {
-          console.log(queryResponse);
           resolve(queryResponse);
         }
       } catch (err) {
@@ -398,19 +402,15 @@ module.exports = function () {
   };
 
   this.getUnpaidTotalIncomeData = (req) => {
-    var output = {};
     return new Promise(async function (resolve) {
-      var output = {};
       try {
         var mysqlExecuteCall = new mysqlExecute();
         var query =
           "Select sum(TotalAmount) as Total from income_table where Status='UnPaid' and IsDeleted=0";
         var queryResponse = await mysqlExecuteCall.executeWithoutParams(query);
         if (queryResponse.error == "false") {
-          console.log(queryResponse);
           resolve(queryResponse);
         } else {
-          console.log(queryResponse);
           resolve(queryResponse);
         }
       } catch (err) {
@@ -428,10 +428,8 @@ module.exports = function () {
           "Select id,InvoiceNumber,CompanyName,StreetAddress,City,State,Pincode,PlaceofSupply,DueDate,GSTIN,Particulars,PSYear,HSNSAC,Rate,CGST,SGST,IGST,TotalAmount,BalanceDue,`Status`,Items,ActionDate,CreatedAt,BankName,Branch,BeneficiaryName,AccountDetails,ACNO,IFSCCode from income_table where IsDeleted=0";
         var queryResponse = await mysqlExecuteCall.executeWithoutParams(query);
         if (queryResponse.error == "false") {
-          console.log(queryResponse);
           resolve(queryResponse);
         } else {
-          console.log(queryResponse);
           resolve(queryResponse);
         }
       } catch (err) {
@@ -443,9 +441,7 @@ module.exports = function () {
   };
 
   this.generateInvoiceData = (req) => {
-    var output = {};
     return new Promise(async function (resolve) {
-      var output = {};
       try {
         var mysqlExecuteCall = new mysqlExecute();
         const id = req.params.id;
@@ -510,19 +506,23 @@ module.exports = function () {
           queryRequest
         );
         if (queryResponse.error == "false") {
-          const words =
-            numberToWords(queryResponse.result[0].TotalAmount) + " " + "only";
+          const amountword = parseInt(queryResponse.result[0].TotalAmount);
+          const words = numberToWords(amountword) + " only";
+
           const randomFilename = generateShortRandomName() + ".pdf";
           const fileName = `PaymentReceipt(${id})(${
             new Date(queryResponse.result[0].ActionDate)
               .toISOString()
               .split("T")[0]
           })${randomFilename}`;
-          generatereceiptpdf.myreceiptpdf(
-            queryResponse.result,
-            words,
-            fileName
-          );
+          if (fileName) {
+            generatereceiptpdf.myreceiptpdf(
+              queryResponse.result,
+              words,
+              fileName
+            );
+          }
+
           const query = `UPDATE income_table SET PaymentReceiptFile=? where id=?`;
           var queryRequest = [fileName, id];
           var queryResponse = await mysqlExecuteCall.executeWithParams(

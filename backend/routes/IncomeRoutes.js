@@ -69,7 +69,6 @@ router.post(
   ],
 
   function (request, response) {
-    console.log(request);
     const error = validationResult(request);
     if (error.array().length) {
       return response.status(500).send(error.errors[0].msg);
@@ -77,6 +76,7 @@ router.post(
       IncomeController.addIncomeController(
         request.body,
         function ({ message, status }) {
+          console.log(status, "sattus");
           return response.status(status).send(message);
         }
       );

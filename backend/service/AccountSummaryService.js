@@ -4,7 +4,7 @@ module.exports = function () {
   this.getListAccountSummaryService = (incomeData) => {
     return new Promise(async function (resolve) {
       var response = {};
-      var resp = {};
+
       var AccountSummarydataObject = new AccountSummaryRepo();
       try {
         var AccountSummaryresult =
@@ -79,9 +79,8 @@ module.exports = function () {
       try {
         var accountsummaryresult =
           await AccountSummarydataObject.updateSummaryData(incomeData);
-        console.log(accountsummaryresult);
+
         if (accountsummaryresult.result.length > 0) {
-          console.log(accountsummaryresult);
           if (accountsummaryresult.error == "true") {
             response.error = "true";
             response.message = "already exists";

@@ -14,7 +14,7 @@ module.exports = function () {
           query,
           queryRequest
         );
-        console.log(queryResponse, "here");
+
         if (queryResponse.error == "false") {
           if (queryResponse.result.length > 0) {
             const query = `UPDATE users SET verified = true WHERE email = ?`;
@@ -23,9 +23,8 @@ module.exports = function () {
               query,
               queryRequest
             );
-            console.log(queryResponse, "response 1");
+
             if (queryResponse.error == "false") {
-              console.log(queryResponse, "response 2");
               resolve({ status: 200, message: "OTP verified successfully" });
             } else {
               resolve({
@@ -36,7 +35,6 @@ module.exports = function () {
           }
         } else {
           resolve({ status: 500, message: "Database Error", error: "true" });
-          console.log(queryResponse);
         }
       } catch (err) {
         err.error = "true";

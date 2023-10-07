@@ -274,10 +274,8 @@ module.exports = function () {
           "SELECT id,InvoiceNumber,CGST,Particulars,PaymentType,AccountType,Amount,SGST,IGST,TotalAmount,DueDate,ActionDate from expense_table where  IsDeleted=0";
         var queryResponse = await mysqlExecuteCall.executeWithoutParams(query);
         if (queryResponse.error == "false") {
-          console.log(queryResponse);
           resolve(queryResponse);
         } else {
-          console.log(queryResponse);
           resolve(queryResponse);
         }
       } catch (err) {

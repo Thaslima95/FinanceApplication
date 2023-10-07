@@ -240,7 +240,7 @@ export default function ExpenseRecord({
         }
         setRows(res.data);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => window.alert("Something went wrong"));
   };
 
   const columns = [

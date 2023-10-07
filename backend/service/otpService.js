@@ -14,7 +14,7 @@ module.exports = function () {
           response.message = loginresult.message;
           response.status = loginresult.status;
           response.error = "false";
-          console.log(response);
+
           resolve(response);
         } else {
           response.error = "true";

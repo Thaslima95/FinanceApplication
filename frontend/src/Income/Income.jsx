@@ -123,7 +123,6 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
               } else if (res.response.status == 403) {
                 window.alert("Invoice Number Already exists");
               } else if (res.response.status == 500) {
-                console.log(res);
                 window.alert(res.response.data);
               }
             })
@@ -205,7 +204,6 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
     await ApiCalls.donwloadInvoice(id)
       .then((res) => {
         if (res.status == 200 || 201) {
-          // window.alert(`Download Success\nfilename:${res.data.fileName}`);
           setTimeout(() => {
             window.open(
               `http://localhost:8089/file/${res.data.fileName}`,
@@ -253,7 +251,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
         }
         setRows(res.data);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => window.alert(`Something went wrong`));
   };
 
   const columns = [

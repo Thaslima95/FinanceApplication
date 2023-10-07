@@ -178,40 +178,50 @@
 </strong></div></td>
              </tr>
 
-            <tr class="information"> 
+            <tr class="information" style="border:1px solid red"> 
                 <td colspan="2">
                     <table>
                         <tr>
                             <td >
-                                <table>
-                                    <tr>
-                                        <td style="text-align:left"> <span style="color:gray">Payment Date</span>
-                                             <br/>
-                                            <br/>
-                                            <br/>
-                                        <span style="color:gray">Reference Date</span>
-                                    <br/>
-                                <br/>
-                            <span style="color:gray">Payment Mode</span>
-                        <br/>
-                    <br/>
-                <span style="color:gray">Amount Received <br/>in
-                Words</span> </td>
-                                        <td style="text-align:left"><span><b>${(new Date(data[0].ActionDate)).toISOString().split("T")[0]}</b></span>
-                                        <br />
-                                        <br />
-                                        <br />
-                                        <span ><b>
-                                        Reference Date</b></span>
-                                        <br />
-                                        <br />
-                                        <span> <b>
-                                             Bank Transfer</b></span>
-                                        <br />
-                                        <br />
-                                        <span> <b>${words}</b></span></td>
-                                    </tr>
-                                </table>
+                                   <table >
+        <tr >
+            <td style="text-align:left;color:gray;padding:10px"> Payment Date
+            </td>
+            <td style="text-align:left;padding:10px">
+           <b> ${moment(
+            data[0].ActionDate
+            ).format(
+            "DD-MM-YYYY"
+            )}</b>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align:left;color:gray;padding:10px">
+            Reference Date</td>
+            <td style="text-align:left;padding:10px">
+           <b> ${moment(
+            data[0].DueDate
+            ).format(
+            "DD-MM-YYYY"
+            )}</b>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align:left;color:gray;padding:10px">
+            Payment Mode</td>
+            <td style="text-align:left">
+            <b>Bank Transfer</b>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align:left;color:gray;padding:10px">Amount Received <br />in
+            Words
+            </td>
+            <td style="text-align:left;padding:10px">
+       <b>${words}</b>
+            </td>
+        </tr>
+    </table>
                             </td>
 
                             <td style="padding-left:150px;padding-right:0px;text-align: center">

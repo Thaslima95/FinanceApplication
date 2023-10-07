@@ -28,16 +28,15 @@ module.exports = function () {
       try {
         var mysqlExecuteCall = new mysqlExecute();
         const { account, limit_amount, balance, date } = data.body;
-        console.log(date);
+
         var query = `INSERT INTO account_summary (account, limit_amount, balance, date, created_at, updated_at, is_deleted) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0)`;
         var queryRequest = [account, limit_amount, balance, date];
         var queryResponse = await mysqlExecuteCall.executeWithParams(
           query,
           queryRequest
         );
-        console.log(queryResponse);
+
         if (queryResponse.error == "false") {
-          console.log(queryResponse);
           resolve({
             result: queryResponse.result,
             error: "true",

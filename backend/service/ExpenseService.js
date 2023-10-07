@@ -176,7 +176,6 @@ module.exports = function () {
   this.getListExpenseService = (incomeData) => {
     return new Promise(async function (resolve) {
       var response = {};
-      var resp = {};
       var expensedataObject = new expenseRepo();
       try {
         var expenseresult = await expensedataObject.getListExpenseData(
