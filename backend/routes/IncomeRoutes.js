@@ -53,19 +53,19 @@ router.post(
     check("PSYear").notEmpty().isString(),
     check("Pincode").notEmpty().isNumeric(),
     check("HSNSAC").notEmpty().isNumeric(),
-    check("ACNO").notEmpty().isLength({ min: 12 }).isNumeric(),
+    check("ACNO").notEmpty().isLength({ min: 10 }).isNumeric(),
     check("BankName")
       .isLength({ min: 5 })
-      .withMessage("Invalid: BankName must have at least 1 character"),
+      .withMessage("Invalid: BankName must have at least 5 character"),
     check("Branch")
       .isLength({ min: 1 })
       .withMessage("Invalid: Branch must have at least 1 character"),
     check("IFSCCode")
       .isLength({ min: 5 })
-      .withMessage("Invalid: IFSCCode must have at least 1 character"),
+      .withMessage("Invalid: IFSCCode must have at least 5 character"),
     check("BeneficiaryName")
       .isLength({ min: 5 })
-      .withMessage("Invalid: BeneficiaryName must have at least 1 character"),
+      .withMessage("Invalid: BeneficiaryName must have at least 5 character"),
     check("AccountDetails")
       .isLength({ min: 1 })
       .withMessage("Invalid: AccountDetails must have at least 1 character"),
@@ -74,13 +74,13 @@ router.post(
   function (request, response) {
     const error = validationResult(request);
     if (error.array().length) {
-      console.log(error.errors);
-      return response.status(500).send(error.errors[0].msg);
+      return response
+        .status(500)
+        .send({ msg: error.errors[0].msg, path: error.errors[0].path });
     } else {
       IncomeController.addIncomeController(
         request.body,
         function ({ message, status }) {
-          console.log(status, "status");
           return response
             .status(status)
             .send({ message: message, status: status });
@@ -137,7 +137,11 @@ router.put(
     check("IGST").optional().isNumeric(),
     check("TotalAmount").notEmpty().isNumeric(),
     check("BalanceDue").notEmpty().isNumeric(),
-    check("Rate").notEmpty().isNumeric(),
+    check("Rate")
+      .isLength({ min: 1, max: 8 })
+      .notEmpty()
+      .isNumeric()
+      .withMessage("Rate out of range.Please enter again"),
     check("DueDate").notEmpty().isISO8601(),
     check("ActionDate").notEmpty().isISO8601(),
     check("PSYear").notEmpty().isString(),
@@ -146,16 +150,16 @@ router.put(
     check("ACNO").notEmpty().isLength({ min: 5 }).isNumeric(),
     check("BankName")
       .isLength({ min: 5 })
-      .withMessage("Invalid: BankName must have at least 1 character"),
+      .withMessage("Invalid: BankName must have at least 5 character"),
     check("Branch")
       .isLength({ min: 1 })
       .withMessage("Invalid: Branch must have at least 1 character"),
     check("IFSCCode")
       .isLength({ min: 5 })
-      .withMessage("Invalid: IFSCCode must have at least 1 character"),
+      .withMessage("Invalid: IFSCCode must have at least 5 character"),
     check("BeneficiaryName")
       .isLength({ min: 5 })
-      .withMessage("Invalid: BeneficiaryName must have at least 1 character"),
+      .withMessage("Invalid: BeneficiaryName must have at least 5 character"),
     check("AccountDetails")
       .isLength({ min: 1 })
       .withMessage("Invalid: AccountDetails must have at least 1 character"),
@@ -164,7 +168,9 @@ router.put(
   function (request, response) {
     const error = validationResult(request);
     if (error.array().length) {
-      return response.status(500).send(error.errors[0].msg);
+      return response
+        .status(500)
+        .send({ msg: error.errors[0].msg, path: error.errors[0].path });
     } else {
       IncomeController.updateIncomeController(
         request,

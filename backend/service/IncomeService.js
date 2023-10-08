@@ -14,19 +14,17 @@ module.exports = function () {
             response.error = "true";
             response.message = "already exists";
             response.status = addIncomeresult.status;
-            console.log(response);
+
             resolve(response);
           } else {
             response.error = "false";
             response.message = "record inserted";
             response.status = addIncomeresult.status;
             response.result = resp;
-            console.log(response);
 
             resolve(response);
           }
         } else {
-          console.log(response);
           response.error = "false";
           response.message = "record inserted";
           response.status = addIncomeresult.status;

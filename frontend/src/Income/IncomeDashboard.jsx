@@ -42,7 +42,7 @@ export default function IncomeDashboard() {
           navigate("/login");
         }
 
-        setTotalIncome(res.data.Total);
+        setTotalIncome(res.data?.Total);
       })
       .catch((err) => console.log(err));
   };

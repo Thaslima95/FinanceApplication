@@ -29,7 +29,11 @@ router.post(
     check("SGST").optional().isNumeric(),
     check("IGST").optional().isNumeric(),
     check("TotalAmount").notEmpty().isNumeric(),
-    check("Amount").notEmpty().isNumeric(),
+    check("Amount")
+      .isLength({ min: 1, max: 8 })
+      .notEmpty()
+      .isNumeric()
+      .withMessage("Rate out of range.Please enter again"),
     check("DueDate").notEmpty().isISO8601(),
     check("ActionDate").notEmpty().isISO8601(),
     check("InvoiceNumber")
@@ -41,12 +45,13 @@ router.post(
   function (request, response) {
     const error = validationResult(request);
     if (error.array().length) {
-      return response.status(500).send(error.errors[0].msg);
+      return response
+        .status(500)
+        .send({ msg: error.errors[0].msg, path: error.errors[0].path });
     } else {
       ExpenseController.addExpenseController(
         request.body,
         function ({ message, status }) {
-          console.log(status, message);
           return response.status(status).send(message);
         }
       );
@@ -85,7 +90,11 @@ router.put(
     check("SGST").optional().isNumeric(),
     check("IGST").optional().isNumeric(),
     check("TotalAmount").notEmpty().isNumeric(),
-    check("Amount").notEmpty().isNumeric(),
+    check("Amount")
+      .isLength({ min: 1, max: 8 })
+      .notEmpty()
+      .isNumeric()
+      .withMessage("Rate out of range.Please enter again"),
     check("DueDate").notEmpty().isISO8601(),
     check("ActionDate").notEmpty().isISO8601(),
     check("InvoiceNumber")
@@ -97,7 +106,9 @@ router.put(
   function (request, response) {
     const error = validationResult(request);
     if (error.array().length) {
-      return response.status(500).send(error.errors[0].msg);
+      return response
+        .status(500)
+        .send({ msg: error.errors[0].msg, path: error.errors[0].path });
     } else {
       ExpenseController.updateExpenseController(
         request,

@@ -19,7 +19,6 @@ import { Grid } from "@mui/material";
 import axios from "axios";
 import { GridRowModes, DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
-import ApiCalls from "../API/ApiCalls";
 import { useNavigate } from "react-router-dom";
 const currentYear = new Date().getFullYear();
 const nextYear = currentYear + 1;
@@ -127,7 +126,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
   };
   const addApiIncomeData = async (newData) => {
     await axios({
-      url: "http://localhost:8089/income/addincome",
+      url: "http://188.166.228.50:8089/income/addincome",
       method: "post",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
@@ -136,7 +135,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
     })
       .then((response) => {
         if (response.status == 200) {
-          window.alert("Record Inserted");
+          window.alert("Income Inserted");
           totalIncomecall();
           totalunpaidincomecall();
           setActionTake(false);
@@ -147,18 +146,22 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
       })
       .catch((err) => {
         if (err.response.status == 403) {
-          window.alert("Record Already Exists");
+          window.alert("Income Already Exists");
         } else if (err && err.response.status == 401) {
           navigate("/login");
-        } else {
-          window.alert("Failed to Insert");
+        } else if (err.response && err.response.status == 500) {
+          window.alert(
+            ` ${
+              err.response && err.response.data && err.response.data.msg
+            } in ${err.response.data.path}`
+          );
         }
       });
   };
 
   const updateApiIncomeData = async (id, newData) => {
     await axios({
-      url: `http://localhost:8089/income/updateincome/${id}`,
+      url: `http://188.166.228.50:8089/income/updateincome/${id}`,
       method: "put",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
@@ -181,8 +184,12 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
           window.alert("Record Already Exists");
         } else if (err && err.response.status == 401) {
           navigate("/login");
-        } else {
-          window.alert("Failed to Update");
+        } else if (err.response && err.response.status == 500) {
+          window.alert(
+            ` ${
+              err.response && err.response.data && err.response.data.msg
+            } in ${err.response.data.path}`
+          );
         }
       });
   };
@@ -221,7 +228,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
 
   const handleDelete = async (id) => {
     await axios({
-      url: `http://localhost:8089/income/deletesinglerecord/${id}`,
+      url: `http://188.166.228.50:8089/income/deletesinglerecord/${id}`,
       method: "put",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
@@ -245,7 +252,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
   };
   const handleDownloadClick = async (id) => {
     await axios({
-      url: `http://localhost:8089/income/generateinvoice/${id}`,
+      url: `http://188.166.228.50:8089/income/generateinvoice/${id}`,
       method: "get",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
@@ -255,7 +262,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
         if (res.status == 200 || 201) {
           setTimeout(() => {
             window.open(
-              `http://localhost:8089/file/${res.data.fileName}`,
+              `http://188.166.228.50:8089/file/${res.data.fileName}`,
               "__blank"
             );
           }, 3000);
@@ -268,7 +275,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
 
   const generatereceipt = async (id) => {
     await axios({
-      url: `http://localhost:8089/income/generatereceipt/${id}`,
+      url: `http://188.166.228.50:8089/income/generatereceipt/${id}`,
       method: "get",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
@@ -278,7 +285,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
         if (res.status == 200 || 201) {
           setTimeout(() => {
             window.open(
-              `http://localhost:8089/file/${res.data.fileName}`,
+              `http://188.166.228.50:8089/file/${res.data.fileName}`,
               "__blank"
             );
           }, 3000);
@@ -295,7 +302,7 @@ export default function Income2({ totalIncomecall, totalunpaidincomecall }) {
 
   const getIncomeRecord = async () => {
     await axios
-      .get(`/income/getincomedetails`, {
+      .get(`http://188.166.228.50:8089/income/getincomedetails`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
         },

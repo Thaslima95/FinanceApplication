@@ -6,7 +6,8 @@ module.exports = function () {
     return new Promise(async function (resolve) {
       try {
         var mysqlExecuteCall = new mysqlExecute();
-        const { email } = req.body;
+        const { email } = req;
+
         const query = `SELECT * FROM userlogin WHERE email = ?`;
         var queryRequest = [email];
         var queryResponse = await mysqlExecuteCall.executeWithParams(

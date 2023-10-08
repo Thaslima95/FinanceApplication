@@ -36,7 +36,7 @@ module.exports = function () {
         const accountdetails = data.AccountDetails;
         const acno = data.ACNO;
         const ifsccode = data.IFSCCode;
-        console.log(data.InvoiceNumber);
+
         if (data.InvoiceNumber != "") {
           var query = `SELECT InvoiceNumber from income_table where InvoiceNumber=? and IsDeleted=0`;
           var queryRequest = [data.InvoiceNumber];
@@ -44,7 +44,7 @@ module.exports = function () {
             query,
             queryRequest
           );
-          console.log(queryResponse);
+
           if (queryResponse.error == "false") {
             if (queryResponse.result.length > 0) {
               resolve({
@@ -91,7 +91,7 @@ module.exports = function () {
                 query,
                 [queryRequest]
               );
-              console.log(queryResponse);
+
               if (queryResponse.error == "false") {
                 resolve({
                   status: 200,

@@ -46,10 +46,9 @@ const Login = () => {
         },
       });
       if (response.status == 200) {
-        console.log(response.data.token);
         // localStorage.setItem("userId", response.data.userId);
         localStorage.setItem("tokenauth", response.data.token);
-        console.log(response.data.token);
+
         window.alert("Login successful");
 
         // Save "Remember me" choice to localStorage
@@ -61,7 +60,6 @@ const Login = () => {
 
         navigate("/layout");
       } else {
-        console.log("Failed to login");
         window.alert("Login failed");
       }
     } catch (error) {

@@ -129,7 +129,7 @@ export default function ExpenseRecord({
 
   const updateAPIExpense = async (id, newData) => {
     await axios({
-      url: `http://localhost:8089/expense/updateexpense/${id}`,
+      url: `http://188.166.228.50:8089/expense/updateexpense/${id}`,
       method: "put",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
@@ -166,15 +166,19 @@ export default function ExpenseRecord({
           window.alert("Record Already Exists");
         } else if (err && err.response.status == 401) {
           navigate("/login");
-        } else {
-          window.alert("Failed to Update");
+        } else if (err.response && err.response.status == 500) {
+          window.alert(
+            ` ${
+              err.response && err.response.data && err.response.data.msg
+            } in ${err.response.data.path}`
+          );
         }
       });
   };
 
   const addAPIExpense = async (newData) => {
     await axios({
-      url: `http://localhost:8089/expense/addexpense`,
+      url: `http://188.166.228.50:8089/expense/addexpense`,
       method: "post",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
@@ -210,8 +214,12 @@ export default function ExpenseRecord({
           window.alert("Record Already Exists");
         } else if (err && err.response.status == 401) {
           navigate("/login");
-        } else {
-          window.alert("Failed to Update");
+        } else if (err.response && err.response.status == 500) {
+          window.alert(
+            ` ${
+              err.response && err.response.data && err.response.data.msg
+            } in ${err.response.data.path}`
+          );
         }
       });
   };
@@ -241,7 +249,7 @@ export default function ExpenseRecord({
 
   const handleDelete = async (id) => {
     await axios({
-      url: `http://localhost:8089/expense/deletesingleexpenserecord/${id}`,
+      url: `http://188.166.228.50:8089/expense/deletesingleexpenserecord/${id}`,
       method: "put",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
@@ -269,7 +277,7 @@ export default function ExpenseRecord({
   }, []);
   const getExpenseRecord = async () => {
     await axios
-      .get(`/expense/getexpensedetails`, {
+      .get(`http://188.166.228.50:8089/expense/getexpensedetails`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
         },

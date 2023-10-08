@@ -115,14 +115,14 @@ const Dashboard = () => {
     ) {
       try {
         await Axios({
-          url: "http://localhost:8089/account/api/account-summary",
+          url: "http://188.166.228.50:8089/account/api/account-summary",
           method: "post",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
           },
           data: newData,
         }).then((response) => {
-          if (response.status == 200) {
+          if (response.status === 200) {
             setTableData((prevTableData) => [...prevTableData, newData]);
             setAddDialogOpen(false);
           } else {
@@ -156,33 +156,28 @@ const Dashboard = () => {
 
     if (editMode[index]) {
       try {
-        const response = await Axios.put(
-          `/account/api/account-summary/${updatedTableData[index].id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
-            },
+        await Axios({
+          url: `http://188.166.228.50:8089/account/api/account-summary/${updatedTableData[index].id}`,
+          method: "put",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
           },
-          {
+          data: {
             account: updatedTableData[index].account,
             limit_amount: updatedTableData[index].limit_amount,
             balance: updatedTableData[index].balance,
             date: updatedTableData[index].date,
+          },
+        }).then((response) => {
+          if (response.status === 200) {
+          } else {
+            console.error("Error updating record");
           }
-        );
-
-        if (response.status === 200) {
-        } else if (
-          response &&
-          response.response &&
-          response.response.status == 401
-        ) {
-          navigate("/login");
-        } else {
-          console.error("Error updating record");
-        }
+        });
       } catch (error) {
-        console.error("Error:", error);
+        if (error && error.response.status == 401) {
+          navigate("/login");
+        }
       }
     }
 
@@ -249,53 +244,57 @@ const Dashboard = () => {
     doc.save("Account_summary.pdf");
   };
 
-  const fetchData = () => {
-    Axios.get("/account/api/account-summary", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
-      },
-    })
-      .then((response) => {
-        if (response.status == 200) {
+  const fetchData = async () => {
+    try {
+      await Axios({
+        url: "http://188.166.228.50:8089/account/api/account-summary",
+        method: "get",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
+        },
+      }).then((response) => {
+        if (response.status === 200) {
           setTableData(response.data);
-        } else if (response.status == 401) {
-          alert(response.message);
         } else {
           console.error("Error fetching data from the API");
         }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
       });
+    } catch (error) {
+      if (error && error.response.status == 401) {
+        navigate("/login");
+      } else {
+        console.error("All fields are required!");
+      }
+    }
   };
 
   const handleDeleteRow = async (index, accountId) => {
     try {
-      if (!accountId) {
-        const updatedTableData = [...tableData];
-        updatedTableData.splice(index, 1);
-        setTableData(updatedTableData);
-      } else {
-        const response = await Axios.delete(
-          `/account/api/account-summary/${accountId}`
-        );
-
-        console.log(response);
-        if (response.status === 200) {
-          // Fetch data again after successful deletion
-          fetchData();
-        } else if (
-          response &&
-          response.response &&
-          response.response.status == 401
-        ) {
-          navigate("/login");
+      await Axios({
+        url: `http://188.166.228.50:8089/account/api/account-summary/${accountId}`,
+        method: "delete",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("tokenauth")}`,
+        },
+      }).then((response) => {
+        if (!accountId) {
+          const updatedTableData = [...tableData];
+          updatedTableData.splice(index, 1);
+          setTableData(updatedTableData);
         } else {
-          console.error("Error deleting data from the API");
+          if (response.status == 200) {
+            fetchData();
+          } else {
+            console.error("Error deleting data from the API");
+          }
         }
-      }
+      });
     } catch (error) {
-      console.error("Error:", error);
+      if (error && error.response.status == 401) {
+        navigate("/login");
+      } else {
+        console.error("All fields are required!");
+      }
     }
   };
   const calculateTotal = () => {
@@ -314,10 +313,13 @@ const Dashboard = () => {
   const gettotalIncome = async () => {
     await ApiCalls.getTotalIncome()
       .then((res) => {
-        if (res && res.response && res.response.status == 401) {
+        if (
+          (res && res.status == 401) ||
+          (res.response && res.response.status == 401)
+        ) {
           navigate("/login");
         }
-        setTotalIncome(res.data.Total);
+        setTotalIncome(res.data?.Total);
       })
       .catch((err) => console.log(err));
   };
@@ -326,9 +328,10 @@ const Dashboard = () => {
     await ApiCalls.getTotalExpense()
       .then((res) => {
         if (res && res.response && res.response.status == 401) {
+          window.alert("Invalid user");
           navigate("/login");
         }
-        setTotalExpense(res.data.Total);
+        setTotalExpense(res.data?.Total);
       })
       .catch((err) => console.log(err));
   };

@@ -2,12 +2,11 @@ module.exports = function () {
   var mysqlExecute = require("../db/db");
 
   this.getotpData = (req) => {
-    console.log(req, "repository");
     return new Promise(async function (resolve) {
       try {
         var mysqlExecuteCall = new mysqlExecute();
         const { email, password, otp } = req.body;
-        console.log(req.body);
+
         const query = `SELECT * FROM users WHERE email = ? AND otp = ? AND verified = false`;
         var queryRequest = [email, otp];
         var queryResponse = await mysqlExecuteCall.executeWithParams(
